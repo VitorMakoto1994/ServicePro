@@ -60,12 +60,12 @@
 <div id="bloqueio-screen">
     <div class="bloqueio-card">
         <i class="bi bi-lock-fill text-danger" style="font-size: 4rem;"></i>
-        <h3 class="fw-bold mt-3">Período de Teste Expirado</h3>
-        <p class="text-muted mb-4">Sua assinatura do ServicePRO chegou ao fim. Para continuar usando o sistema e gerenciar seus clientes, renove sua assinatura.</p>
+        <h3 class="fw-bold mt-3">Acesso Bloqueado</h3>
+        <p class="text-muted mb-4">Seu período de acesso ao ServicePRO expirou ou foi suspenso. Para continuar usando o sistema, regularize sua assinatura.</p>
         <a href="https://wa.me/5543999792501" target="_blank" class="btn btn-success w-100 rounded-pill py-3 fw-bold">
-            <i class="bi bi-whatsapp"></i> Renovar Assinatura
+            <i class="bi bi-whatsapp"></i> Falar com Suporte
         </a>
-        <button class="btn btn-link text-muted mt-3" onclick="window.sairSistema()">Sair da Conta</button>
+        <button class="btn btn-link text-muted mt-3" id="btnSairBloqueio">Sair da Conta</button>
     </div>
 </div>
 
@@ -88,12 +88,12 @@
     <div class="container">
         <div id="aba-admin" class="secao">
             <div class="d-flex justify-content-between mb-4 align-items-center">
-                <h3>Painel de Assinaturas</h3>
-                <span class="badge bg-success">Área Restrita</span>
+                <h3>Controle de Usuários</h3>
+                <span class="badge bg-success">Acesso Master</span>
             </div>
             <div class="table-responsive">
-                <table class="table card-custom">
-                    <thead><tr><th>E-mail do Usuário</th><th>Data de Vencimento</th><th>Status</th><th class="text-end">Ação</th></tr></thead>
+                <table class="table card-custom align-middle">
+                    <thead class="table-light"><tr><th>E-mail do Usuário</th><th width="200">Vencimento</th><th>Status</th><th class="text-end">Ação</th></tr></thead>
                     <tbody id="listaUsuariosAdmin"></tbody>
                 </table>
             </div>
@@ -165,7 +165,7 @@
     const db = getFirestore(app);
 
     // ==========================================
-    // CONFIGURAÇÃO DO ADMIN (COLOQUE SEU E-MAIL)
+    // CONFIGURAÇÃO DO ADMIN (COLOQUE SEU E-MAIL AQUI!)
     // ==========================================
     const ADMIN_EMAIL = "maa.koto@hotmail.com"; 
     // ==========================================
@@ -187,7 +187,7 @@
     }
     document.querySelectorAll('.modal').forEach(m => m.addEventListener('shown.bs.modal', iniciarMascaras));
 
-    // --- AUTENTICAÇÃO E ASSINATURA ---
+    // --- AUTENTICAÇÃO ---
     document.getElementById('btnLogin').addEventListener('click', async () => { 
         const msgBox = document.getElementById('auth-msg'); msgBox.className = "text-danger small mt-3 fw-bold";
         try { 
@@ -203,38 +203,43 @@
         if (!regexSenha.test(p)) return msgBox.innerText = "A senha deve ter mín. 6 caracteres, 1 maiúscula, 1 número e 1 caractere especial.";
         try { 
             const uc = await createUserWithEmailAndPassword(auth, email, p); 
-            
-            // CRIA A ASSINATURA DE 7 DIAS GRÁTIS NO BANCO
-            const validade = new Date();
-            validade.setDate(validade.getDate() + 7);
+            const validade = new Date(); validade.setDate(validade.getDate() + 7);
             await setDoc(doc(db, "assinaturas", uc.user.uid), { email: email, validade: validade.toISOString() });
-
             await sendEmailVerification(uc.user);
             await signOut(auth); 
-            msgBox.className = "text-success small mt-3 fw-bold";
-            msgBox.innerText = "Conta criada com 7 dias grátis! Verifique seu e-mail para ativar."; 
+            msgBox.className = "text-success small mt-3 fw-bold"; msgBox.innerText = "Conta criada com 7 dias grátis! Verifique seu e-mail para ativar."; 
         } catch(e) { msgBox.innerText = "Erro. O e-mail pode já estar em uso."; } 
     });
 
     document.getElementById('btnEsqueciSenha').addEventListener('click', async (e) => { e.preventDefault(); const email = document.getElementById('auth-email').value; const msgBox = document.getElementById('auth-msg'); if(!email) { msgBox.className = "text-danger small mt-3 fw-bold"; msgBox.innerText = "Digite seu e-mail acima para recuperar a senha."; return; } try { await sendPasswordResetEmail(auth, email); msgBox.className = "text-success small mt-3 fw-bold"; msgBox.innerText = "E-mail de recuperação enviado!"; } catch(erro) { msgBox.className = "text-danger small mt-3 fw-bold"; msgBox.innerText = "Erro: e-mail inválido."; } });
     
-    window.sairSistema = () => signOut(auth);
-    document.getElementById('btnLogout').addEventListener('click', window.sairSistema);
+    // Forçar atualização da tela ao sair (evita bug do botão admin)
+    const sairDoSistema = () => {
+        signOut(auth).then(() => {
+            window.location.reload(); 
+        });
+    };
+    
+    document.getElementById('btnLogout').addEventListener('click', sairDoSistema);
+    document.getElementById('btnSairBloqueio').addEventListener('click', sairDoSistema);
 
     onAuthStateChanged(auth, async (user) => {
+        // Garantir que o botão Admin sumiu antes de testar
+        document.getElementById('btnNavAdmin').classList.add('d-none');
+
         if (user && user.emailVerified) { 
             userId = user.uid; userEmail = user.email;
             document.getElementById('auth-screen').style.display = 'none';
             
-            // VERIFICAÇÃO DE ASSINATURA
+            const isAdmin = (userEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+            
             const assDoc = await getDoc(doc(db, "assinaturas", userId));
             let taLiberado = false;
             
             if(assDoc.exists()) {
                 const dataFim = new Date(assDoc.data().validade);
-                if(new Date() <= dataFim || userEmail === ADMIN_EMAIL) taLiberado = true;
-            } else if (userEmail === ADMIN_EMAIL) {
-                // Se o admin logar pela primeira vez e não tiver doc, cria um pra ele eterno
+                if(new Date() <= dataFim || isAdmin) taLiberado = true;
+            } else if (isAdmin) {
                 const validadeEterna = new Date(); validadeEterna.setFullYear(validadeEterna.getFullYear() + 100);
                 await setDoc(doc(db, "assinaturas", userId), { email: userEmail, validade: validadeEterna.toISOString() });
                 taLiberado = true;
@@ -244,15 +249,13 @@
                 document.getElementById('bloqueio-screen').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
                 
-                // MOSTRA ABA ADMIN SÓ PARA O DONO
-                if(userEmail === ADMIN_EMAIL) {
+                if(isAdmin) {
                     document.getElementById('btnNavAdmin').classList.remove('d-none');
                     carregarAdminData();
                 }
 
                 carregarDados();
             } else {
-                // ASSINATURA EXPIRADA
                 document.getElementById('bloqueio-screen').style.display = 'block';
                 document.getElementById('main-app').style.display = 'none';
             }
@@ -264,7 +267,7 @@
         }
     });
 
-    // --- PAINEL ADMIN (GESTÃO DE ASSINATURAS) ---
+    // --- PAINEL ADMIN COM CONTROLE TOTAL DE DATAS ---
     function carregarAdminData() {
         onSnapshot(collection(db, "assinaturas"), snap => {
             usuariosAdmin = snap.docs.map(d => ({ uid: d.id, ...d.data() }));
@@ -277,28 +280,32 @@
             const dataVenc = new Date(u.validade);
             const expirado = new Date() > dataVenc;
             const statusBadge = expirado ? '<span class="badge bg-danger">Bloqueado</span>' : '<span class="badge bg-success">Ativo</span>';
-            const dataFormatada = dataVenc.toLocaleDateString('pt-BR');
+            // Formata data para o Input de data HTML5 (YYYY-MM-DD)
+            const dataStringParaInput = dataVenc.toISOString().split('T')[0];
+            
             return `<tr>
-                <td>${u.email}</td>
-                <td class="${expirado ? 'text-danger fw-bold' : ''}">${dataFormatada}</td>
+                <td class="fw-bold">${u.email}</td>
+                <td>
+                    <input type="date" id="data-venc-${u.uid}" value="${dataStringParaInput}" class="form-control form-control-sm">
+                </td>
                 <td>${statusBadge}</td>
                 <td class="text-end">
-                    <button class="btn btn-sm btn-primary rounded-pill fw-bold" onclick="window.add30Dias('${u.uid}', '${u.validade}')">+ 30 Dias</button>
+                    <button class="btn btn-sm btn-primary rounded-pill fw-bold px-3" onclick="window.salvarNovaData('${u.uid}')">Salvar Data</button>
                 </td>
             </tr>`;
         }).join('');
     }
 
-    window.add30Dias = async (uid, dataAtual) => {
-        if(confirm("Adicionar +30 dias para este usuário?")) {
-            const novaData = new Date(dataAtual);
-            // Se já estava vencido há muito tempo, adiciona 30 dias a partir de HOJE.
-            // Se ainda não venceu, adiciona 30 dias na data atual dele.
-            const baseData = (novaData < new Date()) ? new Date() : novaData;
-            baseData.setDate(baseData.getDate() + 30);
-            
-            await updateDoc(doc(db, "assinaturas", uid), { validade: baseData.toISOString() });
-            alert("Acesso liberado com sucesso!");
+    window.salvarNovaData = async (uid) => {
+        const novaDataStr = document.getElementById(`data-venc-${uid}`).value;
+        if(!novaDataStr) return alert('Escolha uma data válida.');
+        
+        // Coloca a data para as 23:59:59 do dia escolhido
+        const novaDataObj = new Date(novaDataStr + 'T23:59:59'); 
+        
+        if(confirm("Confirmar esta nova data de acesso para o usuário?")) {
+            await updateDoc(doc(db, "assinaturas", uid), { validade: novaDataObj.toISOString() });
+            alert("Assinatura do usuário foi atualizada!");
         }
     };
 
@@ -321,7 +328,7 @@
         onSnapshot(doc(db, "usuarios", userId, "config", "perfil"), d => { if(d.exists()){ perfil = d.data(); document.getElementById('pEmpresa').value = perfil.empresa||''; document.getElementById('pCnpj').value = perfil.cnpj||''; document.getElementById('pTel').value = perfil.tel||''; document.getElementById('pMargem').value = perfil.margem||0; if(perfil.logo){ document.getElementById('logoPreview').src = perfil.logo; document.getElementById('logoPreview').classList.remove('d-none'); } } });
     }
 
-    // --- CÓDIGOS DE CLIENTES, ESTOQUE E ORÇAMENTOS (MANTIDOS IDÊNTICOS) ---
+    // --- CÓDIGOS DE CLIENTES, ESTOQUE E ORÇAMENTOS (INALTERADOS) ---
     document.getElementById('pLogo').addEventListener('change', function() { if(this.files[0]){ const r = new FileReader(); r.onload = e => { perfil.logo = e.target.result; document.getElementById('logoPreview').src = perfil.logo; document.getElementById('logoPreview').classList.remove('d-none'); }; r.readAsDataURL(this.files[0]); } });
     document.getElementById('formPerfil').addEventListener('submit', async e => { e.preventDefault(); await setDoc(doc(db, "usuarios", userId, "config", "perfil"), { empresa: document.getElementById('pEmpresa').value, cnpj: document.getElementById('pCnpj').value, tel: document.getElementById('pTel').value, margem: parseFloat(document.getElementById('pMargem').value||0), logo: perfil.logo||'' }); alert("Salvo na nuvem!"); });
 
