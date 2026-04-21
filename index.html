@@ -41,6 +41,11 @@
         /* TELA DE BLOQUEIO */
         #bloqueio-screen { display: none; text-align: center; padding-top: 100px; }
         .bloqueio-card { max-width: 500px; margin: auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 5px solid #dc2626; }
+        
+        /* DASHBOARD CARDS */
+        .dash-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; height: 100%; }
+        .dash-card h2 { font-weight: 800; font-size: 2.5rem; margin-bottom: 5px; }
+        .dash-card p { color: #64748b; font-weight: 500; font-size: 0.9rem; margin: 0; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -74,6 +79,7 @@
         <div class="container">
             <span class="navbar-brand"><i class="bi bi-layers-half text-primary me-2"></i>ServicePRO</span>
             <div class="navbar-nav d-flex flex-row gap-1 flex-wrap align-items-center">
+                <button class="nav-btn" id="btnNavHome"><i class="bi bi-house-door-fill"></i> Início</button>
                 <button class="nav-btn" id="btnNavClientes">Clientes</button>
                 <button class="nav-btn" id="btnNavEstoque">Estoque</button>
                 <button class="nav-btn" id="btnNavOrcamentos">Histórico</button>
@@ -86,6 +92,33 @@
     </nav>
 
     <div class="container">
+        <div id="aba-home" class="secao ativa">
+            <div class="d-flex justify-content-between mb-4 align-items-center">
+                <h3>Painel Resumo</h3>
+                <button class="btn btn-primary rounded-pill px-4" onclick="window.navegar('clientes')">+ Fazer Orçamento</button>
+            </div>
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="dash-card border-bottom border-4 border-primary">
+                        <h2 id="dashClientes" class="text-primary">0</h2>
+                        <p>Total de Clientes</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="dash-card border-bottom border-4 border-warning">
+                        <h2 id="dashOSAbertas" class="text-warning">0</h2>
+                        <p>OS Abertas / Pendentes</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="dash-card border-bottom border-4 border-success">
+                        <h2 id="dashFaturamento" class="text-success">R$ 0,00</h2>
+                        <p>Faturamento (OS Finalizadas)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="aba-admin" class="secao">
             <div class="d-flex justify-content-between mb-4 align-items-center">
                 <h3>Controle de Usuários</h3>
@@ -99,7 +132,7 @@
             </div>
         </div>
 
-        <div id="aba-clientes" class="secao ativa">
+        <div id="aba-clientes" class="secao">
             <div class="d-flex justify-content-between mb-4"><h3>Clientes</h3><button class="btn btn-primary rounded-pill px-4" id="btnNovoCliente">+ Novo Cliente</button></div>
             <div id="listaClientes"></div>
         </div>
@@ -126,7 +159,15 @@
 
         <div id="aba-perfil" class="secao">
             <div class="card-custom p-4 mx-auto" style="max-width:600px;">
-                <h3>Dados da Empresa</h3>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h3 class="m-0">Dados da Empresa</h3>
+                    <span class="badge bg-primary">Premium</span>
+                </div>
+                
+                <div id="infoAssinatura" class="alert alert-info py-2 text-center small mb-4">
+                    Carregando plano...
+                </div>
+
                 <form id="formPerfil">
                     <label class="small fw-bold">LOGO</label><input type="file" id="pLogo" class="form-control mb-2" accept="image/*">
                     <img id="logoPreview" src="" class="logo-placeholder mb-2 d-none">
@@ -165,7 +206,7 @@
     const db = getFirestore(app);
 
     // ==========================================
-    // CONFIGURAÇÃO DO ADMIN (COLOQUE SEU E-MAIL AQUI!)
+    // CONFIGURAÇÃO DO ADMIN E WHATSAPP
     // ==========================================
     const ADMIN_EMAIL = "maa.koto@hotmail.com"; 
     // ==========================================
@@ -213,18 +254,11 @@
 
     document.getElementById('btnEsqueciSenha').addEventListener('click', async (e) => { e.preventDefault(); const email = document.getElementById('auth-email').value; const msgBox = document.getElementById('auth-msg'); if(!email) { msgBox.className = "text-danger small mt-3 fw-bold"; msgBox.innerText = "Digite seu e-mail acima para recuperar a senha."; return; } try { await sendPasswordResetEmail(auth, email); msgBox.className = "text-success small mt-3 fw-bold"; msgBox.innerText = "E-mail de recuperação enviado!"; } catch(erro) { msgBox.className = "text-danger small mt-3 fw-bold"; msgBox.innerText = "Erro: e-mail inválido."; } });
     
-    // Forçar atualização da tela ao sair (evita bug do botão admin)
-    const sairDoSistema = () => {
-        signOut(auth).then(() => {
-            window.location.reload(); 
-        });
-    };
-    
+    const sairDoSistema = () => { signOut(auth).then(() => { window.location.reload(); }); };
     document.getElementById('btnLogout').addEventListener('click', sairDoSistema);
     document.getElementById('btnSairBloqueio').addEventListener('click', sairDoSistema);
 
     onAuthStateChanged(auth, async (user) => {
-        // Garantir que o botão Admin sumiu antes de testar
         document.getElementById('btnNavAdmin').classList.add('d-none');
 
         if (user && user.emailVerified) { 
@@ -232,12 +266,13 @@
             document.getElementById('auth-screen').style.display = 'none';
             
             const isAdmin = (userEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase());
-            
             const assDoc = await getDoc(doc(db, "assinaturas", userId));
             let taLiberado = false;
+            let infoAssinaturaDiv = document.getElementById('infoAssinatura');
             
             if(assDoc.exists()) {
                 const dataFim = new Date(assDoc.data().validade);
+                infoAssinaturaDiv.innerHTML = `<i class="bi bi-info-circle me-1"></i> Sua assinatura é válida até <strong>${dataFim.toLocaleDateString('pt-BR')}</strong>.`;
                 if(new Date() <= dataFim || isAdmin) taLiberado = true;
             } else if (isAdmin) {
                 const validadeEterna = new Date(); validadeEterna.setFullYear(validadeEterna.getFullYear() + 100);
@@ -245,15 +280,12 @@
                 taLiberado = true;
             }
 
+            if (isAdmin) infoAssinaturaDiv.innerHTML = `<i class="bi bi-shield-check me-1"></i> Conta Administrador Master (Acesso Vitalício).`;
+
             if(taLiberado) {
                 document.getElementById('bloqueio-screen').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
-                
-                if(isAdmin) {
-                    document.getElementById('btnNavAdmin').classList.remove('d-none');
-                    carregarAdminData();
-                }
-
+                if(isAdmin) { document.getElementById('btnNavAdmin').classList.remove('d-none'); carregarAdminData(); }
                 carregarDados();
             } else {
                 document.getElementById('bloqueio-screen').style.display = 'block';
@@ -267,68 +299,39 @@
         }
     });
 
-    // --- PAINEL ADMIN COM CONTROLE TOTAL DE DATAS ---
-    function carregarAdminData() {
-        onSnapshot(collection(db, "assinaturas"), snap => {
-            usuariosAdmin = snap.docs.map(d => ({ uid: d.id, ...d.data() }));
-            renderizarPainelAdmin();
-        });
-    }
-
-    function renderizarPainelAdmin() {
-        document.getElementById('listaUsuariosAdmin').innerHTML = usuariosAdmin.map(u => {
-            const dataVenc = new Date(u.validade);
-            const expirado = new Date() > dataVenc;
-            const statusBadge = expirado ? '<span class="badge bg-danger">Bloqueado</span>' : '<span class="badge bg-success">Ativo</span>';
-            // Formata data para o Input de data HTML5 (YYYY-MM-DD)
-            const dataStringParaInput = dataVenc.toISOString().split('T')[0];
-            
-            return `<tr>
-                <td class="fw-bold">${u.email}</td>
-                <td>
-                    <input type="date" id="data-venc-${u.uid}" value="${dataStringParaInput}" class="form-control form-control-sm">
-                </td>
-                <td>${statusBadge}</td>
-                <td class="text-end">
-                    <button class="btn btn-sm btn-primary rounded-pill fw-bold px-3" onclick="window.salvarNovaData('${u.uid}')">Salvar Data</button>
-                </td>
-            </tr>`;
-        }).join('');
-    }
-
-    window.salvarNovaData = async (uid) => {
-        const novaDataStr = document.getElementById(`data-venc-${uid}`).value;
-        if(!novaDataStr) return alert('Escolha uma data válida.');
-        
-        // Coloca a data para as 23:59:59 do dia escolhido
-        const novaDataObj = new Date(novaDataStr + 'T23:59:59'); 
-        
-        if(confirm("Confirmar esta nova data de acesso para o usuário?")) {
-            await updateDoc(doc(db, "assinaturas", uid), { validade: novaDataObj.toISOString() });
-            alert("Assinatura do usuário foi atualizada!");
-        }
-    };
+    // --- PAINEL ADMIN ---
+    function carregarAdminData() { onSnapshot(collection(db, "assinaturas"), snap => { usuariosAdmin = snap.docs.map(d => ({ uid: d.id, ...d.data() })); renderizarPainelAdmin(); }); }
+    function renderizarPainelAdmin() { document.getElementById('listaUsuariosAdmin').innerHTML = usuariosAdmin.map(u => { const dataVenc = new Date(u.validade); const expirado = new Date() > dataVenc; const statusBadge = expirado ? '<span class="badge bg-danger">Bloqueado</span>' : '<span class="badge bg-success">Ativo</span>'; const dataStringParaInput = dataVenc.toISOString().split('T')[0]; return `<tr><td class="fw-bold">${u.email}</td><td><input type="date" id="data-venc-${u.uid}" value="${dataStringParaInput}" class="form-control form-control-sm"></td><td>${statusBadge}</td><td class="text-end"><button class="btn btn-sm btn-primary rounded-pill fw-bold px-3" onclick="window.salvarNovaData('${u.uid}')">Salvar</button></td></tr>`; }).join(''); }
+    window.salvarNovaData = async (uid) => { const novaDataStr = document.getElementById(`data-venc-${uid}`).value; if(!novaDataStr) return alert('Escolha uma data.'); const novaDataObj = new Date(novaDataStr + 'T23:59:59'); if(confirm("Confirmar nova data?")) { await updateDoc(doc(db, "assinaturas", uid), { validade: novaDataObj.toISOString() }); alert("Atualizado!"); } };
 
     // --- NAVEGAÇÃO ---
-    const navegar = (aba) => { document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativa')); document.getElementById('aba-' + aba).classList.add('ativa'); };
-    document.getElementById('btnNavClientes').addEventListener('click', () => navegar('clientes'));
-    document.getElementById('btnNavEstoque').addEventListener('click', () => navegar('estoque'));
-    document.getElementById('btnNavOrcamentos').addEventListener('click', () => navegar('orcamentos'));
-    document.getElementById('btnNavAgenda').addEventListener('click', () => navegar('agenda'));
-    document.getElementById('btnNavPerfil').addEventListener('click', () => navegar('perfil'));
-    document.getElementById('btnNavAdmin').addEventListener('click', () => navegar('admin'));
-
+    window.navegar = (aba) => { document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativa')); document.getElementById('aba-' + aba).classList.add('ativa'); };
+    document.getElementById('btnNavHome').addEventListener('click', () => window.navegar('home'));
+    document.getElementById('btnNavClientes').addEventListener('click', () => window.navegar('clientes'));
+    document.getElementById('btnNavEstoque').addEventListener('click', () => window.navegar('estoque'));
+    document.getElementById('btnNavOrcamentos').addEventListener('click', () => window.navegar('orcamentos'));
+    document.getElementById('btnNavAgenda').addEventListener('click', () => window.navegar('agenda'));
+    document.getElementById('btnNavPerfil').addEventListener('click', () => window.navegar('perfil'));
+    document.getElementById('btnNavAdmin').addEventListener('click', () => window.navegar('admin'));
     window.toggleDet = (id) => { const e = document.getElementById(id); e.style.display = e.style.display === 'block' ? 'none' : 'block'; };
+
+    // --- DASHBOARD ATUALIZAÇÃO ---
+    function atualizarDashboard() {
+        document.getElementById('dashClientes').innerText = clientes.length;
+        document.getElementById('dashOSAbertas').innerText = orcamentos.filter(o => o.status === 'OS ABERTA').length;
+        const faturamento = orcamentos.filter(o => o.status === 'FINALIZADA').reduce((acc, curr) => acc + limpaDinheiro(curr.total), 0);
+        document.getElementById('dashFaturamento').innerText = formatDinheiro(faturamento);
+    }
 
     // --- CARREGAR DADOS DO USUÁRIO LOGADO ---
     function carregarDados() {
-        onSnapshot(collection(db, "usuarios", userId, "clientes"), snap => { clientes = snap.docs.map(d => ({id_firebase: d.id, ...d.data()})); renderizarClientes(); });
+        onSnapshot(collection(db, "usuarios", userId, "clientes"), snap => { clientes = snap.docs.map(d => ({id_firebase: d.id, ...d.data()})); renderizarClientes(); atualizarDashboard(); });
         onSnapshot(collection(db, "usuarios", userId, "estoque"), snap => { estoque = snap.docs.map(d => ({id_firebase: d.id, ...d.data()})); renderizarEstoque(); });
-        onSnapshot(collection(db, "usuarios", userId, "orcamentos"), snap => { orcamentos = snap.docs.map(d => ({id_firebase: d.id, ...d.data()})); renderizarOrcamentos(); renderizarCalendario(); });
+        onSnapshot(collection(db, "usuarios", userId, "orcamentos"), snap => { orcamentos = snap.docs.map(d => ({id_firebase: d.id, ...d.data()})); renderizarOrcamentos(); renderizarCalendario(); atualizarDashboard(); });
         onSnapshot(doc(db, "usuarios", userId, "config", "perfil"), d => { if(d.exists()){ perfil = d.data(); document.getElementById('pEmpresa').value = perfil.empresa||''; document.getElementById('pCnpj').value = perfil.cnpj||''; document.getElementById('pTel').value = perfil.tel||''; document.getElementById('pMargem').value = perfil.margem||0; if(perfil.logo){ document.getElementById('logoPreview').src = perfil.logo; document.getElementById('logoPreview').classList.remove('d-none'); } } });
     }
 
-    // --- CÓDIGOS DE CLIENTES, ESTOQUE E ORÇAMENTOS (INALTERADOS) ---
+    // --- CÓDIGOS DE CLIENTES, ESTOQUE E ORÇAMENTOS ---
     document.getElementById('pLogo').addEventListener('change', function() { if(this.files[0]){ const r = new FileReader(); r.onload = e => { perfil.logo = e.target.result; document.getElementById('logoPreview').src = perfil.logo; document.getElementById('logoPreview').classList.remove('d-none'); }; r.readAsDataURL(this.files[0]); } });
     document.getElementById('formPerfil').addEventListener('submit', async e => { e.preventDefault(); await setDoc(doc(db, "usuarios", userId, "config", "perfil"), { empresa: document.getElementById('pEmpresa').value, cnpj: document.getElementById('pCnpj').value, tel: document.getElementById('pTel').value, margem: parseFloat(document.getElementById('pMargem').value||0), logo: perfil.logo||'' }); alert("Salvo na nuvem!"); });
 
