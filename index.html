@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ServicePRO Cloud</title>
+    <title>ServicePRO Cloud SaaS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -37,6 +37,10 @@
         .total-geral-azul { background-color: #0f172a; color: white; display: flex; justify-content: space-between; padding: 15px 20px; font-size: 20px; font-weight: bold; }
         .validade-texto { font-size: 11px; color: #64748b; padding: 10px; text-align: center; background: #f8fafc; }
         .logo-placeholder { max-width: 150px; max-height: 80px; object-fit: contain; }
+        
+        /* TELA DE BLOQUEIO */
+        #bloqueio-screen { display: none; text-align: center; padding-top: 100px; }
+        .bloqueio-card { max-width: 500px; margin: auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 5px solid #dc2626; }
     </style>
 </head>
 <body>
@@ -46,14 +50,22 @@
         <h2 class="fw-bold text-primary mb-4"><i class="bi bi-cloud-arrow-up me-2"></i>ServicePRO</h2>
         <input type="email" id="auth-email" class="form-control mb-3" placeholder="Seu e-mail">
         <input type="password" id="auth-pass" class="form-control mb-2" placeholder="Sua senha">
-        
-        <div class="text-end mb-3">
-            <a href="#" class="small text-decoration-none" id="btnEsqueciSenha">Esqueci minha senha</a>
-        </div>
-
+        <div class="text-end mb-3"><a href="#" class="small text-decoration-none" id="btnEsqueciSenha">Esqueci minha senha</a></div>
         <button class="btn btn-primary w-100 mb-2 rounded-pill py-2" id="btnLogin">Entrar no Sistema</button>
-        <button class="btn btn-outline-secondary w-100 rounded-pill py-2" id="btnSignup">Criar Conta Nova</button>
+        <button class="btn btn-outline-secondary w-100 rounded-pill py-2" id="btnSignup">Criar Conta (7 Dias Grátis)</button>
         <div id="auth-msg" class="text-danger small mt-3 fw-bold"></div>
+    </div>
+</div>
+
+<div id="bloqueio-screen">
+    <div class="bloqueio-card">
+        <i class="bi bi-lock-fill text-danger" style="font-size: 4rem;"></i>
+        <h3 class="fw-bold mt-3">Período de Teste Expirado</h3>
+        <p class="text-muted mb-4">Sua assinatura do ServicePRO chegou ao fim. Para continuar usando o sistema e gerenciar seus clientes, renove sua assinatura.</p>
+        <a href="https://wa.me/5543999792501" target="_blank" class="btn btn-success w-100 rounded-pill py-3 fw-bold">
+            <i class="bi bi-whatsapp"></i> Renovar Assinatura
+        </a>
+        <button class="btn btn-link text-muted mt-3" onclick="window.sairSistema()">Sair da Conta</button>
     </div>
 </div>
 
@@ -61,18 +73,32 @@
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom shadow-sm mb-4">
         <div class="container">
             <span class="navbar-brand"><i class="bi bi-layers-half text-primary me-2"></i>ServicePRO</span>
-            <div class="navbar-nav d-flex flex-row gap-1 flex-wrap">
+            <div class="navbar-nav d-flex flex-row gap-1 flex-wrap align-items-center">
                 <button class="nav-btn" id="btnNavClientes">Clientes</button>
                 <button class="nav-btn" id="btnNavEstoque">Estoque</button>
                 <button class="nav-btn" id="btnNavOrcamentos">Histórico</button>
                 <button class="nav-btn" id="btnNavAgenda">Agenda</button>
                 <button class="nav-btn text-warning" id="btnNavPerfil">Empresa</button>
+                <button class="nav-btn text-success fw-bold d-none" id="btnNavAdmin"><i class="bi bi-shield-lock-fill"></i> Admin</button>
                 <button class="btn btn-outline-danger btn-sm ms-2" id="btnLogout"><i class="bi bi-box-arrow-right"></i> Sair</button>
             </div>
         </div>
     </nav>
 
     <div class="container">
+        <div id="aba-admin" class="secao">
+            <div class="d-flex justify-content-between mb-4 align-items-center">
+                <h3>Painel de Assinaturas</h3>
+                <span class="badge bg-success">Área Restrita</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table card-custom">
+                    <thead><tr><th>E-mail do Usuário</th><th>Data de Vencimento</th><th>Status</th><th class="text-end">Ação</th></tr></thead>
+                    <tbody id="listaUsuariosAdmin"></tbody>
+                </table>
+            </div>
+        </div>
+
         <div id="aba-clientes" class="secao ativa">
             <div class="d-flex justify-content-between mb-4"><h3>Clientes</h3><button class="btn btn-primary rounded-pill px-4" id="btnNovoCliente">+ Novo Cliente</button></div>
             <div id="listaClientes"></div>
@@ -115,68 +141,15 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalOrcamento" tabindex="-1"><div class="modal-dialog modal-lg modal-fullscreen-md-down"><div class="modal-content border-0 shadow">
-    <div class="modal-header bg-light"><h5>Documento de Serviço</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-    <div class="modal-body bg-light p-3">
-        <input type="hidden" id="editOrcId">
-        <div id="area-impressao" class="p-0 shadow-sm mb-3">
-            <div class="p-4">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <img id="logoDoc" src="" class="logo-placeholder">
-                    <div class="text-end small" id="empresaDoc"></div>
-                </div>
-                <div class="text-center my-4"><h4 class="fw-bold m-0" style="color:#0f172a">ORÇAMENTO</h4><div class="small text-muted">Nº: <span id="numDoc">000</span> | Data: <span id="dataCriacaoDoc"></span></div></div>
-                <div class="p-3 mb-3 rounded" style="background:#f8fafc; border: 1px solid #e2e8f0;" id="clienteDoc"></div>
-                <div class="row g-2 mb-4 p-2 bg-light rounded mx-0 border">
-                    <div class="col-6"><label class="small fw-bold text-muted">INÍCIO PREVISTO</label><div id="dataIniVisual" class="fw-bold">--/--/----</div><input type="date" id="dataIni" class="form-control border-0 bg-transparent p-0"></div>
-                    <div class="col-6 text-end"><label class="small fw-bold text-muted">ENTREGA PREVISTA</label><div id="dataFimVisual" class="fw-bold">--/--/----</div><input type="date" id="dataFim" class="form-control border-0 bg-transparent p-0 text-end"></div>
-                </div>
-                <table class="tabela-orc"><thead><tr><th style="text-align:left">DESCRIÇÃO</th><th width="60">QTD</th><th width="110">UNIT.</th><th width="110">TOTAL</th><th class="col-x" width="40"></th></tr></thead><tbody id="corpo-orc"></tbody></table>
-            </div>
-            <div class="total-box-dark"><span>MÃO DE OBRA</span><span id="totalMaoObra">R$ 0,00</span></div>
-            <div class="total-box-dark" style="background:#334155;"><span>MATERIAIS</span><span id="totalMaterial">R$ 0,00</span></div>
-            <div class="total-geral-azul"><span>TOTAL GERAL</span><span id="totalGeral">R$ 0,00</span></div>
-            <div class="validade-texto">Válido por 10 dias.</div>
-        </div>
-        <div id="controles-adicao" class="card-custom p-3 border">
-            <div class="row g-2 mb-2"><div class="col-md-6"><select id="selProd" class="form-select"></select></div><div class="col-md-3"><input type="number" id="qProd" class="form-control" placeholder="Qtd"></div><div class="col-md-3"><button class="btn btn-dark w-100" id="btnAddMat">+ Material</button></div></div>
-            <div class="row g-2"><div class="col-md-6"><input type="text" id="nServ" class="form-control" placeholder="Serviço"></div><div class="col-md-3"><input type="text" id="pServ" class="form-control mask-money" placeholder="Preço"></div><div class="col-md-3"><button class="btn btn-outline-dark w-100" id="btnAddServ">+ Serviço</button></div></div>
-        </div>
-    </div>
-    <div class="modal-footer border-0 bg-white d-flex justify-content-center gap-2">
-        <button class="btn btn-light rounded-pill px-4" id="btnSalvarOrc">Salvar</button>
-        <button class="btn btn-primary rounded-pill px-4 shadow-sm" id="btnAprovarOS">Aprovar OS</button>
-        <button class="btn btn-success rounded-pill px-4 shadow-sm" id="btnBaixarImg">Gerar Imagem</button>
-    </div>
-</div></div></div>
-
-<div class="modal fade" id="modalCliente" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow"><form id="formCliente">
-    <div class="modal-header"><h5>Cadastro de Cliente</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-    <div class="modal-body p-4">
-        <input type="hidden" id="editClienteId">
-        <div class="mb-2"><label class="small fw-bold">NOME</label><input type="text" id="cNome" class="form-control" required></div>
-        <div class="row g-2 mb-2"><div class="col-6"><label class="small fw-bold">CPF/CNPJ</label><input type="text" id="cCPF" class="form-control mask-cnpj"></div><div class="col-6"><label class="small fw-bold">WHATSAPP</label><input type="text" id="cTel" class="form-control mask-tel" required></div></div>
-        <div class="mb-2"><label class="small fw-bold">ENDEREÇO</label><input type="text" id="cEnd" class="form-control"></div>
-        <div><label class="small fw-bold">OBS</label><textarea id="cObs" class="form-control"></textarea></div>
-    </div>
-    <div class="modal-footer border-0 bg-light"><button type="submit" class="btn btn-primary w-100 rounded-pill">Salvar na Nuvem</button></div>
-</form></div></div></div>
-
-<div class="modal fade" id="modalEstoque" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow"><form id="formEstoque">
-    <div class="modal-header"><h5>Estoque</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-    <div class="modal-body p-4">
-        <input type="hidden" id="editEstoqueSku">
-        <div class="mb-2"><label class="small fw-bold">PRODUTO</label><input type="text" id="iNome" class="form-control" required></div>
-        <div class="row g-2"><div class="col-6"><label class="small fw-bold">QTD</label><input type="number" id="iQtd" class="form-control" required></div><div class="col-6"><label class="small fw-bold">CUSTO TOTAL DA COMPRA</label><input type="text" id="iPreco" class="form-control mask-money" required></div></div>
-    </div>
-    <div class="modal-footer border-0 bg-light"><button type="submit" class="btn btn-success w-100 rounded-pill">Salvar</button></div>
-</form></div></div></div>
+<div class="modal fade" id="modalOrcamento" tabindex="-1"><div class="modal-dialog modal-lg modal-fullscreen-md-down"><div class="modal-content border-0 shadow"><div class="modal-header bg-light"><h5>Documento de Serviço</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light p-3"><input type="hidden" id="editOrcId"><div id="area-impressao" class="p-0 shadow-sm mb-3"><div class="p-4"><div class="d-flex justify-content-between align-items-start mb-3"><img id="logoDoc" src="" class="logo-placeholder"><div class="text-end small" id="empresaDoc"></div></div><div class="text-center my-4"><h4 class="fw-bold m-0" style="color:#0f172a">ORÇAMENTO</h4><div class="small text-muted">Nº: <span id="numDoc">000</span> | Data: <span id="dataCriacaoDoc"></span></div></div><div class="p-3 mb-3 rounded" style="background:#f8fafc; border: 1px solid #e2e8f0;" id="clienteDoc"></div><div class="row g-2 mb-4 p-2 bg-light rounded mx-0 border"><div class="col-6"><label class="small fw-bold text-muted">INÍCIO PREVISTO</label><div id="dataIniVisual" class="fw-bold">--/--/----</div><input type="date" id="dataIni" class="form-control border-0 bg-transparent p-0"></div><div class="col-6 text-end"><label class="small fw-bold text-muted">ENTREGA PREVISTA</label><div id="dataFimVisual" class="fw-bold">--/--/----</div><input type="date" id="dataFim" class="form-control border-0 bg-transparent p-0 text-end"></div></div><table class="tabela-orc"><thead><tr><th style="text-align:left">DESCRIÇÃO</th><th width="60">QTD</th><th width="110">UNIT.</th><th width="110">TOTAL</th><th class="col-x" width="40"></th></tr></thead><tbody id="corpo-orc"></tbody></table></div><div class="total-box-dark"><span>MÃO DE OBRA</span><span id="totalMaoObra">R$ 0,00</span></div><div class="total-box-dark" style="background:#334155;"><span>MATERIAIS</span><span id="totalMaterial">R$ 0,00</span></div><div class="total-geral-azul"><span>TOTAL GERAL</span><span id="totalGeral">R$ 0,00</span></div><div class="validade-texto">Válido por 10 dias.</div></div><div id="controles-adicao" class="card-custom p-3 border"><div class="row g-2 mb-2"><div class="col-md-6"><select id="selProd" class="form-select"></select></div><div class="col-md-3"><input type="number" id="qProd" class="form-control" placeholder="Qtd"></div><div class="col-md-3"><button class="btn btn-dark w-100" id="btnAddMat">+ Material</button></div></div><div class="row g-2"><div class="col-md-6"><input type="text" id="nServ" class="form-control" placeholder="Serviço"></div><div class="col-md-3"><input type="text" id="pServ" class="form-control mask-money" placeholder="Preço"></div><div class="col-md-3"><button class="btn btn-outline-dark w-100" id="btnAddServ">+ Serviço</button></div></div></div></div><div class="modal-footer border-0 bg-white d-flex justify-content-center gap-2"><button class="btn btn-light rounded-pill px-4" id="btnSalvarOrc">Salvar</button><button class="btn btn-primary rounded-pill px-4 shadow-sm" id="btnAprovarOS">Aprovar OS</button><button class="btn btn-success rounded-pill px-4 shadow-sm" id="btnBaixarImg">Gerar Imagem</button></div></div></div></div>
+<div class="modal fade" id="modalCliente" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow"><form id="formCliente"><div class="modal-header"><h5>Cadastro de Cliente</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-4"><input type="hidden" id="editClienteId"><div class="mb-2"><label class="small fw-bold">NOME</label><input type="text" id="cNome" class="form-control" required></div><div class="row g-2 mb-2"><div class="col-6"><label class="small fw-bold">CPF/CNPJ</label><input type="text" id="cCPF" class="form-control mask-cnpj"></div><div class="col-6"><label class="small fw-bold">WHATSAPP</label><input type="text" id="cTel" class="form-control mask-tel" required></div></div><div class="mb-2"><label class="small fw-bold">ENDEREÇO</label><input type="text" id="cEnd" class="form-control"></div><div><label class="small fw-bold">OBS</label><textarea id="cObs" class="form-control"></textarea></div></div><div class="modal-footer border-0 bg-light"><button type="submit" class="btn btn-primary w-100 rounded-pill">Salvar na Nuvem</button></div></form></div></div></div>
+<div class="modal fade" id="modalEstoque" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow"><form id="formEstoque"><div class="modal-header"><h5>Estoque</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-4"><input type="hidden" id="editEstoqueSku"><div class="mb-2"><label class="small fw-bold">PRODUTO</label><input type="text" id="iNome" class="form-control" required></div><div class="row g-2"><div class="col-6"><label class="small fw-bold">QTD</label><input type="number" id="iQtd" class="form-control" required></div><div class="col-6"><label class="small fw-bold">CUSTO TOTAL DA COMPRA</label><input type="text" id="iPreco" class="form-control mask-money" required></div></div></div><div class="modal-footer border-0 bg-light"><button type="submit" class="btn btn-success w-100 rounded-pill">Salvar</button></div></form></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, collection, onSnapshot, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBrVPL9XBhq1MG550XJ-yGLItS27oiRCUU",
@@ -191,12 +164,17 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let userId = null;
-    let clientes = [], estoque = [], orcamentos = [];
+    // ==========================================
+    // CONFIGURAÇÃO DO ADMIN (COLOQUE SEU E-MAIL)
+    // ==========================================
+    const ADMIN_EMAIL = "maa.koto@hotmail.com"; 
+    // ==========================================
+
+    let userId = null, userEmail = null;
+    let clientes = [], estoque = [], orcamentos = [], usuariosAdmin = [];
     let perfil = { empresa: '', cnpj: '', tel: '', margem: 0, logo: '' };
     let itensTemp = [], clienteAtualId = null, dataCalendario = new Date();
 
-    // --- FUNÇÕES AUXILIARES ---
     const formatDinheiro = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     const limpaDinheiro = (s) => s ? parseFloat(s.toString().replace(/[R$\s.]/g, '').replace(',', '.')) : 0;
     const formatData = (d) => { if(!d) return '--/--/----'; const p = d.split('-'); return `${p[2]}/${p[1]}/${p[0]}`; };
@@ -209,95 +187,133 @@
     }
     document.querySelectorAll('.modal').forEach(m => m.addEventListener('shown.bs.modal', iniciarMascaras));
 
-    // --- AUTENTICAÇÃO COM SEGURANÇA ---
+    // --- AUTENTICAÇÃO E ASSINATURA ---
     document.getElementById('btnLogin').addEventListener('click', async () => { 
-        const msgBox = document.getElementById('auth-msg');
-        msgBox.className = "text-danger small mt-3 fw-bold";
+        const msgBox = document.getElementById('auth-msg'); msgBox.className = "text-danger small mt-3 fw-bold";
         try { 
-            const userCredential = await signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-pass').value); 
-            // Verifica se o e-mail foi confirmado
-            if (!userCredential.user.emailVerified) {
-                await signOut(auth);
-                msgBox.innerText = "Acesso negado: Por favor, confirme seu e-mail clicando no link que enviamos para você.";
-            }
-        } catch(e) { 
-            msgBox.innerText = "Erro: e-mail ou senha inválidos."; 
-        } 
+            const uc = await signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-pass').value); 
+            if (!uc.user.emailVerified) { await signOut(auth); msgBox.innerText = "Confirme seu e-mail na caixa de entrada primeiro."; }
+        } catch(e) { msgBox.innerText = "Erro: e-mail ou senha inválidos."; } 
     });
 
     document.getElementById('btnSignup').addEventListener('click', async () => { 
-        const email = document.getElementById('auth-email').value;
-        const p = document.getElementById('auth-pass').value; 
-        const msgBox = document.getElementById('auth-msg');
-        msgBox.className = "text-danger small mt-3 fw-bold";
-
-        // Regex para validar senha forte
+        const email = document.getElementById('auth-email').value, p = document.getElementById('auth-pass').value; 
+        const msgBox = document.getElementById('auth-msg'); msgBox.className = "text-danger small mt-3 fw-bold";
         const regexSenha = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]).{6,}$/;
-
-        if (!regexSenha.test(p)) {
-            msgBox.innerText = "A senha deve ter mín. 6 caracteres, conter pelo menos 1 letra maiúscula, 1 número e 1 caractere especial.";
-            return;
-        }
-
+        if (!regexSenha.test(p)) return msgBox.innerText = "A senha deve ter mín. 6 caracteres, 1 maiúscula, 1 número e 1 caractere especial.";
         try { 
-            const userCredential = await createUserWithEmailAndPassword(auth, email, p); 
-            await sendEmailVerification(userCredential.user);
-            await signOut(auth); // Desloga imediatamente para forçar verificação
+            const uc = await createUserWithEmailAndPassword(auth, email, p); 
+            
+            // CRIA A ASSINATURA DE 7 DIAS GRÁTIS NO BANCO
+            const validade = new Date();
+            validade.setDate(validade.getDate() + 7);
+            await setDoc(doc(db, "assinaturas", uc.user.uid), { email: email, validade: validade.toISOString() });
+
+            await sendEmailVerification(uc.user);
+            await signOut(auth); 
             msgBox.className = "text-success small mt-3 fw-bold";
-            msgBox.innerText = "Conta criada com sucesso! Um link de confirmação foi enviado para o seu e-mail. Verifique sua caixa de entrada (ou spam)."; 
-        } catch(e) { 
-            msgBox.innerText = "Erro ao criar conta. O e-mail pode já estar em uso ou é inválido."; 
-        } 
+            msgBox.innerText = "Conta criada com 7 dias grátis! Verifique seu e-mail para ativar."; 
+        } catch(e) { msgBox.innerText = "Erro. O e-mail pode já estar em uso."; } 
     });
 
-    // Função Esqueci minha senha
-    document.getElementById('btnEsqueciSenha').addEventListener('click', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('auth-email').value;
-        const msgBox = document.getElementById('auth-msg');
-        
-        if(!email) {
-            msgBox.className = "text-danger small mt-3 fw-bold";
-            msgBox.innerText = "Para redefinir a senha, digite seu e-mail no campo acima e clique em 'Esqueci minha senha' novamente.";
-            return;
-        }
+    document.getElementById('btnEsqueciSenha').addEventListener('click', async (e) => { e.preventDefault(); const email = document.getElementById('auth-email').value; const msgBox = document.getElementById('auth-msg'); if(!email) { msgBox.className = "text-danger small mt-3 fw-bold"; msgBox.innerText = "Digite seu e-mail acima para recuperar a senha."; return; } try { await sendPasswordResetEmail(auth, email); msgBox.className = "text-success small mt-3 fw-bold"; msgBox.innerText = "E-mail de recuperação enviado!"; } catch(erro) { msgBox.className = "text-danger small mt-3 fw-bold"; msgBox.innerText = "Erro: e-mail inválido."; } });
+    
+    window.sairSistema = () => signOut(auth);
+    document.getElementById('btnLogout').addEventListener('click', window.sairSistema);
 
-        try {
-            await sendPasswordResetEmail(auth, email);
-            msgBox.className = "text-success small mt-3 fw-bold";
-            msgBox.innerText = "E-mail de recuperação enviado! Siga as instruções enviadas para a sua caixa de entrada.";
-        } catch(erro) {
-            msgBox.className = "text-danger small mt-3 fw-bold";
-            msgBox.innerText = "Erro: Certifique-se de que o e-mail digitado está correto.";
-        }
-    });
-
-    document.getElementById('btnLogout').addEventListener('click', () => signOut(auth));
-
-    onAuthStateChanged(auth, (user) => {
-        // Só permite acessar o app se existir usuário E o e-mail estiver verificado
+    onAuthStateChanged(auth, async (user) => {
         if (user && user.emailVerified) { 
-            userId = user.uid; 
-            document.getElementById('auth-screen').style.display = 'none'; 
-            document.getElementById('main-app').style.display = 'block'; 
-            carregarDados(); 
+            userId = user.uid; userEmail = user.email;
+            document.getElementById('auth-screen').style.display = 'none';
+            
+            // VERIFICAÇÃO DE ASSINATURA
+            const assDoc = await getDoc(doc(db, "assinaturas", userId));
+            let taLiberado = false;
+            
+            if(assDoc.exists()) {
+                const dataFim = new Date(assDoc.data().validade);
+                if(new Date() <= dataFim || userEmail === ADMIN_EMAIL) taLiberado = true;
+            } else if (userEmail === ADMIN_EMAIL) {
+                // Se o admin logar pela primeira vez e não tiver doc, cria um pra ele eterno
+                const validadeEterna = new Date(); validadeEterna.setFullYear(validadeEterna.getFullYear() + 100);
+                await setDoc(doc(db, "assinaturas", userId), { email: userEmail, validade: validadeEterna.toISOString() });
+                taLiberado = true;
+            }
+
+            if(taLiberado) {
+                document.getElementById('bloqueio-screen').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+                
+                // MOSTRA ABA ADMIN SÓ PARA O DONO
+                if(userEmail === ADMIN_EMAIL) {
+                    document.getElementById('btnNavAdmin').classList.remove('d-none');
+                    carregarAdminData();
+                }
+
+                carregarDados();
+            } else {
+                // ASSINATURA EXPIRADA
+                document.getElementById('bloqueio-screen').style.display = 'block';
+                document.getElementById('main-app').style.display = 'none';
+            }
+
         } else { 
             document.getElementById('auth-screen').style.display = 'block'; 
             document.getElementById('main-app').style.display = 'none'; 
+            document.getElementById('bloqueio-screen').style.display = 'none';
         }
     });
 
-    // --- NAVEGAÇÃO E BÁSICOS ---
+    // --- PAINEL ADMIN (GESTÃO DE ASSINATURAS) ---
+    function carregarAdminData() {
+        onSnapshot(collection(db, "assinaturas"), snap => {
+            usuariosAdmin = snap.docs.map(d => ({ uid: d.id, ...d.data() }));
+            renderizarPainelAdmin();
+        });
+    }
+
+    function renderizarPainelAdmin() {
+        document.getElementById('listaUsuariosAdmin').innerHTML = usuariosAdmin.map(u => {
+            const dataVenc = new Date(u.validade);
+            const expirado = new Date() > dataVenc;
+            const statusBadge = expirado ? '<span class="badge bg-danger">Bloqueado</span>' : '<span class="badge bg-success">Ativo</span>';
+            const dataFormatada = dataVenc.toLocaleDateString('pt-BR');
+            return `<tr>
+                <td>${u.email}</td>
+                <td class="${expirado ? 'text-danger fw-bold' : ''}">${dataFormatada}</td>
+                <td>${statusBadge}</td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-primary rounded-pill fw-bold" onclick="window.add30Dias('${u.uid}', '${u.validade}')">+ 30 Dias</button>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+
+    window.add30Dias = async (uid, dataAtual) => {
+        if(confirm("Adicionar +30 dias para este usuário?")) {
+            const novaData = new Date(dataAtual);
+            // Se já estava vencido há muito tempo, adiciona 30 dias a partir de HOJE.
+            // Se ainda não venceu, adiciona 30 dias na data atual dele.
+            const baseData = (novaData < new Date()) ? new Date() : novaData;
+            baseData.setDate(baseData.getDate() + 30);
+            
+            await updateDoc(doc(db, "assinaturas", uid), { validade: baseData.toISOString() });
+            alert("Acesso liberado com sucesso!");
+        }
+    };
+
+    // --- NAVEGAÇÃO ---
     const navegar = (aba) => { document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativa')); document.getElementById('aba-' + aba).classList.add('ativa'); };
     document.getElementById('btnNavClientes').addEventListener('click', () => navegar('clientes'));
     document.getElementById('btnNavEstoque').addEventListener('click', () => navegar('estoque'));
     document.getElementById('btnNavOrcamentos').addEventListener('click', () => navegar('orcamentos'));
     document.getElementById('btnNavAgenda').addEventListener('click', () => navegar('agenda'));
     document.getElementById('btnNavPerfil').addEventListener('click', () => navegar('perfil'));
+    document.getElementById('btnNavAdmin').addEventListener('click', () => navegar('admin'));
 
     window.toggleDet = (id) => { const e = document.getElementById(id); e.style.display = e.style.display === 'block' ? 'none' : 'block'; };
 
-    // --- CARREGAR DADOS ---
+    // --- CARREGAR DADOS DO USUÁRIO LOGADO ---
     function carregarDados() {
         onSnapshot(collection(db, "usuarios", userId, "clientes"), snap => { clientes = snap.docs.map(d => ({id_firebase: d.id, ...d.data()})); renderizarClientes(); });
         onSnapshot(collection(db, "usuarios", userId, "estoque"), snap => { estoque = snap.docs.map(d => ({id_firebase: d.id, ...d.data()})); renderizarEstoque(); });
@@ -305,99 +321,40 @@
         onSnapshot(doc(db, "usuarios", userId, "config", "perfil"), d => { if(d.exists()){ perfil = d.data(); document.getElementById('pEmpresa').value = perfil.empresa||''; document.getElementById('pCnpj').value = perfil.cnpj||''; document.getElementById('pTel').value = perfil.tel||''; document.getElementById('pMargem').value = perfil.margem||0; if(perfil.logo){ document.getElementById('logoPreview').src = perfil.logo; document.getElementById('logoPreview').classList.remove('d-none'); } } });
     }
 
-    // --- PERFIL ---
+    // --- CÓDIGOS DE CLIENTES, ESTOQUE E ORÇAMENTOS (MANTIDOS IDÊNTICOS) ---
     document.getElementById('pLogo').addEventListener('change', function() { if(this.files[0]){ const r = new FileReader(); r.onload = e => { perfil.logo = e.target.result; document.getElementById('logoPreview').src = perfil.logo; document.getElementById('logoPreview').classList.remove('d-none'); }; r.readAsDataURL(this.files[0]); } });
     document.getElementById('formPerfil').addEventListener('submit', async e => { e.preventDefault(); await setDoc(doc(db, "usuarios", userId, "config", "perfil"), { empresa: document.getElementById('pEmpresa').value, cnpj: document.getElementById('pCnpj').value, tel: document.getElementById('pTel').value, margem: parseFloat(document.getElementById('pMargem').value||0), logo: perfil.logo||'' }); alert("Salvo na nuvem!"); });
 
-    // --- CLIENTES ---
     document.getElementById('btnNovoCliente').addEventListener('click', () => { document.getElementById('formCliente').reset(); document.getElementById('editClienteId').value = ''; new bootstrap.Modal(document.getElementById('modalCliente')).show(); });
-    document.getElementById('formCliente').addEventListener('submit', async e => {
-        e.preventDefault(); const idF = document.getElementById('editClienteId').value;
-        const d = { nome: document.getElementById('cNome').value, cpf: document.getElementById('cCPF').value, tel: document.getElementById('cTel').value, end: document.getElementById('cEnd').value, obs: document.getElementById('cObs').value };
-        if(idF) await updateDoc(doc(db, "usuarios", userId, "clientes", idF), d); else { d.numId = gerarNumId(clientes); await addDoc(collection(db, "usuarios", userId, "clientes"), d); }
-        bootstrap.Modal.getInstance(document.getElementById('modalCliente')).hide();
-    });
-    function renderizarClientes() {
-        document.getElementById('listaClientes').innerHTML = clientes.map(c => `
-            <div class="card-custom p-2 shadow-sm">
-                <div class="card-header-custom" onclick="window.toggleDet('det-${c.id_firebase}')">
-                    <div><strong>#${c.numId||'?'} - ${c.nome}</strong></div>
-                    <div><button class="btn-action btn-action-edit" onclick="event.stopPropagation(); window.editarCliente('${c.id_firebase}')"><i class="bi bi-pencil"></i></button><button class="btn-action btn-action-del" onclick="event.stopPropagation(); window.excluirDoc('clientes','${c.id_firebase}')"><i class="bi bi-trash"></i></button></div>
-                </div>
-                <div id="det-${c.id_firebase}" class="detalhes">
-                    <p class="mb-2">CPF: ${c.cpf} | Endereço: ${c.end}</p>
-                    <a href="https://wa.me/55${c.tel.replace(/\D/g,'')}" target="_blank" class="btn btn-success btn-sm rounded-pill px-3"><i class="bi bi-whatsapp"></i> WhatsApp</a>
-                    <button class="btn btn-primary btn-sm rounded-pill px-3" onclick="window.iniciarOrc('${c.id_firebase}')">Novo Orçamento</button>
-                </div>
-            </div>`).join('');
-    }
+    document.getElementById('formCliente').addEventListener('submit', async e => { e.preventDefault(); const idF = document.getElementById('editClienteId').value; const d = { nome: document.getElementById('cNome').value, cpf: document.getElementById('cCPF').value, tel: document.getElementById('cTel').value, end: document.getElementById('cEnd').value, obs: document.getElementById('cObs').value }; if(idF) await updateDoc(doc(db, "usuarios", userId, "clientes", idF), d); else { d.numId = gerarNumId(clientes); await addDoc(collection(db, "usuarios", userId, "clientes"), d); } bootstrap.Modal.getInstance(document.getElementById('modalCliente')).hide(); });
+    function renderizarClientes() { document.getElementById('listaClientes').innerHTML = clientes.map(c => `<div class="card-custom p-2 shadow-sm"><div class="card-header-custom" onclick="window.toggleDet('det-${c.id_firebase}')"><div><strong>#${c.numId||'?'} - ${c.nome}</strong></div><div><button class="btn-action btn-action-edit" onclick="event.stopPropagation(); window.editarCliente('${c.id_firebase}')"><i class="bi bi-pencil"></i></button><button class="btn-action btn-action-del" onclick="event.stopPropagation(); window.excluirDoc('clientes','${c.id_firebase}')"><i class="bi bi-trash"></i></button></div></div><div id="det-${c.id_firebase}" class="detalhes"><p class="mb-2">CPF: ${c.cpf} | Endereço: ${c.end}</p><a href="https://wa.me/55${c.tel.replace(/\D/g,'')}" target="_blank" class="btn btn-success btn-sm rounded-pill px-3"><i class="bi bi-whatsapp"></i> WhatsApp</a><button class="btn btn-primary btn-sm rounded-pill px-3" onclick="window.iniciarOrc('${c.id_firebase}')">Novo Orçamento</button></div></div>`).join(''); }
     window.editarCliente = (idF) => { const c = clientes.find(x => x.id_firebase === idF); document.getElementById('editClienteId').value = c.id_firebase; document.getElementById('cNome').value = c.nome; document.getElementById('cCPF').value = c.cpf; document.getElementById('cTel').value = c.tel; document.getElementById('cEnd').value = c.end; document.getElementById('cObs').value = c.obs; new bootstrap.Modal(document.getElementById('modalCliente')).show(); };
 
-    // --- ESTOQUE ---
     document.getElementById('btnNovoEstoque').addEventListener('click', () => { document.getElementById('formEstoque').reset(); document.getElementById('editEstoqueSku').value = ''; new bootstrap.Modal(document.getElementById('modalEstoque')).show(); });
-    document.getElementById('formEstoque').addEventListener('submit', async e => {
-        e.preventDefault(); const idF = document.getElementById('editEstoqueSku').value; const q = parseFloat(document.getElementById('iQtd').value);
-        const d = { nome: document.getElementById('iNome').value.toUpperCase(), quantidade: q, custoMedio: limpaDinheiro(document.getElementById('iPreco').value) / q };
-        if(idF) await updateDoc(doc(db, "usuarios", userId, "estoque", idF), d); else { d.numId = gerarNumId(estoque); await addDoc(collection(db, "usuarios", userId, "estoque"), d); }
-        bootstrap.Modal.getInstance(document.getElementById('modalEstoque')).hide();
-    });
+    document.getElementById('formEstoque').addEventListener('submit', async e => { e.preventDefault(); const idF = document.getElementById('editEstoqueSku').value; const q = parseFloat(document.getElementById('iQtd').value); const d = { nome: document.getElementById('iNome').value.toUpperCase(), quantidade: q, custoMedio: limpaDinheiro(document.getElementById('iPreco').value) / q }; if(idF) await updateDoc(doc(db, "usuarios", userId, "estoque", idF), d); else { d.numId = gerarNumId(estoque); await addDoc(collection(db, "usuarios", userId, "estoque"), d); } bootstrap.Modal.getInstance(document.getElementById('modalEstoque')).hide(); });
     function renderizarEstoque() { document.getElementById('listaEstoque').innerHTML = estoque.map(i => `<tr><td>#${i.numId||'?'}</td><td>${i.nome}</td><td>${i.quantidade}</td><td>${formatDinheiro(i.custoMedio)}</td><td class="text-end"><button class="btn-action btn-action-edit" onclick="window.editarEstoque('${i.id_firebase}')"><i class="bi bi-pencil"></i></button><button class="btn-action btn-action-del" onclick="window.excluirDoc('estoque','${i.id_firebase}')"><i class="bi bi-trash"></i></button></td></tr>`).join(''); }
     window.editarEstoque = (idF) => { const i = estoque.find(x => x.id_firebase === idF); document.getElementById('editEstoqueSku').value = i.id_firebase; document.getElementById('iNome').value = i.nome; document.getElementById('iQtd').value = i.quantidade; document.getElementById('iPreco').value = formatDinheiro(i.quantidade * i.custoMedio); new bootstrap.Modal(document.getElementById('modalEstoque')).show(); };
 
-    // --- ORÇAMENTO ---
-    window.iniciarOrc = (cId) => {
-        clienteAtualId = cId; itensTemp = []; document.getElementById('editOrcId').value = ''; const c = clientes.find(x => x.id_firebase === cId);
-        document.getElementById('logoDoc').src = perfil.logo || ''; document.getElementById('numDoc').innerText = gerarNumId(orcamentos); document.getElementById('dataCriacaoDoc').innerText = new Date().toLocaleDateString('pt-BR');
-        document.getElementById('empresaDoc').innerHTML = `<strong>${perfil.empresa||''}</strong><br>${perfil.cnpj||''}<br>${perfil.tel||''}`;
-        document.getElementById('clienteDoc').innerHTML = `<strong>CLIENTE:</strong> ${c.nome}<br><strong>END:</strong> ${c.end} | <strong>CPF:</strong> ${c.cpf}`;
-        document.getElementById('selProd').innerHTML = '<option value="">Material...</option>' + estoque.map(i => `<option value="${i.id_firebase}">${i.nome}</option>`).join('');
-        document.getElementById('dataIni').style.display = 'block'; document.getElementById('dataFim').style.display = 'block'; document.getElementById('dataIniVisual').style.display = 'none'; document.getElementById('dataFimVisual').style.display = 'none'; document.getElementById('controles-adicao').style.display = 'block'; document.getElementById('btnSalvarOrc').style.display = 'block'; document.getElementById('btnAprovarOS').style.display = 'block';
-        window.renderItensOrc(); new bootstrap.Modal(document.getElementById('modalOrcamento')).show(); iniciarMascaras();
-    };
-
+    window.iniciarOrc = (cId) => { clienteAtualId = cId; itensTemp = []; document.getElementById('editOrcId').value = ''; const c = clientes.find(x => x.id_firebase === cId); document.getElementById('logoDoc').src = perfil.logo || ''; document.getElementById('numDoc').innerText = gerarNumId(orcamentos); document.getElementById('dataCriacaoDoc').innerText = new Date().toLocaleDateString('pt-BR'); document.getElementById('empresaDoc').innerHTML = `<strong>${perfil.empresa||''}</strong><br>${perfil.cnpj||''}<br>${perfil.tel||''}`; document.getElementById('clienteDoc').innerHTML = `<strong>CLIENTE:</strong> ${c.nome}<br><strong>END:</strong> ${c.end} | <strong>CPF:</strong> ${c.cpf}`; document.getElementById('selProd').innerHTML = '<option value="">Material...</option>' + estoque.map(i => `<option value="${i.id_firebase}">${i.nome}</option>`).join(''); document.getElementById('dataIni').style.display = 'block'; document.getElementById('dataFim').style.display = 'block'; document.getElementById('dataIniVisual').style.display = 'none'; document.getElementById('dataFimVisual').style.display = 'none'; document.getElementById('controles-adicao').style.display = 'block'; document.getElementById('btnSalvarOrc').style.display = 'block'; document.getElementById('btnAprovarOS').style.display = 'block'; window.renderItensOrc(); new bootstrap.Modal(document.getElementById('modalOrcamento')).show(); iniciarMascaras(); };
     document.getElementById('btnAddMat').addEventListener('click', () => { const idF = document.getElementById('selProd').value; const q = parseFloat(document.getElementById('qProd').value); const i = estoque.find(x => x.id_firebase === idF); if(!i || !q) return; itensTemp.push({ tipo: 'PROD', idRef: idF, desc: i.nome, qtd: q, valor: i.custoMedio * (1 + ((perfil.margem||0)/100)) }); window.renderItensOrc(); });
     document.getElementById('btnAddServ').addEventListener('click', () => { const n = document.getElementById('nServ').value; const p = limpaDinheiro(document.getElementById('pServ').value); if(!n || !p) return; itensTemp.push({ tipo: 'SERV', desc: n, qtd: 1, valor: p }); window.renderItensOrc(); });
-
-    window.renderItensOrc = () => {
-        let mo = 0, mat = 0; const editando = document.getElementById('controles-adicao').style.display === 'block';
-        document.getElementById('corpo-orc').innerHTML = itensTemp.map((it, idx) => { const sub = it.qtd * it.valor; it.tipo === 'SERV' ? mo += sub : mat += sub; const delBtn = editando ? `<td class="text-center col-x"><i class="bi bi-x-circle text-danger" onclick="window.removerItem(${idx})" style="cursor:pointer"></i></td>` : ''; return `<tr><td>${it.desc}</td><td class="text-center">${it.qtd}</td><td class="text-end">${formatDinheiro(it.valor)}</td><td class="text-end fw-bold">${formatDinheiro(sub)}</td>${delBtn}</tr>`; }).join('');
-        document.getElementById('totalMaoObra').innerText = formatDinheiro(mo); document.getElementById('totalMaterial').innerText = formatDinheiro(mat); document.getElementById('totalGeral').innerText = formatDinheiro(mo + mat);
-    };
+    window.renderItensOrc = () => { let mo = 0, mat = 0; const editando = document.getElementById('controles-adicao').style.display === 'block'; document.getElementById('corpo-orc').innerHTML = itensTemp.map((it, idx) => { const sub = it.qtd * it.valor; it.tipo === 'SERV' ? mo += sub : mat += sub; const delBtn = editando ? `<td class="text-center col-x"><i class="bi bi-x-circle text-danger" onclick="window.removerItem(${idx})" style="cursor:pointer"></i></td>` : ''; return `<tr><td>${it.desc}</td><td class="text-center">${it.qtd}</td><td class="text-end">${formatDinheiro(it.valor)}</td><td class="text-end fw-bold">${formatDinheiro(sub)}</td>${delBtn}</tr>`; }).join(''); document.getElementById('totalMaoObra').innerText = formatDinheiro(mo); document.getElementById('totalMaterial').innerText = formatDinheiro(mat); document.getElementById('totalGeral').innerText = formatDinheiro(mo + mat); };
     window.removerItem = (idx) => { itensTemp.splice(idx, 1); window.renderItensOrc(); };
-
-    const salvarDocNuvem = async (status) => {
-        const idF = document.getElementById('editOrcId').value;
-        const d = { clienteId: clienteAtualId, status, dataCriacao: document.getElementById('dataCriacaoDoc').innerText, dataIni: document.getElementById('dataIni').value, dataFim: document.getElementById('dataFim').value, total: document.getElementById('totalGeral').innerText, itens: [...itensTemp] };
-        if(idF) await updateDoc(doc(db, "usuarios", userId, "orcamentos", idF), d); else { d.numId = document.getElementById('numDoc').innerText; await addDoc(collection(db, "usuarios", userId, "orcamentos"), d); }
-        bootstrap.Modal.getInstance(document.getElementById('modalOrcamento')).hide();
-    };
+    const salvarDocNuvem = async (status) => { const idF = document.getElementById('editOrcId').value; const d = { clienteId: clienteAtualId, status, dataCriacao: document.getElementById('dataCriacaoDoc').innerText, dataIni: document.getElementById('dataIni').value, dataFim: document.getElementById('dataFim').value, total: document.getElementById('totalGeral').innerText, itens: [...itensTemp] }; if(idF) await updateDoc(doc(db, "usuarios", userId, "orcamentos", idF), d); else { d.numId = document.getElementById('numDoc').innerText; await addDoc(collection(db, "usuarios", userId, "orcamentos"), d); } bootstrap.Modal.getInstance(document.getElementById('modalOrcamento')).hide(); };
     document.getElementById('btnSalvarOrc').addEventListener('click', () => salvarDocNuvem('ORÇAMENTO'));
     document.getElementById('btnAprovarOS').addEventListener('click', () => salvarDocNuvem('OS ABERTA'));
-
-    function renderizarOrcamentos() {
-        document.getElementById('listaOrcamentos').innerHTML = orcamentos.map(o => {
-            const c = clientes.find(x => x.id_firebase === o.clienteId); const cor = o.status === 'FINALIZADA' ? 'success' : 'primary';
-            return `<div class="card-custom p-3 border-start border-4 border-${cor} shadow-sm"><div class="d-flex justify-content-between align-items-center flex-wrap"><div><strong>#${o.numId||'?'} - ${c?c.nome:'N/A'}</strong><br><small>${o.status} | ${o.total}</small></div><div>${o.status === 'OS ABERTA' ? `<button class="btn-action btn-action-success" onclick="window.finalizarOS('${o.id_firebase}')"><i class="bi bi-check-all"></i></button>` : ''}<button class="btn-action btn-action-view" onclick="window.visualizarOrc('${o.id_firebase}')"><i class="bi bi-eye"></i></button><button class="btn-action btn-action-edit" onclick="window.editarOrc('${o.id_firebase}')"><i class="bi bi-pencil"></i></button><button class="btn-action btn-action-del" onclick="window.excluirDoc('orcamentos','${o.id_firebase}')"><i class="bi bi-trash"></i></button></div></div></div>`;
-        }).join('');
-    }
-
+    function renderizarOrcamentos() { document.getElementById('listaOrcamentos').innerHTML = orcamentos.map(o => { const c = clientes.find(x => x.id_firebase === o.clienteId); const cor = o.status === 'FINALIZADA' ? 'success' : 'primary'; return `<div class="card-custom p-3 border-start border-4 border-${cor} shadow-sm"><div class="d-flex justify-content-between align-items-center flex-wrap"><div><strong>#${o.numId||'?'} - ${c?c.nome:'N/A'}</strong><br><small>${o.status} | ${o.total}</small></div><div>${o.status === 'OS ABERTA' ? `<button class="btn-action btn-action-success" onclick="window.finalizarOS('${o.id_firebase}')"><i class="bi bi-check-all"></i></button>` : ''}<button class="btn-action btn-action-view" onclick="window.visualizarOrc('${o.id_firebase}')"><i class="bi bi-eye"></i></button><button class="btn-action btn-action-edit" onclick="window.editarOrc('${o.id_firebase}')"><i class="bi bi-pencil"></i></button><button class="btn-action btn-action-del" onclick="window.excluirDoc('orcamentos','${o.id_firebase}')"><i class="bi bi-trash"></i></button></div></div></div>`; }).join(''); }
     window.finalizarOS = async (idF) => { if(!confirm("Concluir e dar baixa no estoque?")) return; const o = orcamentos.find(x => x.id_firebase === idF); for(let it of o.itens) { if(it.tipo === 'PROD') { const est = estoque.find(e => e.id_firebase === it.idRef); if(est) await updateDoc(doc(db, "usuarios", userId, "estoque", est.id_firebase), { quantidade: est.quantidade - it.qtd }); } } await updateDoc(doc(db, "usuarios", userId, "orcamentos", idF), { status: 'FINALIZADA' }); };
     window.editarOrc = (idF) => { const o = orcamentos.find(x => x.id_firebase === idF); clienteAtualId = o.clienteId; itensTemp = [...o.itens]; const c = clientes.find(x => x.id_firebase === o.clienteId); document.getElementById('editOrcId').value = o.id_firebase; document.getElementById('dataCriacaoDoc').innerText = o.dataCriacao; document.getElementById('dataIni').value = o.dataIni; document.getElementById('dataFim').value = o.dataFim; document.getElementById('logoDoc').src = perfil.logo||''; document.getElementById('numDoc').innerText = o.numId; document.getElementById('empresaDoc').innerHTML = `<strong>${perfil.empresa||''}</strong><br>${perfil.cnpj||''}<br>${perfil.tel||''}`; document.getElementById('clienteDoc').innerHTML = `<strong>CLIENTE:</strong> ${c?c.nome:'N/A'}<br><strong>END:</strong> ${c?c.end:'N/A'} | <strong>CPF:</strong> ${c?c.cpf:'N/A'}`; document.getElementById('dataIni').style.display = 'block'; document.getElementById('dataFim').style.display = 'block'; document.getElementById('dataIniVisual').style.display = 'none'; document.getElementById('dataFimVisual').style.display = 'none'; document.getElementById('controles-adicao').style.display = 'block'; document.getElementById('btnSalvarOrc').style.display = 'block'; document.getElementById('btnAprovarOS').style.display = 'block'; document.getElementById('selProd').innerHTML = '<option value="">Material...</option>' + estoque.map(i => `<option value="${i.id_firebase}">${i.nome}</option>`).join(''); window.renderItensOrc(); new bootstrap.Modal(document.getElementById('modalOrcamento')).show(); };
     window.visualizarOrc = (idF) => { window.editarOrc(idF); const o = orcamentos.find(x => x.id_firebase === idF); document.getElementById('dataIniVisual').innerText = formatData(o.dataIni); document.getElementById('dataFimVisual').innerText = formatData(o.dataFim); document.getElementById('dataIni').style.display = 'none'; document.getElementById('dataFim').style.display = 'none'; document.getElementById('dataIniVisual').style.display = 'block'; document.getElementById('dataFimVisual').style.display = 'block'; document.getElementById('controles-adicao').style.display = 'none'; document.getElementById('btnSalvarOrc').style.display = 'none'; document.getElementById('btnAprovarOS').style.display = 'none'; window.renderItensOrc(); };
     
-    // AGENDA
-    function renderizarCalendario() {
-        const grid = document.getElementById('diasCalendario'); grid.innerHTML = ''; const m = dataCalendario.getMonth(); const a = dataCalendario.getFullYear(); document.getElementById('mesAnoAtual').innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(dataCalendario); const pDia = new Date(a, m, 1).getDay(); const dNoMes = new Date(a, m + 1, 0).getDate();
-        for (let i = 0; i < pDia; i++) grid.innerHTML += '<div></div>';
-        for (let dia = 1; dia <= dNoMes; dia++) { const dStr = `${a}-${String(m+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`; const ativos = orcamentos.filter(o => o.status !== 'FINALIZADA'); const isIni = ativos.some(o => o.dataIni === dStr); const isFim = ativos.some(o => o.dataFim === dStr); grid.innerHTML += `<div class="dia-calendario shadow-sm ${isIni?'dia-inicio':''} ${isFim?'dia-fim':''}" onclick="window.mostrarAgenda('${dStr}')">${dia}</div>`; }
-    }
+    function renderizarCalendario() { const grid = document.getElementById('diasCalendario'); grid.innerHTML = ''; const m = dataCalendario.getMonth(); const a = dataCalendario.getFullYear(); document.getElementById('mesAnoAtual').innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(dataCalendario); const pDia = new Date(a, m, 1).getDay(); const dNoMes = new Date(a, m + 1, 0).getDate(); for (let i = 0; i < pDia; i++) grid.innerHTML += '<div></div>'; for (let dia = 1; dia <= dNoMes; dia++) { const dStr = `${a}-${String(m+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`; const ativos = orcamentos.filter(o => o.status !== 'FINALIZADA'); const isIni = ativos.some(o => o.dataIni === dStr); const isFim = ativos.some(o => o.dataFim === dStr); grid.innerHTML += `<div class="dia-calendario shadow-sm ${isIni?'dia-inicio':''} ${isFim?'dia-fim':''}" onclick="window.mostrarAgenda('${dStr}')">${dia}</div>`; } }
     window.mostrarAgenda = (data) => { const servs = orcamentos.filter(o => o.status !== 'FINALIZADA' && (o.dataIni === data || o.dataFim === data)); document.getElementById('dataAgendaSelecionada').innerText = data.split('-').reverse().join('/'); document.getElementById('detalheAgendaDia').style.display = 'block'; document.getElementById('servicosAgendaDia').innerHTML = servs.map(s => `<div class="py-1 border-bottom">#${s.numId||'?'} - ${clientes.find(x => x.id_firebase === s.clienteId)?.nome} (${s.status})</div>`).join('') || 'Livre.'; };
     document.getElementById('btnMesAnt').addEventListener('click', () => { dataCalendario.setMonth(dataCalendario.getMonth() - 1); renderizarCalendario(); });
     document.getElementById('btnMesProx').addEventListener('click', () => { dataCalendario.setMonth(dataCalendario.getMonth() + 1); renderizarCalendario(); });
 
     window.excluirDoc = async (col, idF) => { if(confirm("Apagar da nuvem?")) await deleteDoc(doc(db, "usuarios", userId, col, idF)); };
     document.getElementById('btnBaixarImg').addEventListener('click', () => { const area = document.getElementById('area-impressao'); const ow = area.style.width; area.style.width = '800px'; html2canvas(area, { scale: 2 }).then(canvas => { area.style.width = ow; const link = document.createElement('a'); link.download = 'Orcamento.png'; link.href = canvas.toDataURL(); link.click(); }); });
-
 </script>
 </body>
 </html>
