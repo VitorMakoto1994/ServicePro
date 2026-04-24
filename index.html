@@ -7,7 +7,7 @@
     
     <link rel="manifest" href="site.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#1e293b">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -19,374 +19,406 @@
     
     <style>
         /* ========================================================
-           ESTILO SAAS PREMIUM (Aplicado na estrutura original)
+           DESIGN SAAS PREMIUM (Idêntico à Imagem Promocional)
            ======================================================== */
         :root {
-            --app-bg: #f8fafc; /* Fundo cinza claro sofisticado */
-            --theme-main: #0f172a; /* Azul escuro profissional */
-            --app-accent: #3b82f6; /* Azul botão */
-            --text-main: #1e293b;
+            --app-bg: #f1f5f9; /* Fundo cinza claro da imagem */
+            --app-sidebar: #1e293b; /* Azul escuro fosco do menu */
+            --app-card-bg: #ffffff;
+            --app-accent: #4ade80; /* VERDE NEON DA IMAGEM */
+            --app-accent-hover: #22c55e;
+            --app-accent-text: #064e3b; /* Texto escuro para contrastar com o neon */
+            --theme-main: #1e293b;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --sidebar-active-bg: #334155;
+            --sidebar-active-text: #ffffff;
+            --sidebar-width: 260px;
         }
 
-        body { background-color: var(--app-bg); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 50px; }
+        body { background-color: var(--app-bg); font-family: 'Inter', sans-serif; color: var(--text-main); height: 100vh; overflow: hidden; margin: 0; }
         
-        /* NAVBAR ORIGINAL, MAS COM ESTILO PREMIUM */
-        .navbar-custom { background-color: var(--theme-main); padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .navbar-brand { font-weight: 800; font-size: 1.3rem; letter-spacing: -0.5px; color: #fff !important; }
-        .nav-btn { color: #94a3b8; border: none; background: transparent; padding: 8px 14px; border-radius: 8px; font-weight: 600; transition: 0.2s; text-decoration: none; cursor: pointer; font-size: 0.9rem; }
-        .nav-btn:hover, .nav-btn.active-nav { background-color: rgba(255,255,255,0.15); color: #fff; }
+        /* LAYOUT PRINCIPAL */
+        .wrapper { display: flex; width: 100%; height: 100vh; align-items: stretch; }
+        .main-content { flex: 1; height: 100vh; overflow-y: auto; padding: 30px; }
 
-        .secao { display: none; margin-top: 30px; animation: fadeIn 0.3s ease-in-out; }
+        /* MENU LATERAL (SIDEBAR) */
+        .sidebar { min-width: var(--sidebar-width); max-width: var(--sidebar-width); background-color: var(--app-sidebar); color: #fff; display: flex; flex-direction: column; padding: 25px 20px; z-index: 999; }
+        .sidebar-brand { font-weight: 800; letter-spacing: -0.5px; font-size: 1.5rem; color: #fff !important; text-decoration: none; display: flex; align-items: center; margin-bottom: 40px; }
+        .logo-icon-neon { color: var(--app-accent); }
+        .sidebar-nav { flex: 1; list-style: none; padding: 0; margin: 0; }
+        .nav-btn { color: #94a3b8; border: none; background: transparent; padding: 14px 18px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; transition: 0.2s; text-decoration: none; cursor: pointer; display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; margin-bottom: 5px; }
+        .nav-btn:hover { background-color: rgba(255,255,255,0.05); color: #fff; }
+        .nav-btn.active-nav { background-color: var(--sidebar-active-bg); color: var(--sidebar-active-text); }
+        .nav-btn i { font-size: 1.1rem; }
+        
+        .sidebar-profile-section { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+        .sidebar-profile-info { display: flex; align-items: center; gap: 12px; padding-bottom: 15px; }
+        .sidebar-profile-avatar { width: 42px; height: 42px; border-radius: 10px; background: var(--sidebar-active-bg); color: var(--sidebar-active-text); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; }
+        .sidebar-profile-name { font-weight: 600; font-size: 0.9rem; color: #fff; word-break: break-all; }
+        .sidebar-logout-btn { color: #fca5a5 !important; font-size: 0.85rem; text-align: left; padding: 10px; border-radius: 8px; transition: 0.2s; background: transparent; border: none; width: 100%; display: flex; align-items: center; gap: 10px; }
+        .sidebar-logout-btn:hover { background-color: rgba(220, 38, 38, 0.15); color: #f87171 !important; }
+        
+        /* SEÇÕES E HEADER */
+        .secao { display: none; animation: fadeIn 0.4s ease-out; }
         .secao.ativa { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* CARDS ARREDONDADOS COM SOMBRAS SUTIS */
-        .auth-container { max-width: 400px; margin: 100px auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        .card-custom { background: white; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 15px; overflow: hidden; transition: 0.2s; }
-        .card-header-custom { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; cursor: pointer; border-bottom: 1px solid #f1f5f9; }
-        .detalhes { display: none; padding: 20px; background-color: #fbfcfe; border-radius: 0 0 16px 16px; }
+        .secao-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; gap: 15px; flex-wrap: wrap; }
+        .secao-header h3 { font-weight: 800; font-size: 1.75rem; letter-spacing: -0.5px; margin: 0; color: var(--text-main); }
+
+        /* BOTOES PRIMARIOS (VERDE NEON) */
+        .btn-primary { background-color: var(--app-accent) !important; color: var(--app-accent-text) !important; border: none !important; font-weight: 800 !important; transition: 0.2s; }
+        .btn-primary:hover { background-color: var(--app-accent-hover) !important; color: #fff !important; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3); }
+
+        /* CARTÕES E FILTROS */
+        .card-custom { background: var(--app-card-bg); border: 1px solid var(--border-color); border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 15px; overflow: hidden; }
+        .card-header-custom { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .card-header-custom h6 { font-weight: 700; margin: 0; font-size: 1rem; color: var(--text-main); }
+        .detalhes { display: none; padding: 24px; background-color: #fbfcfe; border-radius: 0 0 20px 20px; }
         
-        .dash-card { background: white; border-radius: 16px; padding: 25px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); text-align: center; height: 100%; transition: transform 0.2s; }
-        .dash-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(0,0,0,0.05); }
-        .dash-card h2 { font-weight: 800; font-size: 2.5rem; margin-bottom: 5px; letter-spacing: -1px; }
-        .dash-card p { color: #64748b; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin: 0; }
-        .filtro-container { background: white; padding: 15px; border-radius: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; margin-bottom: 20px; }
+        .dash-card { background: white; border-radius: 20px; padding: 30px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.02); text-align: center; height: 100%; transition: 0.3s; }
+        .dash-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .dash-card h2 { font-weight: 800; font-size: 2.8rem; margin-bottom: 5px; letter-spacing: -1px; color: var(--text-main); }
+        .dash-card p { color: var(--text-muted); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0; }
+        
+        .filtro-container { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 25px; border: 1px solid var(--border-color); }
 
-        /* DESIGN DO PDF/DOCUMENTO */
-        #area-impressao { color: #000; border: none !important; border-radius: 0; background: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
-        .tabela-orc { width: 100%; border-collapse: collapse; }
-        .tabela-orc th { background-color: var(--theme-main); color: #fff; padding: 12px; text-align: center; font-size: 11px; text-transform: uppercase; border: none; letter-spacing: 0.5px; }
-        .tabela-orc td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
-        .total-geral-azul { background-color: var(--theme-main); color: white; display: flex; justify-content: space-between; padding: 20px; font-size: 22px; font-weight: 800; }
-        .total-box-dark { background-color: #1e293b; color: white; display: flex; justify-content: space-between; padding: 12px 20px; font-weight: 700; font-size: 14px; }
-        .validade-texto { font-size: 11px; color: #64748b; padding: 15px; text-align: center; background: #f8fafc; border-top: 1px solid #e2e8f0; }
-        .logo-placeholder { max-width: 150px; max-height: 80px; object-fit: contain; }
+        /* DESIGN DO ORÇAMENTO (DOCUMENTO) */
+        #area-impressao { color: #000; border: none !important; border-radius: 0; background: #fff; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
+        .tabela-orc { width: 100%; border-collapse: collapse; margin-bottom: 0; }
+        .tabela-orc th { background-color: var(--theme-main); color: #fff; padding: 14px; text-align: center; font-size: 11px; text-transform: uppercase; border: none; letter-spacing: 0.5px; }
+        .tabela-orc td { padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; color: var(--text-main); }
+        .total-box-dark { background-color: #1e293b; color: white; display: flex; justify-content: space-between; padding: 14px 24px; font-weight: 700; font-size: 0.95rem; }
+        .total-geral-azul { background-color: var(--theme-main); color: white; display: flex; justify-content: space-between; padding: 24px; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+        .validade-texto { font-size: 11px; color: #64748b; padding: 15px; text-align: center; background: #f8fafc; border-top: 1px solid var(--border-color); }
+        .logo-placeholder { max-width: 180px; max-height: 90px; object-fit: contain; }
 
-        /* BOTÕES DE AÇÃO GERAIS */
-        .btn-action { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; border: none; margin-left: 4px; transition: 0.2s; text-decoration: none; }
+        /* FOTOS */
+        .foto-anexo { max-width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 10px; transition: 0.2s; }
+        .col-foto-wrapper { position: relative; }
+        .btn-remover-foto { position: absolute; top: 8px; right: 8px; background: #dc2626; color: white; border: none; border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+
+        /* TABELAS E BOTÕES GERAIS */
+        .table-custom { background: white; border-radius: 16px; border: 1px solid var(--border-color); }
+        .table-custom thead th { font-weight: 700; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; padding: 15px; background: #fbfcfe; border-bottom: 1px solid var(--border-color); }
+        .table-custom tbody td { padding: 15px; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; vertical-align: middle; }
+        
+        .btn-action { width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; border: none; margin-left: 4px; transition: 0.2s; text-decoration: none; }
         .btn-action-edit { background-color: #fef3c7; color: #d97706; }
         .btn-action-view { background-color: #e0f2fe; color: #0284c7; }
         .btn-action-del { background-color: #fee2e2; color: #dc2626; }
         .btn-action-success { background-color: #dcfce7; color: #16a34a; }
         
-        .form-control, .form-select { border-radius: 10px; border: 1px solid #cbd5e1; padding: 10px 15px; }
-        .form-control:focus, .form-select:focus { border-color: var(--app-accent); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
-        
-        #bloqueio-screen { display: none; text-align: center; padding-top: 100px; }
-        .bloqueio-card { max-width: 500px; margin: auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 5px solid #dc2626; }
-        #alerta-vencimento { display: none; background-color: #dc2626; color: white; text-align: center; padding: 10px; font-weight: bold; width: 100%; z-index: 9999; animation: piscar 2s infinite; }
+        .btn-premium { font-weight: 800; font-size: 0.95rem; padding: 12px 24px; border-radius: 12px; transition: 0.2s; }
+
+        /* FORMULÁRIOS E MODAIS */
+        .form-control, .form-select { border-radius: 12px; padding: 12px 16px; border: 1px solid #cbd5e1; transition: 0.2s; }
+        .form-control:focus, .form-select:focus { border-color: var(--theme-main); box-shadow: 0 0 0 4px rgba(30, 41, 59, 0.1); }
+        .form-label-premium { font-weight: 700; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .modal-content { border-radius: 24px; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .modal-header { border-bottom: 1px solid var(--border-color); padding: 24px 30px; background-color: #fbfcfe; border-radius: 24px 24px 0 0; }
+        .modal-header h5 { font-weight: 800; letter-spacing: -0.5px; color: var(--theme-main); margin: 0; }
+        .modal-body { padding: 30px; }
+        .modal-footer { border-top: none; padding: 0 30px 30px 30px; justify-content: center; gap: 10px; }
+
+        /* TELAS FULLSCREEN */
+        .fullscreen-msg { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: var(--app-sidebar); z-index: 10000; overflow-y: auto; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .auth-container { max-width: 420px; background: white; padding: 50px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); border: 1px solid var(--border-color); text-align: center; }
+        .bloqueio-card { max-width: 550px; background: white; padding: 50px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); border-top: 6px solid #dc2626; text-align: center; }
+        #alerta-vencimento { background-color: #dc2626; color: white; text-align: center; padding: 12px; font-weight: bold; width: 100%; z-index: 998; animation: piscar 3s infinite; }
         @keyframes piscar { 0%, 100% { background-color: #dc2626; } 50% { background-color: #b91c1c; } }
 
-        .grid-calendario { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-        .dia-calendario { padding: 10px; border: 1px solid #e2e8f0; cursor: pointer; min-height: 60px; background: white; text-align: center; border-radius: 8px; transition: 0.2s; font-weight: 500; }
-        .dia-calendario:hover { border-color: var(--app-accent); transform: scale(1.02); }
-        .dia-inicio { background: #3b82f6 !important; color: white !important; font-weight: bold; }
-        .dia-fim { background: #10b981 !important; color: white !important; font-weight: bold; }
-
-        /* FOTOS DO RELATÓRIO */
-        .foto-anexo { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
-        .col-foto-wrapper { position: relative; }
-        .btn-remover-foto { position: absolute; top: 5px; right: 5px; background: #dc2626; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 12px; }
+        /* CALENDÁRIO */
+        .grid-calendario { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+        .dia-calendario { padding: 12px; border: 1px solid var(--border-color); cursor: pointer; min-height: 70px; background: white; text-align: center; border-radius: 12px; transition: 0.2s; font-weight: 600; }
+        .dia-calendario:hover { border-color: var(--app-accent); background-color: #fbfcfe; transform: scale(1.03); }
+        .dia-inicio { background: var(--theme-main) !important; color: white !important; font-weight: 800; border-color: var(--theme-main); }
+        .dia-fim { background: var(--app-accent) !important; color: var(--app-accent-text) !important; font-weight: 800; border-color: var(--app-accent); }
+        
+        /* Mobile fixes */
+        @media (max-width: 768px) {
+            .wrapper { flex-direction: column; }
+            .sidebar { min-width: 100%; max-width: 100%; padding: 15px; flex-direction: row; overflow-x: auto; align-items: center; }
+            .sidebar-brand { margin-bottom: 0; margin-right: 20px; font-size: 1.2rem; }
+            .sidebar-nav { display: flex; flex-direction: row; gap: 5px; }
+            .nav-btn { padding: 10px; width: auto; white-space: nowrap; }
+            .sidebar-profile-section { display: none; }
+            .main-content { padding: 15px; }
+            .dash-card h2 { font-size: 2rem; }
+        }
     </style>
 </head>
 <body>
 
-<div id="auth-screen">
-    <div class="auth-container text-center">
-        <h2 class="fw-bold text-primary mb-4"><i class="bi bi-cloud-arrow-up me-2"></i>ServicePRO</h2>
-        <input type="email" id="auth-email" class="form-control mb-3" placeholder="Seu e-mail">
+<div id="auth-screen" class="fullscreen-msg">
+    <div class="auth-container">
+        <h2 class="fw-bold mb-4" style="color: var(--theme-main);"><i class="bi bi-layers-half me-2 logo-icon-neon"></i>ServicePRO</h2>
+        <input type="email" id="auth-email" class="form-control mb-3" placeholder="Seu e-mail profissional">
         <input type="password" id="auth-pass" class="form-control mb-2" placeholder="Sua senha">
-        <div class="text-end mb-3"><a href="#" class="small text-decoration-none fw-bold" id="btnEsqueciSenha">Esqueci minha senha</a></div>
-        <button class="btn btn-primary w-100 mb-2 rounded-pill py-3 fw-bold shadow-sm" id="btnLogin">Entrar no Sistema</button>
-        <button class="btn btn-outline-secondary w-100 rounded-pill py-2" id="btnSignup">Criar Conta (7 Dias Grátis)</button>
+        <div class="text-end mb-3"><a href="#" class="small text-decoration-none text-muted fw-bold" id="btnEsqueciSenha">Esqueci minha senha</a></div>
+        <button class="btn btn-primary w-100 mb-3 btn-premium py-3" id="btnLogin">Entrar no Sistema</button>
+        <button class="btn btn-outline-dark w-100 btn-premium py-2" id="btnSignup">Criar Conta (7 Dias Grátis)</button>
         <div id="auth-msg" class="text-danger small mt-3 fw-bold"></div>
     </div>
 </div>
 
-<div id="bloqueio-screen">
+<div id="bloqueio-screen" class="fullscreen-msg" style="display: none;">
     <div class="bloqueio-card">
         <i class="bi bi-lock-fill text-danger" style="font-size: 4rem;"></i>
         <h3 class="fw-bold mt-3">Acesso Bloqueado</h3>
         <p class="text-muted mb-4">Seu período de acesso ao ServicePRO expirou ou foi suspenso. Para continuar usando o sistema, regularize sua assinatura.</p>
-        <a href="https://wa.me/5543999792501" target="_blank" class="btn btn-success w-100 rounded-pill py-3 fw-bold">
-            <i class="bi bi-whatsapp"></i> Falar com Suporte
+        <a href="https://wa.me/5543999792501" target="_blank" class="btn btn-success w-100 btn-premium py-3 fw-bold" style="background-color: #25D366; border:none; color:white;">
+            <i class="bi bi-whatsapp me-2"></i> Falar com Suporte
         </a>
-        <button class="btn btn-link text-muted mt-3" id="btnSairBloqueio">Sair da Conta</button>
+        <button class="btn btn-link text-muted mt-3 fw-bold" id="btnSairBloqueio">Sair da Conta</button>
     </div>
 </div>
 
 <div id="main-app" style="display: none;">
-    
     <div id="alerta-vencimento">
         <i class="bi bi-exclamation-triangle-fill me-2"></i> 
         Atenção: Sua assinatura vence em <span id="diasVencimentoCount"></span> dias! Regularize para evitar o bloqueio.
     </div>
 
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom shadow-sm mb-4 sticky-top">
-        <div class="container">
-            <span class="navbar-brand"><i class="bi bi-layers-half me-2 text-info"></i>ServicePRO</span>
-            <div class="navbar-nav d-flex flex-row gap-1 flex-wrap align-items-center">
-                <button class="nav-btn" id="btnNavHome"><i class="bi bi-grid-1x2-fill me-1"></i> Início</button>
-                <button class="nav-btn" id="btnNavClientes">Clientes</button>
-                <button class="nav-btn" id="btnNavEstoque">Estoque</button>
-                <button class="nav-btn" id="btnNavOrcamentos">Orçamentos</button>
-                <button class="nav-btn" id="btnNavAgenda">Agenda</button>
-                <button class="nav-btn" id="btnNavPerfil"><i class="bi bi-gear-fill me-1"></i> Empresa</button>
-                <button class="nav-btn text-success fw-bold d-none" id="btnNavAdmin"><i class="bi bi-shield-lock-fill"></i> Admin</button>
-                <button class="btn btn-danger btn-sm ms-2 rounded-pill px-3 fw-bold" id="btnLogout"><i class="bi bi-box-arrow-right"></i> Sair</button>
+    <div class="wrapper">
+        <nav id="sidebar" class="sidebar">
+            <a href="#" class="sidebar-brand">
+                <i class="bi bi-layers-half me-2 logo-icon-neon"></i>ServicePRO
+            </a>
+            <ul class="sidebar-nav">
+                <li><button class="nav-btn active-nav" id="btnNavHome"><i class="bi bi-grid-1x2-fill"></i> Dashboard</button></li>
+                <li><button class="nav-btn" id="btnNavClientes"><i class="bi bi-people-fill"></i> Clientes</button></li>
+                <li><button class="nav-btn" id="btnNavEstoque"><i class="bi bi-box-seam-fill"></i> Estoque</button></li>
+                <li><button class="nav-btn" id="btnNavOrcamentos"><i class="bi bi-file-earmark-text-fill"></i> Orçamentos / OS</button></li>
+                <li><button class="nav-btn" id="btnNavAgenda"><i class="bi bi-calendar3"></i> Agenda</button></li>
+                <li><button class="nav-btn" id="btnNavPerfil"><i class="bi bi-gear-fill"></i> Empresa</button></li>
+                <li><button class="nav-btn text-success fw-bold d-none" id="btnNavAdmin"><i class="bi bi-shield-lock-fill"></i> Admin</button></li>
+            </ul>
+            <div class="sidebar-profile-section">
+                <div class="sidebar-profile-info">
+                    <div class="sidebar-profile-avatar" id="avatarPerfil">U</div>
+                    <div class="sidebar-profile-name" id="userEmailNav">usuario@email.com</div>
+                </div>
+                <button class="sidebar-logout-btn fw-bold" id="btnLogout"><i class="bi bi-box-arrow-right"></i> Sair da Conta</button>
             </div>
-        </div>
-    </nav>
+        </nav>
 
-    <div class="container">
-        <div id="aba-home" class="secao ativa">
-            <div class="d-flex justify-content-between mb-4 align-items-center flex-wrap gap-2">
-                <h3 class="fw-bold m-0">Painel Resumo</h3>
-                <button class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold" onclick="window.navegar('clientes')">+ Fazer Orçamento</button>
-            </div>
-            <div class="row g-3 mb-4">
-                <div class="col-md-4">
-                    <div class="dash-card border-bottom border-4 border-primary">
-                        <h2 id="dashClientes" class="text-primary">0</h2>
-                        <p>Total de Clientes Ativos</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="dash-card border-bottom border-4 border-warning">
-                        <h2 id="dashOSAbertas" class="text-warning">0</h2>
-                        <p>OS Abertas / Pendentes</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="dash-card border-bottom border-4 border-success">
-                        <h2 id="dashFaturamento" class="text-success">R$ 0,00</h2>
-                        <p>Faturamento (OS Finalizadas)</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="aba-admin" class="secao">
-            <div class="d-flex justify-content-between mb-4 align-items-center">
-                <h3 class="fw-bold m-0">Controle de Usuários</h3>
-                <span class="badge bg-success rounded-pill px-3 py-2">Acesso Master</span>
-            </div>
+        <div class="main-content">
             
-            <div class="filtro-container row g-2 mb-3">
-                <div class="col-md-6">
-                    <input type="text" id="buscaAdmin" class="form-control" placeholder="Buscar por e-mail do usuário...">
+            <div id="aba-home" class="secao ativa">
+                <div class="secao-header">
+                    <h3 id="boasVindasTxt">Bem-vindo(a) ao Painel</h3>
+                    <button class="btn btn-primary btn-premium shadow-sm" onclick="window.navegar('clientes')"><i class="bi bi-plus-lg me-1"></i> Novo Orçamento</button>
                 </div>
-                <div class="col-md-3">
-                    <select id="filtroStatusAdmin" class="form-select">
-                        <option value="todos">Todos os Status</option>
-                        <option value="ativo">Contas Ativas</option>
-                        <option value="bloqueado">Contas Bloqueadas</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select id="ordemAdmin" class="form-select">
-                        <option value="recentes">Padrão</option>
-                        <option value="vencimento_asc">Vencimento (Próximos)</option>
-                        <option value="vencimento_desc">Vencimento (Distantes)</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table card-custom align-middle">
-                    <thead class="table-light"><tr><th>E-mail do Usuário</th><th width="200">Vencimento</th><th>Status</th><th class="text-end">Ação</th></tr></thead>
-                    <tbody id="listaUsuariosAdmin"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="aba-clientes" class="secao">
-            <div class="d-flex justify-content-between mb-4 flex-wrap gap-2">
-                <h3 class="fw-bold m-0">Gestão de Clientes</h3>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-primary rounded-pill px-3 shadow-sm fw-bold" id="btnImportarContato">
-                        <i class="bi bi-person-lines-fill"></i> Importar do Celular
-                    </button>
-                    <button class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold" id="btnNovoCliente">+ Novo Cliente</button>
-                </div>
-            </div>
-            
-            <div class="filtro-container row g-2">
-                <div class="col-md-8"><input type="text" id="buscaCliente" class="form-control" placeholder="Buscar cliente por nome..."></div>
-                <div class="col-md-4">
-                    <select id="ordemCliente" class="form-select">
-                        <option value="recentes">Mais Recentes</option>
-                        <option value="az">Ordem Alfabética (A-Z)</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="listaClientes"></div>
-        </div>
-
-        <div id="aba-estoque" class="secao">
-            <div class="d-flex justify-content-between mb-4 flex-wrap gap-2">
-                <h3 class="fw-bold m-0">Estoque e Materiais</h3>
-                <button class="btn btn-success rounded-pill px-4 shadow-sm fw-bold" id="btnNovoEstoque">+ Entrada Material</button>
-            </div>
-            
-            <div class="filtro-container row g-2 mb-3">
-                <div class="col-md-8"><input type="text" id="buscaEstoque" class="form-control" placeholder="Buscar produto no estoque..."></div>
-                <div class="col-md-4">
-                    <select id="ordemEstoque" class="form-select">
-                        <option value="recentes">Mais Recentes</option>
-                        <option value="az">Ordem Alfabética (A-Z)</option>
-                        <option value="qtd">Maior Quantidade</option>
-                        <option value="valor">Maior Valor em Estoque</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="table-responsive"><table class="table card-custom align-middle"><thead><tr><th class="ps-4">SKU</th><th>Produto</th><th>Qtd</th><th>Custo Médio</th><th class="text-end pe-4">Ações</th></tr></thead><tbody id="listaEstoque"></tbody></table></div>
-        </div>
-
-        <div id="aba-orcamentos" class="secao">
-            <h3 class="fw-bold mb-4">Orçamentos e OS</h3>
-            
-            <div class="filtro-container row g-2 mb-4">
-                <div class="col-md-6"><input type="text" id="buscaOrcamento" class="form-control" placeholder="Buscar por nome do cliente..."></div>
-                <div class="col-md-3">
-                    <select id="filtroStatusOrc" class="form-select">
-                        <option value="todos">Todos os Status</option>
-                        <option value="ORÇAMENTO">Apenas Orçamentos</option>
-                        <option value="OS ABERTA">OS Abertas</option>
-                        <option value="FINALIZADA">Finalizadas</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select id="ordemOrc" class="form-select">
-                        <option value="recentes">Mais Recentes</option>
-                        <option value="maior">Maior Valor</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="listaOrcamentos"></div>
-        </div>
-
-        <div id="aba-agenda" class="secao">
-            <h3 class="fw-bold mb-4">Agenda de Serviços</h3>
-            <div class="card-custom p-4">
-                <div class="d-flex justify-content-between mb-4 align-items-center">
-                    <button class="btn btn-light rounded-pill px-3 fw-bold border" id="btnMesAnt"><i class="bi bi-chevron-left"></i></button>
-                    <h5 id="mesAnoAtual" class="m-0 text-primary fw-bold text-uppercase"></h5>
-                    <button class="btn btn-light rounded-pill px-3 fw-bold border" id="btnMesProx"><i class="bi bi-chevron-right"></i></button>
-                </div>
-                <div class="grid-calendario"><div class="fw-bold text-muted small text-center">DOM</div><div class="fw-bold text-muted small text-center">SEG</div><div class="fw-bold text-muted small text-center">TER</div><div class="fw-bold text-muted small text-center">QUA</div><div class="fw-bold text-muted small text-center">QUI</div><div class="fw-bold text-muted small text-center">SEX</div><div class="fw-bold text-muted small text-center">SÁB</div></div>
-                <div id="diasCalendario" class="grid-calendario mt-2"></div>
-            </div>
-            <div id="detalheAgendaDia" class="card-custom p-4 mt-3" style="display:none;"><h5 id="dataAgendaSelecionada" class="text-primary fw-bold"></h5><div id="servicosAgendaDia"></div></div>
-        </div>
-
-        <div id="aba-perfil" class="secao">
-            <div class="card-custom p-4 mx-auto" style="max-width:600px;">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="m-0 fw-bold">Dados da Empresa</h4>
-                    <span class="badge bg-primary rounded-pill px-3 py-2">Premium</span>
-                </div>
-                <div id="infoAssinatura" class="alert alert-info py-2 text-center small mb-4 fw-bold">Carregando plano...</div>
-                
-                <form id="formPerfil">
-                    <div class="row mb-3 g-2">
-                        <div class="col-md-8">
-                            <label class="small fw-bold text-muted mb-1">LOGO DA EMPRESA</label>
-                            <input type="file" id="pLogo" class="form-control" accept="image/*">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="small fw-bold text-primary mb-1">COR PRINCIPAL</label>
-                            <input type="color" id="pCorPrincipal" class="form-control form-control-color w-100 p-1" value="#0f172a" title="Cor do PDF">
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="dash-card">
+                            <h2 id="dashClientes">0</h2>
+                            <p>Total Clientes Ativos</p>
                         </div>
                     </div>
-                    
-                    <img id="logoPreview" src="" class="logo-placeholder mb-3 d-none">
-                    
-                    <div class="mb-2"><label class="small fw-bold text-muted mb-1">NOME DA EMPRESA</label><input type="text" id="pEmpresa" class="form-control"></div>
-                    <div class="mb-2"><label class="small fw-bold text-muted mb-1">CNPJ/CPF</label><input type="text" id="pCnpj" class="form-control mask-cnpj"></div>
-                    <div class="mb-2"><label class="small fw-bold text-muted mb-1">TELEFONE (WHATSAPP)</label><input type="text" id="pTel" class="form-control mask-tel"></div>
-                    <div class="mb-4"><label class="small fw-bold text-muted mb-1">MARGEM DE LUCRO PADRÃO MATERIAIS (%)</label><input type="number" id="pMargem" class="form-control"></div>
-                    
-                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-3 shadow-sm fw-bold">Salvar Configurações</button>
-                </form>
+                    <div class="col-md-4">
+                        <div class="dash-card">
+                            <h2 id="dashOSAbertas">0</h2>
+                            <p>OS Abertas / Pendentes</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dash-card">
+                            <h2 id="dashFaturamento">R$ 0,00</h2>
+                            <p>Faturamento (Finalizadas)</p>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <div id="aba-admin" class="secao">
+                <div class="secao-header">
+                    <h3>Controle de Usuários</h3>
+                    <span class="badge bg-success px-3 py-2 rounded-pill">Acesso Master</span>
+                </div>
+                <div class="filtro-container row g-2 mb-4">
+                    <div class="col-md-6"><input type="text" id="buscaAdmin" class="form-control" placeholder="Buscar por e-mail do usuário..."></div>
+                    <div class="col-md-3"><select id="filtroStatusAdmin" class="form-select"><option value="todos">Todos os Status</option><option value="ativo">Contas Ativas</option><option value="bloqueado">Contas Bloqueadas</option></select></div>
+                    <div class="col-md-3"><select id="ordemAdmin" class="form-select"><option value="recentes">Padrão</option><option value="vencimento_asc">Vencimento (Próximos)</option><option value="vencimento_desc">Vencimento (Distantes)</option></select></div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-custom align-middle">
+                        <thead><tr><th>E-mail do Usuário</th><th width="200">Vencimento</th><th>Status</th><th class="text-end">Ação</th></tr></thead>
+                        <tbody id="listaUsuariosAdmin"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="aba-clientes" class="secao">
+                <div class="secao-header">
+                    <h3>Gestão de Clientes</h3>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-dark btn-premium bg-white" id="btnImportarContato"><i class="bi bi-person-lines-fill me-1"></i> Importar do Celular</button>
+                        <button class="btn btn-primary btn-premium shadow-sm" id="btnNovoCliente"><i class="bi bi-plus-lg me-1"></i> Novo Cliente</button>
+                    </div>
+                </div>
+                <div class="filtro-container row g-2">
+                    <div class="col-md-8"><input type="text" id="buscaCliente" class="form-control" placeholder="Buscar cliente por nome..."></div>
+                    <div class="col-md-4"><select id="ordemCliente" class="form-select"><option value="recentes">Mais Recentes</option><option value="az">Ordem Alfabética (A-Z)</option></select></div>
+                </div>
+                <div id="listaClientes"></div>
+            </div>
+
+            <div id="aba-estoque" class="secao">
+                <div class="secao-header">
+                    <h3>Estoque e Materiais</h3>
+                    <button class="btn btn-primary btn-premium shadow-sm" id="btnNovoEstoque"><i class="bi bi-plus-lg me-1"></i> Entrada de Material</button>
+                </div>
+                <div class="filtro-container row g-2 mb-4">
+                    <div class="col-md-8"><input type="text" id="buscaEstoque" class="form-control" placeholder="Buscar produto no estoque..."></div>
+                    <div class="col-md-4"><select id="ordemEstoque" class="form-select"><option value="recentes">Mais Recentes</option><option value="az">Ordem Alfabética (A-Z)</option><option value="qtd">Maior Quantidade</option><option value="valor">Maior Valor em Estoque</option></select></div>
+                </div>
+                <div class="table-responsive"><table class="table table-custom align-middle"><thead><tr><th class="ps-4">SKU</th><th>Produto</th><th>Qtd</th><th>Custo Médio</th><th class="text-end pe-4">Ações</th></tr></thead><tbody id="listaEstoque"></tbody></table></div>
+            </div>
+
+            <div id="aba-orcamentos" class="secao">
+                <div class="secao-header"><h3>Orçamentos e OS</h3></div>
+                <div class="filtro-container row g-2 mb-4">
+                    <div class="col-md-6"><input type="text" id="buscaOrcamento" class="form-control" placeholder="Buscar por nome do cliente..."></div>
+                    <div class="col-md-3"><select id="filtroStatusOrc" class="form-select"><option value="todos">Todos os Status</option><option value="ORÇAMENTO">Apenas Orçamentos</option><option value="OS ABERTA">OS Abertas</option><option value="FINALIZADA">Finalizadas</option></select></div>
+                    <div class="col-md-3"><select id="ordemOrc" class="form-select"><option value="recentes">Mais Recentes</option><option value="maior">Maior Valor</option></select></div>
+                </div>
+                <div id="listaOrcamentos"></div>
+            </div>
+
+            <div id="aba-agenda" class="secao">
+                <div class="secao-header"><h3>Agenda de Serviços</h3></div>
+                <div class="card-custom p-4">
+                    <div class="d-flex justify-content-between mb-4 align-items-center">
+                        <button class="btn btn-light rounded-pill border px-3 fw-bold" id="btnMesAnt"><i class="bi bi-chevron-left"></i></button>
+                        <h5 id="mesAnoAtual" class="m-0 text-primary fw-bold text-uppercase"></h5>
+                        <button class="btn btn-light rounded-pill border px-3 fw-bold" id="btnMesProx"><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                    <div class="grid-calendario"><div class="fw-bold text-muted small text-center">DOM</div><div class="fw-bold text-muted small text-center">SEG</div><div class="fw-bold text-muted small text-center">TER</div><div class="fw-bold text-muted small text-center">QUA</div><div class="fw-bold text-muted small text-center">QUI</div><div class="fw-bold text-muted small text-center">SEX</div><div class="fw-bold text-muted small text-center">SÁB</div></div>
+                    <div id="diasCalendario" class="grid-calendario mt-2"></div>
+                </div>
+                <div id="detalheAgendaDia" class="card-custom p-4 mt-4" style="display:none;"><h5 id="dataAgendaSelecionada" class="text-primary fw-bold mb-3"></h5><div id="servicosAgendaDia"></div></div>
+            </div>
+
+            <div id="aba-perfil" class="secao">
+                <div class="secao-header"><h3>Dados da Empresa</h3></div>
+                <div class="card-custom p-4 p-md-5 mx-auto" style="max-width:650px;">
+                    <div id="infoAssinatura" class="alert alert-info py-2 text-center small mb-4 fw-bold rounded-12">Carregando plano...</div>
+                    <form id="formPerfil">
+                        <div class="row mb-4 g-3">
+                            <div class="col-md-8">
+                                <label class="form-label-premium">LOGO DA EMPRESA</label>
+                                <input type="file" id="pLogo" class="form-control" accept="image/*">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label-premium" style="color:var(--theme-main);">COR DO PDF</label>
+                                <input type="color" id="pCorPrincipal" class="form-control form-control-color w-100 p-1" value="#0f172a" title="Escolha a cor que combinará com o seu PDF">
+                            </div>
+                        </div>
+                        <img id="logoPreview" src="" class="logo-placeholder mb-4 d-none">
+                        
+                        <div class="mb-3"><label class="form-label-premium">NOME DA EMPRESA</label><input type="text" id="pEmpresa" class="form-control"></div>
+                        <div class="mb-3"><label class="form-label-premium">CNPJ/CPF</label><input type="text" id="pCnpj" class="form-control mask-cnpj"></div>
+                        <div class="mb-3"><label class="form-label-premium">TELEFONE (WHATSAPP)</label><input type="text" id="pTel" class="form-control mask-tel"></div>
+                        <div class="mb-5"><label class="form-label-premium">MARGEM DE LUCRO PADRÃO MATERIAIS (%)</label><input type="number" id="pMargem" class="form-control"></div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 btn-premium py-3 fw-bold">Salvar Configurações</button>
+                    </form>
+                </div>
+            </div>
+            
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="modalOrcamento" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-fullscreen-md-down">
+    <div class="modal-dialog modal-lg modal-fullscreen-md-down modal-dialog-centered">
         <div class="modal-content border-0 shadow" style="border-radius: 20px;">
             <div class="modal-header bg-light" style="border-radius: 20px 20px 0 0;">
                 <h5 class="fw-bold m-0">Documento de Serviço</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body bg-light p-3">
+            <div class="modal-body bg-light p-0 p-md-3">
                 <input type="hidden" id="editOrcId">
-                <div id="area-impressao" class="p-0 shadow-sm mb-3">
-                    <div class="p-4 p-md-5">
-                        <div class="d-flex justify-content-between align-items-start mb-4"><img id="logoDoc" src="" class="logo-placeholder"><div class="text-end small" id="empresaDoc"></div></div>
-                        <div class="text-center my-4"><h3 class="fw-bold m-0" style="color:var(--theme-main); letter-spacing: -1px;">ORÇAMENTO / OS</h3><div class="small text-muted fw-bold">Nº: <span id="numDoc">000</span> | Data: <span id="dataCriacaoDoc"></span></div></div>
-                        <div class="p-3 mb-4 rounded" style="background:#f8fafc; border: 1px solid #e2e8f0;" id="clienteDoc"></div>
-                        <div class="row g-2 mb-4 p-3 bg-light rounded mx-0 border"><div class="col-6"><label class="small fw-bold text-muted">INÍCIO PREVISTO</label><div id="dataIniVisual" class="fw-bold fs-5">--/--/----</div><input type="date" id="dataIni" class="form-control border-0 bg-transparent p-0"></div><div class="col-6 text-end"><label class="small fw-bold text-muted">ENTREGA PREVISTA</label><div id="dataFimVisual" class="fw-bold fs-5">--/--/----</div><input type="date" id="dataFim" class="form-control border-0 bg-transparent p-0 text-end"></div></div>
-                        <table class="tabela-orc"><thead><tr><th style="text-align:left">DESCRIÇÃO</th><th width="60">QTD</th><th width="110">UNIT.</th><th width="110">TOTAL</th><th class="col-x" width="40"></th></tr></thead><tbody id="corpo-orc"></tbody></table>
+                <div id="area-impressao" class="p-0 shadow-sm mb-3" style="width: 100%; max-width: 800px; margin: auto;">
+                    <div class="p-4 p-md-5 pb-3">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <img id="logoDoc" src="" class="logo-placeholder">
+                            <div class="text-end small text-muted">
+                                <span class="fw-bold fs-6">Orçamento/OS nº <span id="numDoc" style="color:var(--theme-main);">000</span></span><br>
+                                Data: <span id="dataCriacaoDoc"></span>
+                            </div>
+                        </div>
+                        <div class="text-end mt-4 mb-4"><div id="empresaDoc" class="small fw-bold text-muted"></div></div>
+                        
+                        <div class="p-4 mb-4 rounded" style="background:#f8fafc; border: 1px solid var(--border-color);" id="clienteDoc"></div>
+                        
+                        <div class="row g-2 mb-4 p-3 bg-light rounded mx-0 border">
+                            <div class="col-6"><label class="small fw-bold text-muted d-block">INÍCIO PREVISTO</label><span id="dataIniVisual" class="fw-bold fs-5 text-main">--/--/----</span><input type="date" id="dataIni" class="form-control border-0 bg-transparent p-0 d-none"></div>
+                            <div class="col-6 text-end"><label class="small fw-bold text-muted d-block">ENTREGA PREVISTA</label><span id="dataFimVisual" class="fw-bold fs-5 text-main">--/--/----</span><input type="date" id="dataFim" class="form-control border-0 bg-transparent p-0 d-none text-end"></div>
+                        </div>
+                        
+                        <table class="tabela-orc"><thead><tr><th style="text-align:left; border-radius: 8px 0 0 0;">DESCRIÇÃO</th><th width="60">QTD</th><th width="110">UNIT.</th><th width="110" style="border-radius: 0 8px 0 0;">TOTAL</th><th class="col-x" width="40"></th></tr></thead><tbody id="corpo-orc"></tbody></table>
                     </div>
+                    
                     <div class="total-box-dark"><span>MÃO DE OBRA</span><span id="totalMaoObra">R$ 0,00</span></div>
                     <div class="total-box-dark" style="background:#334155;"><span>MATERIAIS</span><span id="totalMaterial">R$ 0,00</span></div>
                     <div class="total-geral-azul"><span>TOTAL GERAL</span><span id="totalGeral">R$ 0,00</span></div>
                     
-                    <div class="p-4 p-md-5 pt-4 pb-2" id="box-fotos-impressao" style="display:none;">
-                        <h6 class="fw-bold text-muted mb-3 text-center border-bottom pb-2">RELATÓRIO FOTOGRÁFICO</h6>
-                        <div class="row g-2" id="galeria-fotos"></div>
+                    <div class="p-4 p-md-5 pt-5 pb-3" id="box-fotos-impressao" style="display:none;">
+                        <h6 class="fw-bold text-muted mb-4 text-center border-bottom pb-2">RELATÓRIO FOTOGRÁFICO</h6>
+                        <div class="row g-3" id="galeria-fotos"></div>
                     </div>
 
-                    <div class="validade-texto">Válido por 10 dias. Este documento é uma aprovação preliminar.</div>
+                    <div class="validade-texto">Válido por 10 dias. Este documento é uma aprovação preliminar de serviço.</div>
                 </div>
     
-                <div id="controles-adicao" class="card-custom p-4 border-0 shadow-sm bg-white">
-                    <label class="small fw-bold text-muted mb-2">ADICIONAR MATERIAL/PRODUTO</label>
-                    <div class="row g-2 mb-4">
-                        <div class="col-md-3"><select id="selPuxarEstoque" class="form-select bg-light"><option value="">Puxar do Estoque...</option></select></div>
-                        <div class="col-md-4"><input type="text" id="nMatInput" class="form-control" placeholder="Nome do material (livre)"></div>
-                        <div class="col-md-2"><input type="text" id="pMatInput" class="form-control mask-money" placeholder="Preço"></div>
-                        <div class="col-md-1"><input type="number" id="qMatInput" class="form-control" placeholder="Qtd"></div>
-                        <div class="col-md-2"><button class="btn btn-dark w-100 fw-bold" id="btnAddMat">+ Prod</button></div>
+                <div id="controles-adicao" class="card-custom p-4 m-3 border-0 bg-white" style="border-top: 1px solid #e2e8f0; border-radius:0;">
+                    <label class="form-label-premium">Adicionar Produto / Material</label>
+                    <div class="row g-2 mb-4 align-items-stretch">
+                        <div class="col-12 col-md-3"><select id="selPuxarEstoque" class="form-select bg-light h-100"><option value="">Estoque...</option></select></div>
+                        <div class="col-12 col-md-4"><input type="text" id="nMatInput" class="form-control h-100" placeholder="Material (Livre)"></div>
+                        <div class="col-5 col-md-2"><input type="text" id="pMatInput" class="form-control mask-money h-100" placeholder="R$ 0,00"></div>
+                        <div class="col-4 col-md-2"><input type="number" id="qMatInput" class="form-control text-center h-100" placeholder="Qtd"></div>
+                        <div class="col-3 col-md-1"><button class="btn w-100 fw-bold fs-5 d-flex align-items-center justify-content-center" style="background-color: var(--theme-main); color: white; border-radius: 12px; height: 100%; min-height:48px;" id="btnAddMat">+</button></div>
                     </div>
 
-                    <label class="small fw-bold text-muted mb-2 border-top pt-3">ADICIONAR MÃO DE OBRA</label>
-                    <div class="row g-2 mb-4">
-                        <div class="col-md-7"><input type="text" id="nServ" class="form-control" placeholder="Descrição do Serviço"></div>
-                        <div class="col-md-3"><input type="text" id="pServ" class="form-control mask-money" placeholder="Preço Cobrado"></div>
-                        <div class="col-md-2"><button class="btn btn-outline-dark w-100 fw-bold" id="btnAddServ">+ Serv</button></div>
+                    <label class="form-label-premium border-top pt-3">Adicionar Serviço / Mão de Obra</label>
+                    <div class="row g-2 mb-4 align-items-stretch">
+                        <div class="col-12 col-md-7"><input type="text" id="nServ" class="form-control h-100" placeholder="Descrição do Serviço"></div>
+                        <div class="col-8 col-md-4"><input type="text" id="pServ" class="form-control mask-money h-100" placeholder="Preço Cobrado"></div>
+                        <div class="col-4 col-md-1"><button class="btn w-100 fw-bold fs-5 d-flex align-items-center justify-content-center" style="background-color: var(--theme-main); color: white; border-radius: 12px; height: 100%; min-height:48px;" id="btnAddServ">+</button></div>
                     </div>
 
-                    <label class="small fw-bold text-muted mb-2 border-top pt-3">ADICIONAR RELATÓRIO FOTOGRÁFICO</label>
-                    <button class="btn btn-outline-secondary w-100 fw-bold py-2" id="btnTirarFoto">
-                        <i class="bi bi-camera-fill me-1"></i> Anexar Foto (Antes/Depois)
+                    <label class="form-label-premium border-top pt-3">Adicionar Relatório Fotográfico</label>
+                    <button class="btn btn-outline-dark w-100 fw-bold py-3" style="border-radius:12px; border: 2px dashed #cbd5e1;" id="btnTirarFoto">
+                        <i class="bi bi-camera-fill me-2 fs-5"></i> Anexar Foto (Antes/Depois)
                     </button>
                     <input type="file" id="inputFotoOS" accept="image/*" capture="environment" class="d-none">
                 </div>
-    
             </div>
             
-            <div class="modal-footer border-0 bg-white d-flex justify-content-center gap-2 flex-wrap" style="border-radius: 0 0 20px 20px;">
-                <button class="btn btn-light rounded-pill px-4 fw-bold border" id="btnSalvarOrc">Salvar Orçamento</button>
-                <button class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold" id="btnAprovarOS">Aprovar OS</button>
-                <button class="btn btn-success rounded-pill px-4 shadow-sm fw-bold" id="btnBaixarImg">Gerar Imagem</button>
-                <button class="btn btn-danger rounded-pill px-4 shadow-sm fw-bold" id="btnBaixarPdf"><i class="bi bi-file-earmark-pdf-fill me-1"></i> Gerar PDF</button>
+            <div class="modal-footer bg-light" style="border-radius: 0 0 20px 20px;">
+                <div class="d-flex gap-2 flex-wrap justify-content-center w-100">
+                    <button class="btn btn-light btn-premium border" id="btnSalvarOrc">Salvar como Orçamento</button>
+                    <button class="btn btn-primary btn-premium shadow-sm" id="btnAprovarOS">Aprovar OS</button>
+                    <button class="btn btn-success btn-premium shadow-sm" style="background-color: #10b981; border:none;" id="btnBaixarImg">Baixar Imagem</button>
+                    <button class="btn btn-premium shadow-sm text-white" style="background-color: var(--theme-main);" id="btnBaixarPdf"><i class="bi bi-file-earmark-pdf-fill me-1"></i> Gerar PDF</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="modalCliente" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow" style="border-radius:20px;"><form id="formCliente"><div class="modal-header bg-light" style="border-radius:20px 20px 0 0;"><h5 class="fw-bold m-0">Cadastro de Cliente</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-4"><input type="hidden" id="editClienteId"><div class="mb-3"><label class="small fw-bold text-muted mb-1">NOME COMPLETO</label><input type="text" id="cNome" class="form-control" required></div><div class="row g-2 mb-3"><div class="col-6"><label class="small fw-bold text-muted mb-1">CPF/CNPJ</label><input type="text" id="cCPF" class="form-control mask-cnpj"></div><div class="col-6"><label class="small fw-bold text-muted mb-1">WHATSAPP</label><input type="text" id="cTel" class="form-control mask-tel" required></div></div>
-<div class="row g-2 mb-3"><div class="col-9"><label class="small fw-bold text-muted mb-1">CIDADE</label><input type="text" id="cCidade" class="form-control"></div><div class="col-3"><label class="small fw-bold text-muted mb-1">UF</label><input type="text" id="cEstado" class="form-control" maxlength="2" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()"></div></div>
-<div class="mb-3"><label class="small fw-bold text-muted mb-1">ENDEREÇO (RUA, NÚMERO, BAIRRO)</label><input type="text" id="cEnd" class="form-control"></div><div><label class="small fw-bold text-muted mb-1">OBSERVAÇÕES GERAIS</label><textarea id="cObs" class="form-control" rows="3"></textarea></div></div><div class="modal-footer border-0 bg-light" style="border-radius:0 0 20px 20px;"><button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold">Salvar na Nuvem</button></div></form></div></div></div>
+<div class="modal fade" id="modalCliente" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><form id="formCliente"><div class="modal-header"><h5>Cadastro de Cliente</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="editClienteId"><div class="mb-3"><label class="form-label-premium">NOME COMPLETO</label><input type="text" id="cNome" class="form-control" required></div><div class="row g-3 mb-3"><div class="col-6"><label class="form-label-premium">CPF/CNPJ</label><input type="text" id="cCPF" class="form-control mask-cnpj"></div><div class="col-6"><label class="form-label-premium">WHATSAPP</label><input type="text" id="cTel" class="form-control mask-tel" required></div></div>
+<div class="row g-3 mb-3"><div class="col-9"><label class="form-label-premium">CIDADE</label><input type="text" id="cCidade" class="form-control"></div><div class="col-3"><label class="form-label-premium">UF</label><input type="text" id="cEstado" class="form-control" maxlength="2" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()"></div></div>
+<div class="mb-3"><label class="form-label-premium">ENDEREÇO (RUA, NÚMERO, BAIRRO)</label><input type="text" id="cEnd" class="form-control"></div><div><label class="form-label-premium">OBSERVAÇÕES</label><textarea id="cObs" class="form-control" rows="3"></textarea></div></div><div class="modal-footer"><button type="submit" class="btn btn-primary w-100 btn-premium py-2">Salvar na Nuvem</button></div></form></div></div></div>
 
-<div class="modal fade" id="modalEstoque" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow" style="border-radius:20px;"><form id="formEstoque"><div class="modal-header bg-light" style="border-radius:20px 20px 0 0;"><h5 class="fw-bold m-0">Estoque</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-4"><input type="hidden" id="editEstoqueSku"><div class="mb-3"><label class="small fw-bold text-muted mb-1">PRODUTO</label><input type="text" id="iNome" class="form-control" required></div><div class="row g-2"><div class="col-6"><label class="small fw-bold text-muted mb-1">QTD TOTAL</label><input type="number" id="iQtd" class="form-control" required></div><div class="col-6"><label class="small fw-bold text-muted mb-1">CUSTO TOTAL DA COMPRA</label><input type="text" id="iPreco" class="form-control mask-money" required></div></div></div><div class="modal-footer border-0 bg-light" style="border-radius:0 0 20px 20px;"><button type="submit" class="btn btn-success w-100 rounded-pill py-2 fw-bold">Salvar no Estoque</button></div></form></div></div></div>
+<div class="modal fade" id="modalEstoque" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><form id="formEstoque"><div class="modal-header"><h5>Estoque</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="editEstoqueSku"><div class="mb-3"><label class="form-label-premium">PRODUTO</label><input type="text" id="iNome" class="form-control" required></div><div class="row g-3"><div class="col-6"><label class="form-label-premium">QTD TOTAL</label><input type="number" id="iQtd" class="form-control" required></div><div class="col-6"><label class="form-label-premium">CUSTO COMPRA</label><input type="text" id="iPreco" class="form-control mask-money" required></div></div></div><div class="modal-footer"><button type="submit" class="btn btn-primary w-100 btn-premium py-2">Salvar no Estoque</button></div></form></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module">
@@ -414,9 +446,10 @@
     let perfil = { empresa: '', cnpj: '', tel: '', margem: 0, logo: '', cor: '#0f172a' };
     let itensTemp = [], clienteAtualId = null, dataCalendario = new Date();
     
-    // NOVA VARIÁVEL PARA AS FOTOS
+    // FOTOS
     let fotosTemp = [];
 
+    // FILTROS
     let txtBuscaCliente = "", ordemFiltroCliente = "recentes";
     let txtBuscaEstoque = "", ordemFiltroEstoque = "recentes";
     let txtBuscaOrc = "", statusFiltroOrc = "todos", ordemFiltroOrc = "recentes";
@@ -438,88 +471,59 @@
     };
 
     function iniciarMascaras() {
-        document.querySelectorAll('.mask-money').forEach(el => {
-            el.removeEventListener('input', window.applyMoneyMask);
-            el.addEventListener('input', window.applyMoneyMask);
-        });
+        document.querySelectorAll('.mask-money').forEach(el => { el.removeEventListener('input', window.applyMoneyMask); el.addEventListener('input', window.applyMoneyMask); });
         document.querySelectorAll('.mask-tel').forEach(el => IMask(el, { mask: '(00) 00000-0000' }));
         document.querySelectorAll('.mask-cnpj').forEach(el => IMask(el, { mask: [{ mask: '000.000.000-00' }, { mask: '00.000.000/0000-00' }] }));
     }
     document.querySelectorAll('.modal').forEach(m => m.addEventListener('shown.bs.modal', iniciarMascaras));
 
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').then(reg => console.log('PWA: Ativo!')).catch(err => console.log('Erro PWA:', err));
-        });
+        window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').then(reg => console.log('PWA Ativo')).catch(err => console.log('Erro PWA', err)); });
     }
 
-    // --- NOVA LÓGICA DO RELATÓRIO FOTOGRÁFICO ---
-    document.getElementById('btnTirarFoto').addEventListener('click', () => {
-        document.getElementById('inputFotoOS').click();
-    });
-
+    // --- FOTOS ---
+    document.getElementById('btnTirarFoto').addEventListener('click', () => { document.getElementById('inputFotoOS').click(); });
     document.getElementById('inputFotoOS').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if(!file) return;
-
         const reader = new FileReader();
         reader.onload = (event) => {
             const img = new Image();
             img.onload = () => {
-                // Comprime a imagem para não sobrecarregar o PDF e o Firebase
                 const canvas = document.createElement('canvas');
                 const MAX_WIDTH = 600, MAX_HEIGHT = 600;
                 let width = img.width, height = img.height;
-                if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
-                else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
+                if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
                 canvas.width = width; canvas.height = height;
                 const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
-                
-                const base64Foto = canvas.toDataURL('image/jpeg', 0.6);
-                fotosTemp.push(base64Foto);
+                fotosTemp.push(canvas.toDataURL('image/jpeg', 0.6));
                 renderFotos();
             };
             img.src = event.target.result;
         };
         reader.readAsDataURL(file);
-        this.value = ''; // reseta o input
+        this.value = '';
     });
 
-    window.removerFoto = (idx) => {
-        fotosTemp.splice(idx, 1);
-        renderFotos();
-    };
+    window.removerFoto = (idx) => { fotosTemp.splice(idx, 1); renderFotos(); };
 
     function renderFotos() {
         const editando = document.getElementById('controles-adicao').style.display === 'block';
         const galeria = document.getElementById('galeria-fotos');
         const boxFotos = document.getElementById('box-fotos-impressao');
-        
-        if(fotosTemp.length === 0) {
-            boxFotos.style.display = 'none';
-            galeria.innerHTML = '';
-            return;
-        }
-
+        if(fotosTemp.length === 0) { boxFotos.style.display = 'none'; galeria.innerHTML = ''; return; }
         boxFotos.style.display = 'block';
         galeria.innerHTML = fotosTemp.map((foto, idx) => {
-            const btnExcluir = editando ? `<button class="btn-remover-foto col-x" onclick="window.removerFoto(${idx})"><i class="bi bi-x"></i></button>` : '';
-            return `
-                <div class="col-6 col-md-4 text-center col-foto-wrapper">
-                    <img src="${foto}" class="foto-anexo">
-                    ${btnExcluir}
-                </div>
-            `;
+            const btnExcluir = editando ? `<button class="btn-remover-foto col-x" onclick="window.removerFoto(${idx})"><i class="bi bi-trash"></i></button>` : '';
+            return `<div class="col-6 col-md-4 text-center col-foto-wrapper"><img src="${foto}" class="foto-anexo">${btnExcluir}</div>`;
         }).join('');
     }
 
-    // --- IMPORTAR CONTATOS DO CELULAR ---
+    // --- CONTATOS ---
     document.getElementById('btnImportarContato').addEventListener('click', async () => {
-        const props = ['name', 'tel'];
-        const opts = { multiple: false };
         if ('contacts' in navigator && 'ContactsManager' in window) {
             try {
-                const contacts = await navigator.contacts.select(props, opts);
+                const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: false });
                 if (contacts.length > 0) {
                     const contact = contacts[0];
                     document.getElementById('formCliente').reset();
@@ -530,10 +534,10 @@
                     setTimeout(iniciarMascaras, 500);
                 }
             } catch (ex) { alert('A importação foi cancelada ou a permissão foi negada.'); }
-        } else { alert('Seu navegador/celular não suporta a importação automática de contatos no momento.'); }
+        } else { alert('Seu navegador/celular não suporta a importação automática de contatos.'); }
     });
 
-    // --- AUTENTICAÇÃO ---
+    // --- AUTH ---
     document.getElementById('btnLogin').addEventListener('click', async () => { 
         const msgBox = document.getElementById('auth-msg'); msgBox.className = "text-danger small mt-3 fw-bold";
         try { 
@@ -546,18 +550,18 @@
         const email = document.getElementById('auth-email').value, p = document.getElementById('auth-pass').value; 
         const msgBox = document.getElementById('auth-msg'); msgBox.className = "text-danger small mt-3 fw-bold";
         const regexSenha = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]).{6,}$/;
-        if (!regexSenha.test(p)) return msgBox.innerText = "A senha deve ter mín. 6 caracteres, 1 maiúscula, 1 número e 1 caractere especial.";
+        if (!regexSenha.test(p)) return msgBox.innerText = "A senha deve ter mín. 6 caracteres, 1 maiúscula, 1 número e 1 especial.";
         try { 
             const uc = await createUserWithEmailAndPassword(auth, email, p); 
             const validade = new Date(); validade.setDate(validade.getDate() + 7);
             await setDoc(doc(db, "assinaturas", uc.user.uid), { email: email, validade: validade.toISOString() });
             await sendEmailVerification(uc.user);
             await signOut(auth); 
-            msgBox.className = "text-success small mt-3 fw-bold"; msgBox.innerText = "Conta criada com 7 dias grátis! Verifique seu e-mail para ativar."; 
+            msgBox.className = "text-success small mt-3 fw-bold"; msgBox.innerText = "Conta criada! Verifique seu e-mail para ativar."; 
         } catch(e) { msgBox.innerText = "Erro. O e-mail pode já estar em uso."; } 
     });
 
-    document.getElementById('btnEsqueciSenha').addEventListener('click', async (e) => { e.preventDefault(); const email = document.getElementById('auth-email').value; const msgBox = document.getElementById('auth-msg'); if(!email) { msgBox.className = "text-danger small mt-3 fw-bold"; msgBox.innerText = "Digite seu e-mail acima para recuperar a senha."; return; } try { await sendPasswordResetEmail(auth, email); msgBox.className = "text-success small mt-3 fw-bold"; msgBox.innerText = "E-mail de recuperação enviado!"; } catch(erro) { msgBox.className = "text-danger small mt-3 fw-bold"; msgBox.innerText = "Erro: e-mail inválido."; } });
+    document.getElementById('btnEsqueciSenha').addEventListener('click', async (e) => { e.preventDefault(); const email = document.getElementById('auth-email').value; const msgBox = document.getElementById('auth-msg'); if(!email) { msgBox.className = "text-danger small mt-3 fw-bold"; msgBox.innerText = "Digite seu e-mail acima para recuperar."; return; } try { await sendPasswordResetEmail(auth, email); msgBox.className = "text-success small mt-3 fw-bold"; msgBox.innerText = "E-mail de recuperação enviado!"; } catch(erro) { msgBox.className = "text-danger small mt-3 fw-bold"; msgBox.innerText = "Erro: e-mail inválido."; } });
     
     const sairDoSistema = () => { signOut(auth).then(() => { window.location.reload(); }); };
     document.getElementById('btnLogout').addEventListener('click', sairDoSistema);
@@ -570,6 +574,8 @@
         if (user && user.emailVerified) { 
             userId = user.uid; userEmail = user.email;
             document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('userEmailNav').innerText = userEmail;
+            document.getElementById('avatarPerfil').innerText = userEmail.charAt(0).toUpperCase();
             
             const isAdmin = (userEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase());
             const assDoc = await getDoc(doc(db, "assinaturas", userId));
@@ -578,7 +584,7 @@
             
             if(assDoc.exists()) {
                 const dataFim = new Date(assDoc.data().validade);
-                infoAssinaturaDiv.innerHTML = `<i class="bi bi-info-circle me-1"></i> Sua assinatura é válida até <strong>${dataFim.toLocaleDateString('pt-BR')}</strong>.`;
+                infoAssinaturaDiv.innerHTML = `<i class="bi bi-info-circle me-1"></i> Assinatura válida até <strong>${dataFim.toLocaleDateString('pt-BR')}</strong>.`;
                 
                 if(new Date() <= dataFim || isAdmin) {
                     taLiberado = true;
@@ -596,23 +602,27 @@
                 taLiberado = true;
             }
 
-            if (isAdmin) infoAssinaturaDiv.innerHTML = `<i class="bi bi-shield-check me-1"></i> Conta Administrador Master (Acesso Vitalício).`;
+            if (isAdmin) infoAssinaturaDiv.innerHTML = `<i class="bi bi-shield-check me-1"></i> Acesso Master.`;
 
             if(taLiberado) {
-                document.getElementById('bloqueio-screen').style.display = 'none'; document.getElementById('main-app').style.display = 'block';
+                document.getElementById('bloqueio-screen').style.display = 'none'; 
+                document.getElementById('main-app').style.display = 'block';
+                
+                const nomeParte = userEmail.split('@')[0];
+                document.getElementById('boasVindasTxt').innerText = `Bem-vindo(a), ${nomeParte}`;
+
                 if(isAdmin) { document.getElementById('btnNavAdmin').classList.remove('d-none'); carregarAdminData(); }
                 carregarDados();
             } else {
-                document.getElementById('bloqueio-screen').style.display = 'block'; document.getElementById('main-app').style.display = 'none';
+                document.getElementById('bloqueio-screen').style.display = 'flex'; document.getElementById('main-app').style.display = 'none';
             }
         } else { 
-            document.getElementById('auth-screen').style.display = 'block'; document.getElementById('main-app').style.display = 'none'; document.getElementById('bloqueio-screen').style.display = 'none';
+            document.getElementById('auth-screen').style.display = 'flex'; document.getElementById('main-app').style.display = 'none'; document.getElementById('bloqueio-screen').style.display = 'none';
         }
     });
 
-    // --- PAINEL ADMIN COM FILTROS ---
+    // --- PAINEL ADMIN ---
     function carregarAdminData() { onSnapshot(collection(db, "assinaturas"), snap => { usuariosAdmin = snap.docs.map(d => ({ uid: d.id, ...d.data() })); renderizarPainelAdmin(); }); }
-    
     document.getElementById('buscaAdmin').addEventListener('input', (e) => { txtBuscaAdmin = e.target.value.toLowerCase(); renderizarPainelAdmin(); });
     document.getElementById('filtroStatusAdmin').addEventListener('change', (e) => { statusFiltroAdmin = e.target.value; renderizarPainelAdmin(); });
     document.getElementById('ordemAdmin').addEventListener('change', (e) => { ordemFiltroAdmin = e.target.value; renderizarPainelAdmin(); });
@@ -624,20 +634,15 @@
             const hoje = new Date();
             filtrados = filtrados.filter(u => {
                 const venc = new Date(u.validade);
-                const expirado = hoje > venc;
-                return statusFiltroAdmin === 'bloqueado' ? expirado : !expirado;
+                return statusFiltroAdmin === 'bloqueado' ? hoje > venc : hoje <= venc;
             });
         }
-        if(ordemFiltroAdmin === 'vencimento_asc') {
-            filtrados.sort((a,b) => new Date(a.validade) - new Date(b.validade));
-        } else if(ordemFiltroAdmin === 'vencimento_desc') {
-            filtrados.sort((a,b) => new Date(b.validade) - new Date(a.validade));
-        }
+        if(ordemFiltroAdmin === 'vencimento_asc') { filtrados.sort((a,b) => new Date(a.validade) - new Date(b.validade)); } else if(ordemFiltroAdmin === 'vencimento_desc') { filtrados.sort((a,b) => new Date(b.validade) - new Date(a.validade)); }
 
         document.getElementById('listaUsuariosAdmin').innerHTML = filtrados.map(u => { 
             const dataVenc = new Date(u.validade); 
             const expirado = new Date() > dataVenc; 
-            const statusBadge = expirado ? '<span class="badge bg-danger rounded-pill">Bloqueado</span>' : '<span class="badge bg-success rounded-pill">Ativo</span>'; 
+            const statusBadge = expirado ? '<span class="badge bg-danger rounded-pill px-3">Bloqueado</span>' : '<span class="badge bg-success rounded-pill px-3">Ativo</span>'; 
             const dataStringParaInput = dataVenc.toISOString().split('T')[0]; 
             return `<tr><td class="fw-bold">${u.email}</td><td><input type="date" id="data-venc-${u.uid}" value="${dataStringParaInput}" class="form-control form-control-sm"></td><td>${statusBadge}</td><td class="text-end"><button class="btn btn-sm btn-primary rounded-pill fw-bold px-3" onclick="window.salvarNovaData('${u.uid}')">Salvar</button></td></tr>`; 
         }).join(''); 
@@ -649,7 +654,6 @@
         document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativa')); 
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-nav'));
         document.getElementById('aba-' + aba).classList.add('ativa'); 
-        // Adicionar classe ativa no botão certo
         const mapaBotoes = { home: 'btnNavHome', clientes: 'btnNavClientes', estoque: 'btnNavEstoque', orcamentos: 'btnNavOrcamentos', agenda: 'btnNavAgenda', perfil: 'btnNavPerfil', admin: 'btnNavAdmin' };
         if(mapaBotoes[aba]) document.getElementById(mapaBotoes[aba]).classList.add('active-nav');
     };
@@ -680,25 +684,16 @@
         onSnapshot(doc(db, "usuarios", userId, "config", "perfil"), d => { 
             if(d.exists()){ 
                 perfil = d.data(); 
-                document.getElementById('pEmpresa').value = perfil.empresa||''; 
-                document.getElementById('pCnpj').value = perfil.cnpj||''; 
-                document.getElementById('pTel').value = perfil.tel||''; 
-                document.getElementById('pMargem').value = perfil.margem||0; 
-                document.getElementById('pCorPrincipal').value = perfil.cor || '#0f172a';
-                document.documentElement.style.setProperty('--theme-main', perfil.cor || '#0f172a');
+                document.getElementById('pEmpresa').value = perfil.empresa||''; document.getElementById('pCnpj').value = perfil.cnpj||''; document.getElementById('pTel').value = perfil.tel||''; document.getElementById('pMargem').value = perfil.margem||0; document.getElementById('pCorPrincipal').value = perfil.cor || '#1e293b';
+                document.documentElement.style.setProperty('--theme-main', perfil.cor || '#1e293b');
                 if(perfil.logo){ document.getElementById('logoPreview').src = perfil.logo; document.getElementById('logoPreview').classList.remove('d-none'); } 
             } 
         });
     }
 
-    // --- SOFT DELETE GLOBAL ---
-    window.excluirDoc = async (col, idF) => { 
-        if(confirm("Apagar este registro? (Ele será removido da tela mas o sistema manterá o backup invisível)")) {
-            await updateDoc(doc(db, "usuarios", userId, col, idF), { apagado: true });
-        }
-    };
+    window.excluirDoc = async (col, idF) => { if(confirm("Apagar este registro? (O sistema manterá o backup invisível na nuvem)")) { await updateDoc(doc(db, "usuarios", userId, col, idF), { apagado: true }); } };
 
-    // --- PERFIL EMPRESA E LOGO ---
+    // --- PERFIL ---
     document.getElementById('pLogo').addEventListener('change', function() { 
         if(this.files[0]){ 
             const r = new FileReader(); 
@@ -724,18 +719,13 @@
         e.preventDefault(); 
         try {
             await setDoc(doc(db, "usuarios", userId, "config", "perfil"), { 
-                empresa: document.getElementById('pEmpresa').value, 
-                cnpj: document.getElementById('pCnpj').value, 
-                tel: document.getElementById('pTel').value, 
-                margem: parseFloat(document.getElementById('pMargem').value||0), 
-                logo: perfil.logo||'',
-                cor: document.getElementById('pCorPrincipal').value || '#0f172a'
+                empresa: document.getElementById('pEmpresa').value, cnpj: document.getElementById('pCnpj').value, tel: document.getElementById('pTel').value, margem: parseFloat(document.getElementById('pMargem').value||0), logo: perfil.logo||'', cor: document.getElementById('pCorPrincipal').value || '#1e293b'
             }); 
             alert("Salvo na nuvem com sucesso!"); 
         } catch (error) { alert("Erro ao salvar. Verifique sua conexão."); }
     });
 
-    // --- CLIENTES COM FILTRO E MAPA ---
+    // --- CLIENTES ---
     document.getElementById('buscaCliente').addEventListener('input', (e) => { txtBuscaCliente = e.target.value.toLowerCase(); renderizarClientes(); });
     document.getElementById('ordemCliente').addEventListener('change', (e) => { ordemFiltroCliente = e.target.value; renderizarClientes(); });
 
@@ -743,11 +733,7 @@
     document.getElementById('formCliente').addEventListener('submit', async e => { 
         e.preventDefault(); 
         const idF = document.getElementById('editClienteId').value; 
-        const d = { 
-            nome: document.getElementById('cNome').value, cpf: document.getElementById('cCPF').value, tel: document.getElementById('cTel').value, 
-            cidade: document.getElementById('cCidade').value, estado: document.getElementById('cEstado').value, end: document.getElementById('cEnd').value, 
-            obs: document.getElementById('cObs').value, apagado: false 
-        }; 
+        const d = { nome: document.getElementById('cNome').value, cpf: document.getElementById('cCPF').value, tel: document.getElementById('cTel').value, cidade: document.getElementById('cCidade').value, estado: document.getElementById('cEstado').value, end: document.getElementById('cEnd').value, obs: document.getElementById('cObs').value, apagado: false }; 
         if(idF) await updateDoc(doc(db, "usuarios", userId, "clientes", idF), d); else { d.numId = gerarNumId(clientes); await addDoc(collection(db, "usuarios", userId, "clientes"), d); } 
         bootstrap.Modal.getInstance(document.getElementById('modalCliente')).hide(); 
     });
@@ -760,13 +746,13 @@
         document.getElementById('listaClientes').innerHTML = filtrados.map(c => {
             const endCompleto = `${c.end||''}, ${c.cidade||''} - ${c.estado||''}`;
             const linkMapa = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endCompleto)}`;
-            return `<div class="card-custom p-0"><div class="card-header-custom" onclick="window.toggleDet('det-${c.id_firebase}')"><div class="d-flex align-items-center gap-3"><div style="width:40px; height:40px; background:#e0f2fe; color:#0284c7; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:bold;">${c.nome.charAt(0).toUpperCase()}</div><div><h6 class="mb-0 fw-bold">#${c.numId||'?'} - ${c.nome}</h6></div></div><div><button class="btn-action btn-action-edit" onclick="event.stopPropagation(); window.editarCliente('${c.id_firebase}')"><i class="bi bi-pencil"></i></button><button class="btn-action btn-action-del" onclick="event.stopPropagation(); window.excluirDoc('clientes','${c.id_firebase}')"><i class="bi bi-trash"></i></button></div></div><div id="det-${c.id_firebase}" class="detalhes"><p class="mb-3 text-muted">CPF: ${c.cpf} | Endereço: ${c.end} | <strong>${c.cidade||'S/ Cidade'}-${c.estado||'UF'}</strong></p><div class="d-flex gap-2 flex-wrap"><a href="https://wa.me/55${c.tel.replace(/\D/g,'')}" target="_blank" class="btn btn-success btn-sm rounded-pill px-3 fw-bold"><i class="bi bi-whatsapp"></i> WhatsApp</a><a href="${linkMapa}" target="_blank" class="btn btn-info btn-sm rounded-pill px-3 text-white fw-bold"><i class="bi bi-geo-alt-fill"></i> Mapa</a><button class="btn btn-primary btn-sm rounded-pill px-3 fw-bold" onclick="window.iniciarOrc('${c.id_firebase}')"><i class="bi bi-file-earmark-plus"></i> Novo Orçamento</button></div></div></div>`; 
+            return `<div class="card-custom p-0"><div class="card-header-custom" onclick="window.toggleDet('det-${c.id_firebase}')"><div class="d-flex align-items-center gap-3"><div style="width:40px; height:40px; background:#e0f2fe; color:#0284c7; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:bold;">${c.nome.charAt(0).toUpperCase()}</div><div><h6 class="mb-0 fw-bold">#${c.numId||'?'} - ${c.nome}</h6></div></div><div><button class="btn-action btn-action-edit" onclick="event.stopPropagation(); window.editarCliente('${c.id_firebase}')"><i class="bi bi-pencil"></i></button><button class="btn-action btn-action-del" onclick="event.stopPropagation(); window.excluirDoc('clientes','${c.id_firebase}')"><i class="bi bi-trash"></i></button></div></div><div id="det-${c.id_firebase}" class="detalhes"><p class="mb-3 text-muted">CPF: ${c.cpf} | Endereço: ${c.end} | <strong>${c.cidade||'S/ Cidade'}-${c.estado||'UF'}</strong></p><div class="d-flex gap-2 flex-wrap"><a href="https://wa.me/55${c.tel.replace(/\D/g,'')}" target="_blank" class="btn btn-success btn-sm rounded-pill px-3 fw-bold"><i class="bi bi-whatsapp"></i> WhatsApp</a><a href="${linkMapa}" target="_blank" class="btn btn-dark btn-sm rounded-pill px-3 text-white fw-bold" style="background-color: var(--theme-main); border:none;"><i class="bi bi-geo-alt-fill"></i> Mapa</a><button class="btn btn-primary btn-sm rounded-pill px-3 fw-bold" onclick="window.iniciarOrc('${c.id_firebase}')"><i class="bi bi-file-earmark-plus"></i> Novo Orçamento</button></div></div></div>`; 
         }).join('');
     }
     
     window.editarCliente = (idF) => { const c = clientes.find(x => x.id_firebase === idF); document.getElementById('editClienteId').value = c.id_firebase; document.getElementById('cNome').value = c.nome; document.getElementById('cCPF').value = c.cpf; document.getElementById('cTel').value = c.tel; document.getElementById('cCidade').value = c.cidade||''; document.getElementById('cEstado').value = c.estado||''; document.getElementById('cEnd').value = c.end; document.getElementById('cObs').value = c.obs; new bootstrap.Modal(document.getElementById('modalCliente')).show(); };
 
-    // --- ESTOQUE COM FILTROS E ALERTA NEGATIVO ---
+    // --- ESTOQUE ---
     document.getElementById('buscaEstoque').addEventListener('input', (e) => { txtBuscaEstoque = e.target.value.toLowerCase(); renderizarEstoque(); });
     document.getElementById('ordemEstoque').addEventListener('change', (e) => { ordemFiltroEstoque = e.target.value; renderizarEstoque(); });
 
@@ -776,21 +762,17 @@
     function renderizarEstoque() { 
         let filtrados = estoque.filter(e => !e.apagado);
         if(txtBuscaEstoque) filtrados = filtrados.filter(e => e.nome.toLowerCase().includes(txtBuscaEstoque));
-        
-        if(ordemFiltroEstoque === 'az') filtrados.sort((a,b) => a.nome.localeCompare(b.nome)); 
-        else if(ordemFiltroEstoque === 'qtd') filtrados.sort((a,b) => b.quantidade - a.quantidade);
-        else if(ordemFiltroEstoque === 'valor') filtrados.sort((a,b) => (b.quantidade * b.custoMedio) - (a.quantidade * a.custoMedio));
-        else filtrados.sort((a,b) => b.numId - a.numId);
+        if(ordemFiltroEstoque === 'az') filtrados.sort((a,b) => a.nome.localeCompare(b.nome)); else if(ordemFiltroEstoque === 'qtd') filtrados.sort((a,b) => b.quantidade - a.quantidade); else if(ordemFiltroEstoque === 'valor') filtrados.sort((a,b) => (b.quantidade * b.custoMedio) - (a.quantidade * a.custoMedio)); else filtrados.sort((a,b) => b.numId - a.numId);
 
         document.getElementById('listaEstoque').innerHTML = filtrados.map(i => {
             const corQtd = i.quantidade < 0 ? 'text-danger fw-bold' : 'fw-bold';
             const aviso = i.quantidade < 0 ? ' <i class="bi bi-exclamation-circle-fill text-danger" title="Estoque Negativo"></i>' : '';
-            return `<tr><td class="fw-bold text-muted">#${i.numId||'?'}</td><td class="fw-bold">${i.nome}</td><td class="${corQtd}">${i.quantidade}${aviso}</td><td>${formatDinheiro(i.custoMedio)}</td><td class="text-end"><button class="btn-action btn-action-edit" onclick="window.editarEstoque('${i.id_firebase}')"><i class="bi bi-pencil"></i></button><button class="btn-action btn-action-del" onclick="window.excluirDoc('estoque','${i.id_firebase}')"><i class="bi bi-trash"></i></button></td></tr>`;
+            return `<tr><td class="fw-bold text-muted ps-4">#${i.numId||'?'}</td><td class="fw-bold">${i.nome}</td><td class="${corQtd}">${i.quantidade}${aviso}</td><td>${formatDinheiro(i.custoMedio)}</td><td class="text-end pe-4"><button class="btn-action btn-action-edit" onclick="window.editarEstoque('${i.id_firebase}')"><i class="bi bi-pencil"></i></button><button class="btn-action btn-action-del" onclick="window.excluirDoc('estoque','${i.id_firebase}')"><i class="bi bi-trash"></i></button></td></tr>`;
         }).join(''); 
     }
     window.editarEstoque = (idF) => { const i = estoque.find(x => x.id_firebase === idF); document.getElementById('editEstoqueSku').value = i.id_firebase; document.getElementById('iNome').value = i.nome; document.getElementById('iQtd').value = i.quantidade; document.getElementById('iPreco').value = formatDinheiro(i.quantidade * i.custoMedio); new bootstrap.Modal(document.getElementById('modalEstoque')).show(); };
 
-    // --- ORÇAMENTOS E MATERIAIS ---
+    // --- ORÇAMENTOS E OS ---
     document.getElementById('buscaOrcamento').addEventListener('input', (e) => { txtBuscaOrc = e.target.value.toLowerCase(); renderizarOrcamentos(); });
     document.getElementById('filtroStatusOrc').addEventListener('change', (e) => { statusFiltroOrc = e.target.value; renderizarOrcamentos(); });
     document.getElementById('ordemOrc').addEventListener('change', (e) => { ordemFiltroOrc = e.target.value; renderizarOrcamentos(); });
@@ -800,7 +782,6 @@
         document.getElementById('logoDoc').src = perfil.logo || ''; document.getElementById('numDoc').innerText = gerarNumId(orcamentos); document.getElementById('dataCriacaoDoc').innerText = new Date().toLocaleDateString('pt-BR'); 
         document.getElementById('empresaDoc').innerHTML = `<strong>${perfil.empresa||''}</strong><br>${perfil.cnpj||''}<br>${perfil.tel||''}`; 
         document.getElementById('clienteDoc').innerHTML = `<strong>CLIENTE:</strong> ${c.nome}<br><strong>END:</strong> ${c.end} | <strong>CIDADE:</strong> ${c.cidade||''}-${c.estado||''} | <strong>CPF:</strong> ${c.cpf}`; 
-        
         document.getElementById('selPuxarEstoque').innerHTML = '<option value="">Puxar do Estoque...</option>' + estoque.filter(e=>!e.apagado).map(i => `<option value="${i.id_firebase}">${i.nome}</option>`).join(''); 
         document.getElementById('nMatInput').value = ''; document.getElementById('pMatInput').value = ''; document.getElementById('qMatInput').value = '';
 
@@ -825,7 +806,7 @@
 
     document.getElementById('btnAddServ').addEventListener('click', () => { const n = document.getElementById('nServ').value; const p = limpaDinheiro(document.getElementById('pServ').value); if(!n || !p) return; itensTemp.push({ tipo: 'SERV', desc: n, qtd: 1, valor: p }); document.getElementById('nServ').value=''; document.getElementById('pServ').value=''; window.renderItensOrc(); });
     
-    window.renderItensOrc = () => { let mo = 0, mat = 0; const editando = document.getElementById('controles-adicao').style.display === 'block'; document.getElementById('corpo-orc').innerHTML = itensTemp.map((it, idx) => { const sub = it.qtd * it.valor; it.tipo === 'SERV' ? mo += sub : mat += sub; const delBtn = editando ? `<td class="text-center col-x"><i class="bi bi-x-circle text-danger" onclick="window.removerItem(${idx})" style="cursor:pointer"></i></td>` : ''; return `<tr><td>${it.desc}</td><td class="text-center fw-bold">${it.qtd}</td><td class="text-end">${formatDinheiro(it.valor)}</td><td class="text-end fw-bold">${formatDinheiro(sub)}</td>${delBtn}</tr>`; }).join(''); document.getElementById('totalMaoObra').innerText = formatDinheiro(mo); document.getElementById('totalMaterial').innerText = formatDinheiro(mat); document.getElementById('totalGeral').innerText = formatDinheiro(mo + mat); };
+    window.renderItensOrc = () => { let mo = 0, mat = 0; const editando = document.getElementById('controles-adicao').style.display === 'block'; document.getElementById('corpo-orc').innerHTML = itensTemp.map((it, idx) => { const sub = it.qtd * it.valor; it.tipo === 'SERV' ? mo += sub : mat += sub; const delBtn = editando ? `<td class="text-center col-x"><i class="bi bi-x-circle text-danger fs-5" onclick="window.removerItem(${idx})" style="cursor:pointer"></i></td>` : ''; return `<tr><td class="fw-bold text-muted">${it.desc}</td><td class="text-center fw-bold">${it.qtd}</td><td class="text-end">${formatDinheiro(it.valor)}</td><td class="text-end fw-bold text-main">${formatDinheiro(sub)}</td>${delBtn}</tr>`; }).join(''); document.getElementById('totalMaoObra').innerText = formatDinheiro(mo); document.getElementById('totalMaterial').innerText = formatDinheiro(mat); document.getElementById('totalGeral').innerText = formatDinheiro(mo + mat); };
     window.removerItem = (idx) => { itensTemp.splice(idx, 1); window.renderItensOrc(); };
     const salvarDocNuvem = async (status) => { const idF = document.getElementById('editOrcId').value; const d = { clienteId: clienteAtualId, status, dataCriacao: document.getElementById('dataCriacaoDoc').innerText, dataIni: document.getElementById('dataIni').value, dataFim: document.getElementById('dataFim').value, total: document.getElementById('totalGeral').innerText, apagado: false, itens: [...itensTemp], fotos: [...fotosTemp] }; if(idF) await updateDoc(doc(db, "usuarios", userId, "orcamentos", idF), d); else { d.numId = document.getElementById('numDoc').innerText; await addDoc(collection(db, "usuarios", userId, "orcamentos"), d); } bootstrap.Modal.getInstance(document.getElementById('modalOrcamento')).hide(); };
     document.getElementById('btnSalvarOrc').addEventListener('click', () => salvarDocNuvem('ORÇAMENTO'));
@@ -852,16 +833,16 @@
     window.editarOrc = (idF) => { const o = orcamentos.find(x => x.id_firebase === idF); clienteAtualId = o.clienteId; itensTemp = [...o.itens]; fotosTemp = o.fotos ? [...o.fotos] : []; const c = clientes.find(x => x.id_firebase === o.clienteId); document.getElementById('editOrcId').value = o.id_firebase; document.getElementById('dataCriacaoDoc').innerText = o.dataCriacao; document.getElementById('dataIni').value = o.dataIni; document.getElementById('dataFim').value = o.dataFim; document.getElementById('logoDoc').src = perfil.logo||''; document.getElementById('numDoc').innerText = o.numId; document.getElementById('empresaDoc').innerHTML = `<strong>${perfil.empresa||''}</strong><br>${perfil.cnpj||''}<br>${perfil.tel||''}`; document.getElementById('clienteDoc').innerHTML = `<strong>CLIENTE:</strong> ${c?c.nome:'N/A'}<br><strong>END:</strong> ${c?c.end:'N/A'} | <strong>CIDADE:</strong> ${c?c.cidade:''}-${c?c.estado:''} | <strong>CPF:</strong> ${c?c.cpf:'N/A'}`; document.getElementById('dataIni').style.display = 'block'; document.getElementById('dataFim').style.display = 'block'; document.getElementById('dataIniVisual').style.display = 'none'; document.getElementById('dataFimVisual').style.display = 'none'; document.getElementById('controles-adicao').style.display = 'block'; document.getElementById('btnSalvarOrc').style.display = 'block'; document.getElementById('btnAprovarOS').style.display = 'block'; document.getElementById('selPuxarEstoque').innerHTML = '<option value="">Puxar do Estoque...</option>' + estoque.filter(e=>!e.apagado).map(i => `<option value="${i.id_firebase}">${i.nome}</option>`).join(''); document.getElementById('nMatInput').value=''; document.getElementById('pMatInput').value=''; document.getElementById('qMatInput').value=''; window.renderItensOrc(); renderFotos(); new bootstrap.Modal(document.getElementById('modalOrcamento')).show(); };
     window.visualizarOrc = (idF) => { window.editarOrc(idF); const o = orcamentos.find(x => x.id_firebase === idF); document.getElementById('dataIniVisual').innerText = formatData(o.dataIni); document.getElementById('dataFimVisual').innerText = formatData(o.dataFim); document.getElementById('dataIni').style.display = 'none'; document.getElementById('dataFim').style.display = 'none'; document.getElementById('dataIniVisual').style.display = 'block'; document.getElementById('dataFimVisual').style.display = 'block'; document.getElementById('controles-adicao').style.display = 'none'; document.getElementById('btnSalvarOrc').style.display = 'none'; document.getElementById('btnAprovarOS').style.display = 'none'; window.renderItensOrc(); renderFotos(); };
     
-    // AGENDA
+    // --- AGENDA ---
     function renderizarCalendario() { const grid = document.getElementById('diasCalendario'); grid.innerHTML = ''; const m = dataCalendario.getMonth(); const a = dataCalendario.getFullYear(); document.getElementById('mesAnoAtual').innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(dataCalendario); const pDia = new Date(a, m, 1).getDay(); const dNoMes = new Date(a, m + 1, 0).getDate(); for (let i = 0; i < pDia; i++) grid.innerHTML += '<div></div>'; for (let dia = 1; dia <= dNoMes; dia++) { const dStr = `${a}-${String(m+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`; const ativos = orcamentos.filter(o => !o.apagado && o.status !== 'FINALIZADA'); const isIni = ativos.some(o => o.dataIni === dStr); const isFim = ativos.some(o => o.dataFim === dStr); grid.innerHTML += `<div class="dia-calendario shadow-sm ${isIni?'dia-inicio':''} ${isFim?'dia-fim':''}" onclick="window.mostrarAgenda('${dStr}')">${dia}</div>`; } }
-    window.mostrarAgenda = (data) => { const servs = orcamentos.filter(o => !o.apagado && o.status !== 'FINALIZADA' && (o.dataIni === data || o.dataFim === data)); document.getElementById('dataAgendaSelecionada').innerText = data.split('-').reverse().join('/'); document.getElementById('detalheAgendaDia').style.display = 'block'; document.getElementById('servicosAgendaDia').innerHTML = servs.map(s => `<div class="py-1 border-bottom">#${s.numId||'?'} - ${clientes.find(x => x.id_firebase === s.clienteId)?.nome} (${s.status})</div>`).join('') || 'Livre.'; };
+    window.mostrarAgenda = (data) => { const servs = orcamentos.filter(o => !o.apagado && o.status !== 'FINALIZADA' && (o.dataIni === data || o.dataFim === data)); document.getElementById('dataAgendaSelecionada').innerText = data.split('-').reverse().join('/'); document.getElementById('detalheAgendaDia').style.display = 'block'; document.getElementById('servicosAgendaDia').innerHTML = servs.map(s => `<div class="py-2 border-bottom fw-bold text-muted">#${s.numId||'?'} - ${clientes.find(x => x.id_firebase === s.clienteId)?.nome} (${s.status})</div>`).join('') || '<div class="text-muted">Livre.</div>'; };
     document.getElementById('btnMesAnt').addEventListener('click', () => { dataCalendario.setMonth(dataCalendario.getMonth() - 1); renderizarCalendario(); });
     document.getElementById('btnMesProx').addEventListener('click', () => { dataCalendario.setMonth(dataCalendario.getMonth() + 1); renderizarCalendario(); });
 
-    // GERAR IMAGEM (PNG)
+    // --- GERAR IMAGEM (PNG) ---
     document.getElementById('btnBaixarImg').addEventListener('click', () => { const area = document.getElementById('area-impressao'); const ow = area.style.width; area.style.width = '800px'; html2canvas(area, { scale: 2 }).then(canvas => { area.style.width = ow; const link = document.createElement('a'); link.download = 'Orcamento.png'; link.href = canvas.toDataURL(); link.click(); }); });
 
-    // GERAR PDF REAL (jsPDF + html2canvas)
+    // --- GERAR PDF REAL (jsPDF + html2canvas) ---
     document.getElementById('btnBaixarPdf').addEventListener('click', () => { 
         const { jsPDF } = window.jspdf;
         const area = document.getElementById('area-impressao'); 
