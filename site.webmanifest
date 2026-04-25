@@ -1,11 +1,10 @@
 {
-  "name": "ServicePRO Cloud",
+  "name": "ServicePRO Cloud SaaS",
   "short_name": "ServicePRO",
-  "description": "Sistema de Gestão ServicePRO Cloud SaaS",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#1e293b",
+  "theme_color": "#1e293b",
   "icons": [
     {
       "src": "web-app-manifest-192x192.png",
