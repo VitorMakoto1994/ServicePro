@@ -216,26 +216,32 @@
                     <h3 id="boasVindasTxt">Bem-vindo(a) ao Painel</h3>
                     <button class="btn btn-primary btn-premium shadow-sm" onclick="window.navegar('clientes')"><i class="bi bi-plus-lg me-1"></i> Novo Orçamento</button>
                 </div>
-                <div class="row g-4 mb-4">
-                    <div class="col-md-3">
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-sm-6 col-xl">
                         <div class="dash-card">
                             <h2 id="dashClientes">0</h2>
-                            <p>Total Clientes Ativos</p>
+                            <p>Clientes Ativos</p>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-12 col-sm-6 col-xl">
                         <div class="dash-card">
                             <h2 id="dashOSAbertas">0</h2>
-                            <p>OS Abertas / Pendentes</p>
+                            <p>OS Abertas</p>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-12 col-sm-6 col-xl">
                         <div class="dash-card">
-                            <h2 id="dashFaturamento">R$ 0,00</h2>
-                            <p>Faturamento (Finalizadas)</p>
+                            <h2 id="dashFaturamento" class="text-success">R$ 0,00</h2>
+                            <p>Faturamento Realizado</p>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-12 col-sm-6 col-xl">
+                        <div class="dash-card" style="border: 2px solid #ef4444; background: #fff5f5;">
+                            <h2 id="dashAReceber" class="text-danger">R$ 0,00</h2>
+                            <p class="text-danger fw-bold">A Receber (Pendentes)</p>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl">
                         <div class="dash-card">
                             <h2 id="dashLucro" class="text-primary">R$ 0,00</h2>
                             <p>Lucro Est. (Bruto)</p>
@@ -262,6 +268,25 @@
                 <div class="secao-header">
                     <h3>Controle de Usuários</h3>
                     <span class="badge bg-success px-3 py-2 rounded-pill">Acesso Master</span>
+                </div>
+                
+                <!-- CENTRO DE BACKUP MASTER -->
+                <div class="card-custom p-4 mb-4 border-start border-4 border-success bg-white shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div>
+                            <h5 class="fw-bold mb-1 text-success"><i class="bi bi-shield-check me-2"></i>Backup de Segurança do Sistema (Master)</h5>
+                            <p class="text-muted small mb-0">Baixe um arquivo seguro (.json) com TODOS os usuários, assinaturas, clientes, estoques e orçamentos do banco de dados.</p>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button class="btn btn-success btn-premium shadow-sm text-white" id="btnExportarBackupMaster">
+                                <i class="bi bi-download me-1"></i> Baixar Backup Geral (JSON)
+                            </button>
+                            <button class="btn btn-outline-danger btn-premium bg-white" id="btnRestaurarBackupMaster">
+                                <i class="bi bi-upload me-1"></i> Restaurar Banco
+                            </button>
+                            <input type="file" id="inputRestaurarMaster" accept=".json" class="d-none">
+                        </div>
+                    </div>
                 </div>
                 <div class="filtro-container row g-2 mb-4">
                     <div class="col-md-6"><input type="text" id="buscaAdmin" class="form-control" placeholder="Buscar por e-mail do usuário..."></div>
@@ -350,6 +375,21 @@
                         <div class="mb-5"><label class="form-label-premium">MARGEM DE LUCRO PADRÃO MATERIAIS (%)</label><input type="number" id="pMargem" class="form-control"></div>
                         
                         <button type="submit" class="btn btn-primary w-100 btn-premium py-3 fw-bold">Salvar Configurações</button>
+
+                        <!-- BACKUP PESSOAL DO USUÁRIO -->
+                        <div class="border-top pt-4 mt-4 text-start">
+                            <label class="form-label-premium"><i class="bi bi-cloud-arrow-down-fill me-1"></i>Segurança e Backup dos Meus Dados</label>
+                            <p class="text-muted small">Baixe uma cópia de segurança de todos os seus clientes, produtos e orçamentos para o seu computador.</p>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <button type="button" class="btn btn-outline-dark btn-premium flex-grow-1" id="btnExportarBackupUser">
+                                    <i class="bi bi-download me-1"></i> Baixar Meus Dados (JSON)
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-premium" id="btnRestaurarBackupUser">
+                                    <i class="bi bi-upload me-1"></i> Restaurar Dados
+                                </button>
+                                <input type="file" id="inputRestaurarUser" accept=".json" class="d-none">
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -391,6 +431,17 @@
                     <div class="total-box-dark"><span>MÃO DE OBRA</span><span id="totalMaoObra">R$ 0,00</span></div>
                     <div class="total-box-dark" style="background:#334155;"><span>MATERIAIS</span><span id="totalMaterial">R$ 0,00</span></div>
                     <div class="total-geral-azul"><span>TOTAL GERAL</span><span id="totalGeral">R$ 0,00</span></div>
+
+                    <div id="boxStatusPagamentoDoc" class="p-3 bg-light border-top border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <label class="small fw-bold text-muted d-block text-uppercase">Condição de Pagamento</label>
+                            <span id="statusPagDoc" class="badge bg-danger fs-6 px-3 py-2">🔴 Pagamento Pendente</span>
+                        </div>
+                        <div id="boxSinalDoc" class="text-end" style="display:none;">
+                            <span class="text-success small fw-bold d-block">Sinal / Entrada: <strong id="sinalDocVal">R$ 0,00</strong></span>
+                            <span class="text-danger fw-bold d-block">Saldo a Receber: <strong id="restanteDocVal">R$ 0,00</strong></span>
+                        </div>
+                    </div>
                     
                     
 
@@ -412,6 +463,24 @@
                         <div class="col-12 col-md-7"><input type="text" id="nServ" class="form-control h-100" placeholder="Descrição do Serviço"></div>
                         <div class="col-8 col-md-4"><input type="text" id="pServ" class="form-control mask-money h-100" placeholder="Preço Cobrado"></div>
                         <div class="col-4 col-md-1"><button class="btn w-100 fw-bold fs-5 d-flex align-items-center justify-content-center" style="background-color: var(--theme-main); color: white; border-radius: 12px; height: 100%; min-height:48px;" id="btnAddServ">+</button></div>
+                    </div>
+                    <!-- CONDIÇÕES DE PAGAMENTO NA OS (ITEM B) -->
+                    <label class="form-label-premium border-top pt-3">Condições de Pagamento</label>
+                    <div class="row g-2 mb-2 align-items-center">
+                        <div class="col-12 col-md-5">
+                            <select id="selStatusPagamento" class="form-select">
+                                <option value="PENDENTE">🔴 Pagamento Pendente (100% a Receber)</option>
+                                <option value="SINAL">🟡 Sinal Pago (Entrada Recebida)</option>
+                                <option value="QUITADO">🟢 Quitado (100% Pago)</option>
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-4" id="colInputSinal" style="display:none;">
+                            <input type="text" id="valSinalInput" class="form-control mask-money" placeholder="Valor da Entrada (R$)">
+                        </div>
+                        <div class="col-6 col-md-3" id="colInfoRestante" style="display:none;">
+                            <span class="small text-muted d-block">Saldo a Receber:</span>
+                            <strong id="txtRestanteCalculado" class="text-danger fs-6">R$ 0,00</strong>
+                        </div>
                     </div>
 
                     
@@ -461,7 +530,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification, sendPasswordResetEmail, deleteUser } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, updateDoc, enableIndexedDbPersistence, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, onSnapshot, addDoc, updateDoc, enableIndexedDbPersistence, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBrVPL9XBhq1MG550XJ-yGLItS27oiRCUU",
@@ -495,7 +564,7 @@
     let txtBuscaOrc = "", statusFiltroOrc = "todos", ordemFiltroOrc = "recentes";
     let txtBuscaAdmin = "", statusFiltroAdmin = "todos", ordemFiltroAdmin = "recentes";
 
-    // --- HELPER: NOTIFICAÇÕES E CONFIRMAÇÕES MODERNAS (SWEETALERT2) ---
+    // --- NOTIFICAÇÕES E CONFIRMAÇÕES MODERNAS (SWEETALERT2) ---
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
@@ -542,6 +611,58 @@
     }
     document.querySelectorAll('.modal').forEach(m => m.addEventListener('shown.bs.modal', iniciarMascaras));
 
+    // --- CONTROLE DE PAGAMENTO NA OS (SINAL / QUITADO / PENDENTE) ---
+    function atualizarVisualPagamento() {
+        const selEl = document.getElementById('selStatusPagamento');
+        if (!selEl) return;
+        const st = selEl.value;
+        const colSinal = document.getElementById('colInputSinal');
+        const colRest = document.getElementById('colInfoRestante');
+        const boxSinal = document.getElementById('boxSinalDoc');
+        const statusBadge = document.getElementById('statusPagDoc');
+        const total = limpaDinheiro(document.getElementById('totalGeral').innerText);
+
+        if (st === 'SINAL') {
+            if (colSinal) colSinal.style.display = 'block';
+            if (colRest) colRest.style.display = 'block';
+            if (boxSinal) boxSinal.style.display = 'block';
+            const sinal = limpaDinheiro(document.getElementById('valSinalInput').value);
+            const restante = Math.max(0, total - sinal);
+            const txtRest = document.getElementById('txtRestanteCalculado');
+            if (txtRest) txtRest.innerText = formatDinheiro(restante);
+            const sinalDoc = document.getElementById('sinalDocVal');
+            if (sinalDoc) sinalDoc.innerText = formatDinheiro(sinal);
+            const restDoc = document.getElementById('restanteDocVal');
+            if (restDoc) restDoc.innerText = formatDinheiro(restante);
+            if (statusBadge) {
+                statusBadge.className = "badge bg-warning text-dark fs-6 px-3 py-2";
+                statusBadge.innerHTML = '🟡 Sinal Recebido';
+            }
+        } else if (st === 'QUITADO') {
+            if (colSinal) colSinal.style.display = 'none';
+            if (colRest) colRest.style.display = 'none';
+            if (boxSinal) boxSinal.style.display = 'none';
+            if (statusBadge) {
+                statusBadge.className = "badge bg-success fs-6 px-3 py-2";
+                statusBadge.innerHTML = '🟢 Quitado (100% Pago)';
+            }
+        } else {
+            // PENDENTE
+            if (colSinal) colSinal.style.display = 'none';
+            if (colRest) colRest.style.display = 'none';
+            if (boxSinal) boxSinal.style.display = 'none';
+            if (statusBadge) {
+                statusBadge.className = "badge bg-danger fs-6 px-3 py-2";
+                statusBadge.innerHTML = '🔴 Pagamento Pendente';
+            }
+        }
+    }
+
+    const selStatusPag = document.getElementById('selStatusPagamento');
+    if (selStatusPag) selStatusPag.addEventListener('change', atualizarVisualPagamento);
+    const valSinalEl = document.getElementById('valSinalInput');
+    if (valSinalEl) valSinalEl.addEventListener('input', atualizarVisualPagamento);
+
     // --- VIACEP: BUSCA AUTOMÁTICA DE ENDEREÇO ---
     async function buscarCep(cep) {
         const limpo = cep ? cep.replace(/\D/g, '') : '';
@@ -572,11 +693,23 @@
     const btnBuscarCep = document.getElementById('btnBuscarCep');
     if (btnBuscarCep) btnBuscarCep.addEventListener('click', () => buscarCep(document.getElementById('cCEP').value));
 
-    // --- PWA SERVICE WORKER ---
+    // --- PWA SERVICE WORKER COM ATUALIZAÇÃO AUTOMÁTICA ---
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => { 
             navigator.serviceWorker.register('sw.js')
-                .then(() => console.log('ServicePRO PWA Ativo'))
+                .then((reg) => {
+                    console.log('ServicePRO PWA Ativo');
+                    reg.update();
+                    reg.addEventListener('updatefound', () => {
+                        const newWorker = reg.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('Nova versão do ServicePRO instalada. Recarregando...');
+                                window.location.reload();
+                            }
+                        });
+                    });
+                })
                 .catch(err => console.log('Erro PWA', err)); 
         });
     }
@@ -820,6 +953,232 @@
         }
     };
 
+    // --- CENTRO DE BACKUP MASTER (SISTEMA COMPLETO) ---
+    const btnExpMaster = document.getElementById('btnExportarBackupMaster');
+    if (btnExpMaster) {
+        btnExpMaster.addEventListener('click', async () => {
+            Toast.fire({ icon: 'info', title: 'Gerando backup completo do sistema...' });
+            try {
+                const snapAss = await getDocs(collection(db, "assinaturas"));
+                const backup = {
+                    sistema: "ServicePRO Cloud SaaS",
+                    tipo: "BACKUP_MASTER_COMPLETO",
+                    versao: "2.0",
+                    dataCriacao: new Date().toISOString(),
+                    geradoPor: userEmail,
+                    totalUsuarios: snapAss.docs.length,
+                    assinaturas: snapAss.docs.map(d => ({ uid: d.id, ...d.data() })),
+                    usuarios: {}
+                };
+
+                for (const uDoc of snapAss.docs) {
+                    const uid = uDoc.id;
+                    const [perfSnap, cliSnap, estSnap, orcSnap] = await Promise.all([
+                        getDoc(doc(db, "usuarios", uid, "config", "perfil")).catch(() => ({ exists: () => false })),
+                        getDocs(collection(db, "usuarios", uid, "clientes")).catch(() => ({ docs: [] })),
+                        getDocs(collection(db, "usuarios", uid, "estoque")).catch(() => ({ docs: [] })),
+                        getDocs(collection(db, "usuarios", uid, "orcamentos")).catch(() => ({ docs: [] }))
+                    ]);
+
+                    backup.usuarios[uid] = {
+                        perfil: (perfSnap && perfSnap.exists && perfSnap.exists()) ? perfSnap.data() : null,
+                        clientes: (cliSnap && cliSnap.docs) ? cliSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : [],
+                        estoque: (estSnap && estSnap.docs) ? estSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : [],
+                        orcamentos: (orcSnap && orcSnap.docs) ? orcSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : []
+                    };
+                }
+
+                const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.download = `backup_servicepro_completo_${new Date().toISOString().split('T')[0]}.json`;
+                a.href = url;
+                a.click();
+                URL.revokeObjectURL(url);
+                Swal.fire({
+                    title: 'Backup Master Concluído!',
+                    text: `Backup completo de ${backup.totalUsuarios} usuários e todo o banco gerado com sucesso.`,
+                    icon: 'success',
+                    confirmButtonColor: '#1e293b'
+                });
+            } catch (err) {
+                console.error(err);
+                Toast.fire({ icon: 'error', title: 'Erro ao gerar backup master.' });
+            }
+        });
+    }
+
+    const btnRestMaster = document.getElementById('btnRestaurarBackupMaster');
+    const inputRestMaster = document.getElementById('inputRestaurarMaster');
+    if (btnRestMaster && inputRestMaster) {
+        btnRestMaster.addEventListener('click', () => inputRestMaster.click());
+        inputRestMaster.addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (evt) => {
+                try {
+                    const backup = JSON.parse(evt.target.result);
+                    if (backup.tipo !== "BACKUP_MASTER_COMPLETO" || !backup.assinaturas) {
+                        return Toast.fire({ icon: 'error', title: 'Arquivo de backup master inválido.' });
+                    }
+
+                    const confirmou = await confirmarAcao(
+                        'Restaurar Todo o Banco de Dados?',
+                        `Este arquivo contém ${backup.totalUsuarios || backup.assinaturas.length} usuários. Deseja restaurar todos esses dados no Firebase?`,
+                        'Sim, restaurar'
+                    );
+                    if (!confirmou) return;
+
+                    Toast.fire({ icon: 'info', title: 'Restaurando banco de dados...' });
+
+                    for (const a of backup.assinaturas) {
+                        const uid = a.uid;
+                        const { uid: _, ...dadosAss } = a;
+                        await setDoc(doc(db, "assinaturas", uid), dadosAss);
+                    }
+
+                    if (backup.usuarios) {
+                        for (const [uid, uData] of Object.entries(backup.usuarios)) {
+                            if (uData.perfil) {
+                                await setDoc(doc(db, "usuarios", uid, "config", "perfil"), uData.perfil);
+                            }
+                            if (uData.clientes) {
+                                for (const c of uData.clientes) {
+                                    const idDoc = c.id_backup || c.id_firebase;
+                                    const { id_backup: _1, id_firebase: _2, ...dadosCli } = c;
+                                    if (idDoc) await setDoc(doc(db, "usuarios", uid, "clientes", idDoc), dadosCli);
+                                }
+                            }
+                            if (uData.estoque) {
+                                for (const i of uData.estoque) {
+                                    const idDoc = i.id_backup || i.id_firebase;
+                                    const { id_backup: _1, id_firebase: _2, ...dadosEst } = i;
+                                    if (idDoc) await setDoc(doc(db, "usuarios", uid, "estoque", idDoc), dadosEst);
+                                }
+                            }
+                            if (uData.orcamentos) {
+                                for (const o of uData.orcamentos) {
+                                    const idDoc = o.id_backup || o.id_firebase;
+                                    const { id_backup: _1, id_firebase: _2, ...dadosOrc } = o;
+                                    if (idDoc) await setDoc(doc(db, "usuarios", uid, "orcamentos", idDoc), dadosOrc);
+                                }
+                            }
+                        }
+                    }
+
+                    Swal.fire({
+                        title: 'Banco Restaurado!',
+                        text: 'Todas as assinaturas, clientes e orçamentos foram restaurados com sucesso.',
+                        icon: 'success',
+                        confirmButtonColor: '#1e293b'
+                    });
+                } catch (erro) {
+                    console.error(erro);
+                    Toast.fire({ icon: 'error', title: 'Erro ao processar arquivo de restauração.' });
+                } finally {
+                    e.target.value = '';
+                }
+            };
+            reader.readAsText(file);
+        });
+    }
+
+    // --- BACKUP PESSOAL DO USUÁRIO (ABA EMPRESA) ---
+    const btnExpUser = document.getElementById('btnExportarBackupUser');
+    if (btnExpUser) {
+        btnExpUser.addEventListener('click', () => {
+            const backupUser = {
+                sistema: "ServicePRO Cloud SaaS",
+                tipo: "BACKUP_PESSOAL",
+                versao: "2.0",
+                dataCriacao: new Date().toISOString(),
+                uid: userId,
+                email: userEmail,
+                perfil: perfil,
+                clientes: clientes.map(c => ({ ...c })),
+                estoque: estoque.map(e => ({ ...e })),
+                orcamentos: orcamentos.map(o => ({ ...o }))
+            };
+            const blob = new Blob([JSON.stringify(backupUser, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.download = `meu_backup_servicepro_${new Date().toISOString().split('T')[0]}.json`;
+            a.href = url;
+            a.click();
+            URL.revokeObjectURL(url);
+            Toast.fire({ icon: 'success', title: 'Seus dados foram baixados com sucesso!' });
+        });
+    }
+
+    const btnRestUser = document.getElementById('btnRestaurarBackupUser');
+    const inputRestUser = document.getElementById('inputRestaurarUser');
+    if (btnRestUser && inputRestUser) {
+        btnRestUser.addEventListener('click', () => inputRestUser.click());
+        inputRestUser.addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (evt) => {
+                try {
+                    const backup = JSON.parse(evt.target.result);
+                    if (backup.tipo !== "BACKUP_PESSOAL" && backup.tipo !== "BACKUP_MASTER_COMPLETO") {
+                        return Toast.fire({ icon: 'error', title: 'Arquivo de backup inválido.' });
+                    }
+                    const confirmou = await confirmarAcao(
+                        'Restaurar Seus Dados?',
+                        'Os clientes, produtos e orçamentos deste arquivo serão regravados na sua conta. Deseja prosseguir?',
+                        'Sim, restaurar'
+                    );
+                    if (!confirmou) return;
+
+                    Toast.fire({ icon: 'info', title: 'Restaurando seus dados...' });
+
+                    const uData = backup.tipo === "BACKUP_PESSOAL" ? backup : (backup.usuarios ? backup.usuarios[userId] : null);
+                    if (!uData) return Toast.fire({ icon: 'warning', title: 'Dados não encontrados no arquivo.' });
+
+                    if (uData.perfil) {
+                        await setDoc(doc(db, "usuarios", userId, "config", "perfil"), uData.perfil);
+                    }
+                    if (uData.clientes) {
+                        for (const c of uData.clientes) {
+                            const idDoc = c.id_firebase || c.id_backup;
+                            const { id_firebase: _1, id_backup: _2, ...dadosCli } = c;
+                            if (idDoc) await setDoc(doc(db, "usuarios", userId, "clientes", idDoc), dadosCli);
+                        }
+                    }
+                    if (uData.estoque) {
+                        for (const i of uData.estoque) {
+                            const idDoc = i.id_firebase || i.id_backup;
+                            const { id_firebase: _1, id_backup: _2, ...dadosEst } = i;
+                            if (idDoc) await setDoc(doc(db, "usuarios", userId, "estoque", idDoc), dadosEst);
+                        }
+                    }
+                    if (uData.orcamentos) {
+                        for (const o of uData.orcamentos) {
+                            const idDoc = o.id_firebase || o.id_backup;
+                            const { id_firebase: _1, id_backup: _2, ...dadosOrc } = o;
+                            if (idDoc) await setDoc(doc(db, "usuarios", userId, "orcamentos", idDoc), dadosOrc);
+                        }
+                    }
+
+                    Swal.fire({
+                        title: 'Dados Restaurados!',
+                        text: 'Seus dados foram atualizados com sucesso.',
+                        icon: 'success',
+                        confirmButtonColor: '#1e293b'
+                    });
+                } catch (erro) {
+                    console.error(erro);
+                    Toast.fire({ icon: 'error', title: 'Erro ao restaurar arquivo de backup.' });
+                } finally {
+                    e.target.value = '';
+                }
+            };
+            reader.readAsText(file);
+        });
+    }
+
     // --- NAVEGAÇÃO ---
     window.navegar = (aba) => { 
         document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativa')); 
@@ -845,6 +1204,21 @@
         document.getElementById('dashOSAbertas').innerText = orcamentosAtivos.filter(o => o.status === 'OS ABERTA').length;
         const faturamento = orcamentosAtivos.filter(o => o.status === 'FINALIZADA').reduce((acc, curr) => acc + limpaDinheiro(curr.total), 0);
         document.getElementById('dashFaturamento').innerText = formatDinheiro(faturamento);
+
+        // Cálculo de Valores a Receber (Item B)
+        let totalAReceber = 0;
+        orcamentosAtivos.forEach(o => {
+            if (o.statusPagamento === 'QUITADO') {
+                // Nada a receber
+            } else if (o.statusPagamento === 'SINAL') {
+                totalAReceber += (o.valorRestante !== undefined ? o.valorRestante : Math.max(0, limpaDinheiro(o.total) - (o.valorSinal || 0)));
+            } else {
+                // PENDENTE
+                totalAReceber += limpaDinheiro(o.total);
+            }
+        });
+        const elAReceber = document.getElementById('dashAReceber');
+        if (elAReceber) elAReceber.innerText = formatDinheiro(totalAReceber);
 
         let lucroTotal = 0;
         orcamentosAtivos.filter(o => o.status === 'FINALIZADA').forEach(o => {
@@ -943,7 +1317,7 @@
             }); 
             Toast.fire({ icon: 'success', title: 'Salvo na nuvem com sucesso!' }); 
         } catch (error) { 
-            Toast.fire({ icon: 'error', title: 'Erro ao salvar perfil.' }); 
+            Toast.fire({ icon: 'error', title: 'Erro ao salvar perfil. Verifique a conexão.' }); 
         }
     });
 
@@ -1107,7 +1481,7 @@
     document.getElementById('filtroStatusOrc').addEventListener('change', (e) => { statusFiltroOrc = e.target.value; renderizarOrcamentos(); });
     document.getElementById('ordemOrc').addEventListener('change', (e) => { ordemFiltroOrc = e.target.value; renderizarOrcamentos(); });
 
-    // Enviar Orçamento detalhado no WhatsApp
+    // Enviar Orçamento detalhado no WhatsApp com Status Financeiro
     window.enviarWhatsOrc = (idF) => {
         const o = orcamentos.find(x => x.id_firebase === idF);
         if (!o) return;
@@ -1118,6 +1492,16 @@
         if (o.itens && o.itens.length > 0) {
             itensTxt = o.itens.map(it => `• ${it.desc} (${it.qtd}x) - ${formatDinheiro(it.valor * it.qtd)}`).join('\n');
         }
+        
+        let pgtoTxt = '';
+        if (o.statusPagamento === 'QUITADO') {
+            pgtoTxt = '💳 *Pagamento:* Quitado (100% Pago)\n';
+        } else if (o.statusPagamento === 'SINAL') {
+            pgtoTxt = `💳 *Pagamento:* Sinal de ${formatDinheiro(o.valorSinal || 0)} recebido (Restante a pagar na entrega: ${formatDinheiro(o.valorRestante || 0)})\n`;
+        } else {
+            pgtoTxt = '💳 *Pagamento:* A receber na conclusão\n';
+        }
+
         const empresaNome = perfil.empresa ? `*${perfil.empresa}*` : '*ServicePRO*';
         let msg = `Olá, *${c.nome}*! Tudo bem?\n\n` +
             `Aqui está o resumo do seu documento emitido por ${empresaNome}:\n\n` +
@@ -1125,8 +1509,9 @@
         if (o.dataIni) msg += `📅 *Início Previsto:* ${formatData(o.dataIni)}\n`;
         if (o.dataFim) msg += `🏁 *Conclusão Prevista:* ${formatData(o.dataFim)}\n`;
         if (itensTxt) msg += `\n📋 *Itens e Serviços:*\n${itensTxt}\n`;
-        msg += `\n💰 *VALOR TOTAL: ${o.total}*\n\n` +
-            `Ficamos à disposição para qualquer dúvida ou aprovação!`;
+        msg += `\n💰 *VALOR TOTAL: ${o.total}*\n` +
+            pgtoTxt +
+            `\nFicamos à disposição para qualquer dúvida ou aprovação!`;
         const telLimpo = c.tel.replace(/\D/g, '');
         window.open(`https://wa.me/55${telLimpo}?text=${encodeURIComponent(msg)}`, '_blank');
     };
@@ -1162,8 +1547,15 @@
         document.getElementById('selPuxarEstoque').innerHTML = '<option value="">Puxar do Estoque...</option>' + estoque.filter(e=>!e.apagado).map(i => `<option value="${i.id_firebase}">${i.nome}</option>`).join(''); 
         document.getElementById('nMatInput').value = ''; document.getElementById('pMatInput').value = ''; document.getElementById('qMatInput').value = '';
 
+        // Resetar pagamento
+        const selPag = document.getElementById('selStatusPagamento');
+        if (selPag) selPag.value = 'PENDENTE';
+        const valSinal = document.getElementById('valSinalInput');
+        if (valSinal) valSinal.value = '';
+
         document.getElementById('dataIni').style.display = 'block'; document.getElementById('dataFim').style.display = 'block'; document.getElementById('dataIniVisual').style.display = 'none'; document.getElementById('dataFimVisual').style.display = 'none'; document.getElementById('controles-adicao').style.display = 'block'; document.getElementById('btnSalvarOrc').style.display = 'block'; document.getElementById('btnAprovarOS').style.display = 'block'; 
         window.renderItensOrc(); 
+        atualizarVisualPagamento();
         new bootstrap.Modal(document.getElementById('modalOrcamento')).show(); 
         iniciarMascaras(); 
     };
@@ -1204,14 +1596,23 @@
         document.getElementById('totalMaoObra').innerText = formatDinheiro(mo); 
         document.getElementById('totalMaterial').innerText = formatDinheiro(mat); 
         document.getElementById('totalGeral').innerText = formatDinheiro(mo + mat); 
+        atualizarVisualPagamento();
     };
     window.removerItem = (idx) => { itensTemp.splice(idx, 1); window.renderItensOrc(); };
 
     const salvarDocNuvem = async (status) => { 
         const idF = document.getElementById('editOrcId').value; 
+        const statusPag = document.getElementById('selStatusPagamento').value;
+        const totGeral = limpaDinheiro(document.getElementById('totalGeral').innerText);
+        const valSinal = statusPag === 'SINAL' ? limpaDinheiro(document.getElementById('valSinalInput').value) : (statusPag === 'QUITADO' ? totGeral : 0);
+        const valRestante = statusPag === 'QUITADO' ? 0 : Math.max(0, totGeral - valSinal);
+
         const d = { 
             clienteId: clienteAtualId, 
             status, 
+            statusPagamento: statusPag,
+            valorSinal: valSinal,
+            valorRestante: valRestante,
             dataCriacao: document.getElementById('dataCriacaoDoc').innerText, 
             dataIni: document.getElementById('dataIni').value, 
             dataFim: document.getElementById('dataFim').value, 
@@ -1245,12 +1646,22 @@
         document.getElementById('listaOrcamentos').innerHTML = filtrados.map(o => { 
             const c = clientes.find(x => x.id_firebase === o.clienteId); 
             const cor = o.status === 'FINALIZADA' ? 'success' : o.status === 'OS ABERTA' ? 'warning' : 'primary'; 
+            
+            let badgePag = '';
+            if (o.statusPagamento === 'QUITADO') {
+                badgePag = '<span class="badge bg-success ms-1"><i class="bi bi-check-circle me-1"></i>Quitado</span>';
+            } else if (o.statusPagamento === 'SINAL') {
+                badgePag = `<span class="badge bg-warning text-dark ms-1"><i class="bi bi-hourglass-split me-1"></i>Sinal (Resta: ${formatDinheiro(o.valorRestante || 0)})</span>`;
+            } else {
+                badgePag = '<span class="badge bg-danger ms-1"><i class="bi bi-clock-history me-1"></i>A Receber</span>';
+            }
+
             return `<div class="card-custom p-0 border-start border-4 border-${cor}">
                 <div class="card-header-custom border-0 p-3">
                     <div class="d-flex justify-content-between align-items-center w-100 flex-wrap gap-2">
                         <div>
                             <strong class="fs-6">#${o.numId||'?'} - ${c?c.nome:'N/A'}</strong><br>
-                            <span class="badge bg-${cor} mt-1">${o.status}</span> <span class="fw-bold ms-2">${o.total}</span>
+                            <span class="badge bg-${cor} mt-1">${o.status}</span> ${badgePag} <span class="fw-bold ms-2">${o.total}</span>
                         </div>
                         <div>
                             <button class="btn-action btn-action-success" style="background-color:#dcfce7; color:#16a34a;" onclick="window.enviarWhatsOrc('${o.id_firebase}')" title="Enviar Orçamento pelo WhatsApp"><i class="bi bi-whatsapp"></i></button>
@@ -1299,6 +1710,13 @@
         document.getElementById('numDoc').innerText = o.numId; 
         document.getElementById('empresaDoc').innerHTML = `<strong>${perfil.empresa||''}</strong><br>${perfil.cnpj||''}<br>${perfil.tel||''}`; 
         document.getElementById('clienteDoc').innerHTML = `<strong>CLIENTE:</strong> ${c?c.nome:'N/A'}<br><strong>END:</strong> ${c?c.end:'N/A'}${c && c.bairro ? ', ' + c.bairro : ''} | <strong>CIDADE:</strong> ${c?c.cidade:''}-${c?c.estado:''} | <strong>CEP:</strong> ${c?c.cep:'--'} | <strong>CPF/CNPJ:</strong> ${c?c.cpf:'N/A'}`; 
+        
+        // Carregar status financeiro
+        const selPag = document.getElementById('selStatusPagamento');
+        if (selPag) selPag.value = o.statusPagamento || 'PENDENTE';
+        const valSinal = document.getElementById('valSinalInput');
+        if (valSinal) valSinal.value = o.valorSinal ? formatDinheiro(o.valorSinal) : '';
+
         document.getElementById('dataIni').style.display = 'block'; 
         document.getElementById('dataFim').style.display = 'block'; 
         document.getElementById('dataIniVisual').style.display = 'none'; 
@@ -1311,6 +1729,7 @@
         document.getElementById('pMatInput').value=''; 
         document.getElementById('qMatInput').value=''; 
         window.renderItensOrc(); 
+        atualizarVisualPagamento();
         new bootstrap.Modal(document.getElementById('modalOrcamento')).show(); 
     };
 
@@ -1327,6 +1746,7 @@
         document.getElementById('btnSalvarOrc').style.display = 'none'; 
         document.getElementById('btnAprovarOS').style.display = 'none'; 
         window.renderItensOrc(); 
+        atualizarVisualPagamento();
     };
     
     // --- AGENDA DE SERVIÇOS ---
@@ -1387,7 +1807,7 @@
             const imgData = canvas.toDataURL('image/png'); 
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width; 
             
             pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
             pdf.save(`Orcamento_${document.getElementById('numDoc').innerText}.pdf`);
