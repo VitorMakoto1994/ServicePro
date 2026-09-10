@@ -2,6 +2,13 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [2.7.0] - 2026-09-09
+### Segurança (Fase 1 - Segurança & Autorização)
+- **Isolamento Absoluto Multi-Tenant:** Regras do Cloud Firestore (`firestore.rules`) garantem que o Usuário A jamais possa ler ou gravar dados do Usuário B (`isVerifiedOwner(userId)`).
+- **Proteção da Conta Master:** Validação criptográfica do token JWT de `maa.koto@hotmail.com` com exigência de e-mail verificado, bloqueando tentativas de privilege escalation via DevTools ou APIs externas.
+- **Prevenção contra Fraude de Assinatura:** Regras bloqueiam mutações (`update`/`delete`) na coleção `/assinaturas` para qualquer usuário não-master e impõem um teto de 8 dias na criação de contas trial via `validadeTimestamp <= request.time + duration.value(8, 'd')`.
+- **Governança & Documentação:** Criação do documento oficial `SECURITY.md` e homologação dos itens de segurança no `AUDIT_REPORT.md`.
+
 ## [2.6.1] - 2026-09-09
 ### Corrigido
 - **Menu Lateral no Celular (Mobile Drawer):** Restaurada e aperfeiçoada a barra superior mobile (`.mobile-topbar`) com botão hambúrguer, avatar do usuário, backdrop blur com transição suave e botão de fechar dedicado na gaveta lateral.
