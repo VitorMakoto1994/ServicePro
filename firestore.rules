@@ -62,6 +62,17 @@ service cloud.firestore {
       allow read, write: if (isVerifiedOwner(userId) && !isUserBlocked(userId)) || isMaster();
     }
     
+    // Coleção /auditoria/{logId}
+    // Sistema corporativo de auditoria e rastreabilidade (append-only e imutável)
+    // - Criação: Usuário autenticado registrando sua própria atividade
+    // - Leitura: Master (auditoria geral) ou o próprio usuário (suas ações)
+    // - Alteração e Exclusão: Bloqueio absoluto (tamper-proof / imutável)
+    match /auditoria/{logId} {
+      allow create: if isAuth() && request.resource.data.usuarioId == request.auth.uid;
+      allow read: if isMaster() || (isAuth() && resource.data.usuarioId == request.auth.uid);
+      allow update, delete: if false;
+    }
+
     // Bloqueio explícito por padrão de qualquer outra coleção não declarada
     match /{document=**} {
       allow read, write: if false;
