@@ -200,16 +200,12 @@ Avaliação detalhada:
 # 12. ESTOQUE
 
 ### Resultado
-[ APROVADO COM RESSALVA DE IDEMPOTÊNCIA ]
+[ APROVADO — RESOLVIDO COM IDEMPOTÊNCIA ATÔMICA ]
 
 * **Custo Médio:** Calculado corretamente ponderando preço total dividido pela quantidade.
-* **Estoque Negativo:** Tratamento visual com ícone de exclamação vermelho.
+* **Estoque Negativo:** Tratamento visual com ícone de exclamação vermelho e trava de piso zero (`Math.max(0, ...)`).
 * **Puxador em Orçamentos:** Aplica a margem de lucro padrão configurada na empresa.
-
-### Teste Crítico de Baixa e Idempotência:
-* **Fluxo Atual:** Ao clicar em "Concluir e dar baixa", o sistema executa um loop de `updateDoc` reduzindo o estoque dos materiais e marca `o.status = 'FINALIZADA'`.
-* **Risco Identificado:** Se a OS já foi finalizada uma vez e por qualquer falha for reaberta ou a função for chamada novamente, ocorrerá uma **segunda baixa indevida**.
-* **Correção Necessária:** Adicionar a flag `estoqueBaixado: true` no documento da OS e checar antes de deduzir.
+* **Baixa Atômica Idempotente (Resolvido na Fase 3):** Finalização de OS utiliza `writeBatch(db)` atômico agrupando a dedução de produtos e a marcação de `estoqueBaixado: true`. O sistema valida previamente se a baixa já ocorreu, bloqueando execuções duplicadas.
 
 ---
 
@@ -239,12 +235,14 @@ Avaliação detalhada:
 # 15. FINANCEIRO
 
 ### Resultado
-[ APROVADO COM RECOMENDAÇÃO ]
+[ APROVADO — RESOLVIDO NA FASE 3: MOTOR FINANCEIRO ]
 
-* **Controle de Sinal/Entrada:** Permite registrar `PENDENTE`, `SINAL` e `QUITADO`.
-* **Cálculo Automático:** Saldo restante apurado em tempo real (`Math.max(0, total - sinal)`).
-* **Métrica "A Receber":** Contabiliza com precisão o montante pendente em todos os orçamentos não quitados.
-* **Recomendação:** No objeto salvo no Firestore, migrar o campo `total: "R$ 150,00"` para `valorTotalCentavos: 15000` (ou `valorTotalNumerico: 150.00`) para cumprir 100% da **REGRA 7** das diretrizes de engenharia.
+* **Aritmética Exata em Centavos Inteiros:** Cumprimento rigoroso da **REGRA 7**. Todas as operações matemáticas são processadas exclusivamente como inteiros de centavos (`subtotalCentavos`, `descontoCentavos`, `totalCentavos`, `valorPagoCentavos`, `saldoCentavos`, `custoCentavos`, `lucroCentavos`), eliminando imprecisões de ponto flutuante IEEE 754.
+* **Desacoplamento de Status:** Separação explícita entre o **Status Operacional da OS** (`ABERTA`, `EM_EXECUCAO`, `CONCLUIDA`, `CANCELADA`) e o **Status Financeiro** (`NAO_PAGO`, `PARCIAL`, `PAGO`, `ATRASADO`), permitindo cenários do mundo real (ex: serviço concluído com pagamento atrasado, ou serviço aberto com entrada recebida).
+* **Múltiplos Pagamentos e Métodos:** Estrutura preparada para registrar pagamentos com métodos oficiais (`DINHEIRO`, `PIX`, `CARTAO`, `TRANSFERENCIA`, `OUTRO`).
+* **Controle de Desconto e Margens:** Desconto deduzido do subtotal com piso zero (`Math.max(0, subtotal - desconto)`) e apuração do lucro bruto operacional considerando os custos dos insumos de estoque.
+* **Retrocompatibilidade Absoluta:** O leitor possui fallbacks inteligentes que normalizam registros antigos sem quebrar relatórios, Dashboard ou documentos históricos.
+* **Dashboard Atualizado:** Métricas de faturamento, a receber e lucro operacional apuradas com precisão centesimal.
 
 ---
 
