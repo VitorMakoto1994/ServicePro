@@ -1,5 +1,5 @@
 // sw.js - ServicePRO Service Worker Otimizado
-const CACHE_NAME = 'servicepro-cache-v4';
+const CACHE_NAME = 'servicepro-cache-v5';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
