@@ -499,7 +499,14 @@ A base de código é sólida, rápida e livre de inchaço de dependências desne
 * **Documento Gerado Em:** 09/09/2026
 * **Auditor Responsável:** Antigravity AI Agent
 * **Arquivo Físico Salvo:** `c:\Users\Makoto\Desktop\meu-app\AUDIT_REPORT.md`
-* **Status:** AGUARDANDO APROVAÇÃO DO PLANO DE CORREÇÃO (FIREBASE RULES)
+# 36. STATUS DAS FASES IMPLEMENTADAS
+
+* **Fase 1 (Segurança e Autorização):** CONCLUÍDA (v2.7.0) - Firestore Rules ativas e isolamento multi-tenant por UID.
+* **Fase 2 (Assinaturas e Planos):** CONCLUÍDA (v2.8.0) - Catálogo de planos (TRIAL, STARTER, PRO, BUSINESS), ciclo de vida e bloqueio no servidor.
+* **Fase 3 (Motor Financeiro):** CONCLUÍDA (v2.9.0) - Aritmética centesimal exata em centavos inteiros e desacoplamento de status.
+* **Fase 4 (Estoque Profissional):** CONCLUÍDA (v2.10.0) - Subcoleção de movimentações (ENTRADA, SAIDA, AJUSTE, ESTORNO) e baixa idempotente.
+* **Fase 5 (Orçamento e Ordem de Serviço):** CONCLUÍDA (v2.11.0) - Ciclo de vida formal de propostas, rastreabilidade por orcamentoOrigemId e bloqueio de estados inválidos.
+* **Fase 6 (Auditoria e Rastreabilidade):** CONCLUÍDA (v2.12.0) - Coleção imutável /auditoria/{logId}, 13 operações críticas instrumentadas, sanitização estrita e painel Master.
 
 ---
 FIM DO AUDIT REPORT.
