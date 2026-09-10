@@ -2,6 +2,21 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [2.14.1] - 2026-09-10
+### Corrigido (Navegação & UX Mobile)
+- **Desbloqueio de Navegação entre Abas:**
+  - Corrigido ReferenceError que impedia a declaração de `window.navegar` e o registro de ouvintes de clique nos botões da sidebar.
+  - Movida a inicialização da navegação (`window.navegar` e `toggleMobileMenu`) para o início imediato do módulo com bindings resilientes.
+  - Adicionados atributos inline `onclick="window.navegar('...')"` diretamente em todos os botões do menu lateral para redundância 100% à prova de falhas.
+  - Injetado o template nativo `HTML_MODAL_RESTORE_PREVIEW` com proteção `try/catch` defensiva na rotina `garantirModalRestoreNoDOM()`.
+- **Redesenho Ergonômico de UX Mobile (Novo Atendimento):**
+  - Removido o botão espremido e apertado que poluía a barra superior móvel (`.mobile-topbar`), restaurando um cabeçalho limpo com alinhamento perfeito (hambúrguer à esquerda, marca ao centro, avatar de perfil à direita).
+  - Implementado Floating Action Button (FAB) ergonômico fixo no canto inferior direito (`.btn-fab-atendimento` / `#btnNovoAtendimentoMobile`), perfeitamente acessível com uma mão na zona de alcance do polegar.
+  - Adicionado botão de ação rápida de largura total destacado no topo do menu Drawer deslizante.
+  - Adicionada regra CSS `@media (min-width: 992px) { .sidebar-backdrop { display: none !important; } }` para impedir qualquer sobreposição fantasma no desktop.
+- **Service Worker Cache:**
+  - Cache atualizado para `servicepro-cache-v14` em `sw.js` para garantir atualização imediata no navegador mobile e em PWAs instalados.
+
 ## [2.14.0] - 2026-09-09
 ### Adicionado (Fase 9 - Backup e Restauração Profissional)
 - **Schema v3.0 com Checksum Criptográfico:**
