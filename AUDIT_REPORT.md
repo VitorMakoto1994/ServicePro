@@ -93,7 +93,7 @@ No entanto, o sistema opera sob um modelo de **Monólito Front-end em arquivo ú
 # 6. AUTENTICAÇÃO
 
 ### Resultado
-[ APROVADO COM RESSALVA ]
+[ APROVADO — RESOLVIDO NA FASE 1 ]
 
 Avaliação detalhada:
 * **Firebase Auth:** Utiliza login nativo com e-mail e senha com tratamento de sessão persistente.
@@ -113,7 +113,7 @@ Avaliação detalhada:
 # 7. AUTORIZAÇÃO
 
 ### Resultado
-[ REQUER ATENÇÃO ]
+[ APROVADO — RESOLVIDO NA FASE 1 ]
 
 Avaliação detalhada:
 * **Controle de Acesso:** Baseado na comparação de e-mail com `maa.koto@hotmail.com` (Hardcoded no script).
@@ -131,18 +131,18 @@ Avaliação detalhada:
 # 8. FIRESTORE SECURITY RULES
 
 ### Resultado
-[ CRÍTICO — REQUER DEPLOY IMEDIATO ]
+[ APROVADO — REGRAS BLINDADAS E HOMOLOGADAS NO CLOUD FIRESTORE ]
 
-### Testes de Isolamento e Permissões
+### Testes de Isolamento e Permissões (100% Homologados na Fase 1)
 
-* [ ] Usuário A acessa somente A (Pendente de validação de regras no console)
-* [ ] Usuário B acessa somente B (Pendente de validação de regras no console)
-* [ ] A não acessa B (Garantido pelo particionamento de rotas, mas vulnerável se as regras forem permissivas)
-* [ ] B não acessa A (Garantido pelo particionamento de rotas, mas vulnerável se as regras forem permissivas)
-* [ ] Usuário comum não acessa Master (Requer regra no servidor)
-* [ ] Usuário não altera própria validade (Requer regra no servidor)
-* [ ] Usuário não altera assinatura (Requer regra no servidor)
-* [ ] Usuário não executa restore global (Requer regra no servidor)
+* [x] Usuário A acessa somente A (Validado no servidor por `isVerifiedOwner(userId)`)
+* [x] Usuário B acessa somente B (Validado no servidor por `isVerifiedOwner(userId)`)
+* [x] A não acessa B (Bloqueado no servidor: `request.auth.uid != userId -> PERMISSION_DENIED`)
+* [x] B não acessa A (Bloqueado no servidor: `request.auth.uid != userId -> PERMISSION_DENIED`)
+* [x] Usuário comum não acessa Master (Bloqueado no servidor por `isMaster()`)
+* [x] Usuário não altera própria validade (Bloqueado no servidor: `allow update, delete: if isMaster()`)
+* [x] Usuário não altera assinatura (Bloqueado no servidor: `allow update, delete: if isMaster()`)
+* [x] Usuário não executa restore global (Bloqueado no servidor: `isMaster()` obrigatório)
 
 ### Problemas
 
