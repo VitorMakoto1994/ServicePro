@@ -2,6 +2,28 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [2.13.0] - 2026-09-09
+### Adicionado (Fase 7 - Dashboard Executivo)
+- **Painel de Gestão com 9 KPIs em Tempo Real:**
+  - Clientes Ativos (`#dashClientes`) e OS Abertas na fila (`#dashOSAbertas`).
+  - OS Concluídas (`#dashOSConcluidas`) e Ticket Médio por OS (`#dashTicketMedio`).
+  - Faturamento Realizado (`#dashFaturamento`) e A Receber Pendente (`#dashAReceber`).
+  - Custos Operacionais de Materiais (`#dashCustos`), Lucro Operacional Real (`#dashLucro`) e Margem de Lucro percentual (`#dashMargem`).
+- **Filtros Dinâmicos de Período:** Seletor touch em pills horizontais com scroll suave (`Hoje`, `7 dias`, `30 dias` [default], `Este mês`, `Mês anterior` e `Personalizado` com intervalo de datas).
+- **4 Gráficos Executivos em Chart.js:**
+  - Evolução Temporal de Faturamento & Lucro Líquido (`#chartFaturamento`).
+  - Distribuição dos documentos por Status (`#chartStatus`).
+  - Fluxo de Caixa / Recebimentos (`#chartRecebimentos`).
+  - Composição Financeira comparativa Faturamento x Custos x Lucro (`#chartLucro`).
+- **Zero Leituras Adicionais e Alta Performance:** Processamento 100% in-memory a partir dos arrays locais já sincronizados, com custo zero no Firebase e latência instantânea.
+
+### Adicionado (Fase 8 - UX Mobile + Desktop)
+- **Fluxo Novo Atendimento Express (`#modalNovoAtendimento`):** Abertura de Ordem de Serviço em menos de 30 segundos no celular, com opção de cliente cadastrado ou cadastro rápido de novo cliente na hora (Nome + WhatsApp), descrição do serviço, valor com máscara monetária e data.
+- **Gatilhos de Ação Rápida:** Botão de destaque no Dashboard (`#btnNovoAtendimentoDash`) e na barra superior móvel (`#btnNovoAtendimentoMobile`).
+- **Notificação com 1 Toque no WhatsApp:** Diálogo imediato pós-criação da OS para envio de mensagem formatada via WhatsApp para o cliente.
+- **Empty States Universais:** Componente padronizado com ícones, mensagens de orientação e botões de Call-To-Action para listas vazias de Clientes, Estoque e Orçamentos.
+- **Ergonomia Móvel e Alvos de Toque:** Garantia de área mínima de 44px x 44px em todos os botões (`.btn-action`, `.btn-premium`, `.btn-dash-pill`, etc.) e adaptação responsiva auditada para 320px, 375px, 390px, 430px, tablet e desktop.
+
 ## [2.12.0] - 2026-09-09
 ### Adicionado (Fase 6 - Auditoria e Rastreabilidade)
 - **Sistema Corporativo de Auditoria:** Implementação da coleção global `/auditoria/{logId}` registrando de forma append-only e inviolável as operações críticas do sistema.
