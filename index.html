@@ -630,6 +630,62 @@
                         <tbody id="listaUsuariosAdmin"></tbody>
                     </table>
                 </div>
+
+                <!-- CENTRO DE AUDITORIA E RASTREABILIDADE (MASTER) -->
+                <div class="card-custom p-4 mb-4 mt-4 border-start border-3 border-primary bg-white shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+                        <div>
+                            <h5 class="fw-bold mb-1 text-primary"><i class="bi bi-shield-lock me-2"></i>Auditoria & Rastreabilidade do Sistema</h5>
+                            <p class="text-muted small mb-0">Registro inviolável (append-only) de todas as 13 operações críticas realizadas no sistema.</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary btn-sm btn-premium" id="btnRecarregarAuditoria" onclick="window.carregarAuditoriaAdmin()">
+                                <i class="bi bi-arrow-clockwise me-1"></i> Atualizar Logs
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="filtro-container row g-2 mb-3">
+                        <div class="col-md-6">
+                            <input type="text" id="buscaAuditoria" class="form-control form-control-sm" placeholder="Buscar por e-mail, referência ou detalhe...">
+                        </div>
+                        <div class="col-md-6">
+                            <select id="filtroAcaoAuditoria" class="form-select form-select-sm">
+                                <option value="todas">Todas as Ações Críticas (13)</option>
+                                <option value="LOGIN">LOGIN</option>
+                                <option value="CRIACAO_CLIENTE">CRIACAO_CLIENTE</option>
+                                <option value="ALTERACAO_CLIENTE">ALTERACAO_CLIENTE</option>
+                                <option value="EXCLUSAO_CLIENTE">EXCLUSAO_CLIENTE</option>
+                                <option value="CRIACAO_ORCAMENTO">CRIACAO_ORCAMENTO</option>
+                                <option value="ALTERACAO_ORCAMENTO">ALTERACAO_ORCAMENTO</option>
+                                <option value="CRIACAO_OS">CRIACAO_OS</option>
+                                <option value="FINALIZACAO_OS">FINALIZACAO_OS</option>
+                                <option value="BAIXA_ESTOQUE">BAIXA_ESTOQUE</option>
+                                <option value="PAGAMENTO">PAGAMENTO</option>
+                                <option value="RESTAURACAO_BACKUP">RESTAURACAO_BACKUP</option>
+                                <option value="ALTERACAO_ASSINATURA">ALTERACAO_ASSINATURA</option>
+                                <option value="ALTERACAO_PLANO">ALTERACAO_PLANO</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+                        <table class="table table-sm table-hover align-middle mb-0">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th width="150">Data / Hora</th>
+                                    <th width="170">Ação</th>
+                                    <th>Usuário</th>
+                                    <th>Referência</th>
+                                    <th width="80" class="text-center">Detalhes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaAuditoriaAdmin">
+                                <tr><td colspan="5" class="text-center text-muted py-4"><i class="bi bi-arrow-repeat spin me-2"></i>Carregando logs de auditoria...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <div id="aba-clientes" class="secao">
@@ -891,7 +947,44 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalCliente" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><form id="formCliente"><div class="modal-header"><h5>Cadastro de Cliente</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="editClienteId"><div class="mb-3"><label class="form-label-premium">NOME COMPLETO</label><input type="text" id="cNome" class="form-control" required></div><div class="row g-3 mb-3">
+    <!-- MODAL DETALHES DA AUDITORIA (FASE 6) -->
+    <div class="modal fade" id="modalDetalhesAuditoria" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dark"><i class="bi bi-shield-check text-primary me-2"></i>Detalhes do Log de Auditoria</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <small class="text-muted d-block">Ação Crítica</small>
+                        <span id="auditoriaModalAcao" class="badge bg-primary fs-6"></span>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted d-block">Data & Hora</small>
+                        <strong id="auditoriaModalData" class="small text-dark"></strong>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted d-block">Operador / E-mail</small>
+                        <span id="auditoriaModalUsuario" class="small text-dark font-monospace"></span>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted d-block">Referência</small>
+                        <span id="auditoriaModalReferencia" class="fw-bold small text-dark"></span>
+                    </div>
+                    <div class="mb-0">
+                        <small class="text-muted d-block mb-1">Metadados Sanitizados (JSON)</small>
+                        <pre id="auditoriaModalDetalhes" class="p-3 bg-light rounded-2 border small font-monospace text-dark mb-0" style="max-height: 250px; overflow-y:auto;"></pre>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalCliente" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><form id="formCliente"><div class="modal-header"><h5>Cadastro de Cliente</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="editClienteId"><div class="mb-3"><label class="form-label-premium">NOME COMPLETO</label><input type="text" id="cNome" class="form-control" required></div><div class="row g-3 mb-3">
     <div class="col-6"><label class="form-label-premium">CPF/CNPJ</label><input type="text" id="cCPF" class="form-control mask-cnpj"></div>
     <div class="col-6"><label class="form-label-premium">WHATSAPP</label><input type="text" id="cTel" class="form-control mask-tel" required></div>
 </div>
@@ -1007,7 +1100,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification, sendPasswordResetEmail, deleteUser } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, onSnapshot, addDoc, updateDoc, enableIndexedDbPersistence, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, onSnapshot, addDoc, updateDoc, enableIndexedDbPersistence, deleteDoc, writeBatch, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBrVPL9XBhq1MG550XJ-yGLItS27oiRCUU",
@@ -1037,6 +1130,154 @@
     let chartFat = null, chartSt = null; 
 
     let txtBuscaCliente = "", ordemFiltroCliente = "recentes";
+
+    // --- MOTOR DE AUDITORIA E RASTREABILIDADE (FASE 6) ---
+    const sanitizarDadosAuditoria = (dados) => {
+        if (!dados || typeof dados !== 'object') return {};
+        const chavesSensiveis = ['password', 'senha', 'pass', 'token', 'auth', 'secret', 'cartao', 'cardNumber', 'cvv', 'cvc'];
+        const limpo = {};
+        for (const [k, v] of Object.entries(dados)) {
+            if (chavesSensiveis.some(s => k.toLowerCase().includes(s))) {
+                continue; // Omitir rigorosamente
+            }
+            if (v !== undefined && v !== null) {
+                if (typeof v === 'object' && !(v instanceof Date)) {
+                    limpo[k] = sanitizarDadosAuditoria(v);
+                } else {
+                    limpo[k] = v;
+                }
+            }
+        }
+        return limpo;
+    };
+
+    window.registrarAuditoria = async (acao, referencia = '', detalhes = {}) => {
+        if (!auth.currentUser) return;
+        const uid = auth.currentUser.uid;
+        const email = auth.currentUser.email || userEmail || '';
+        const agora = new Date().toISOString();
+
+        try {
+            const auditData = {
+                usuarioId: uid,
+                usuarioEmail: email,
+                acao: acao,
+                referencia: String(referencia || ''),
+                data: agora,
+                detalhes: sanitizarDadosAuditoria(detalhes),
+                userAgent: typeof navigator !== 'undefined' && navigator.userAgent ? navigator.userAgent.substring(0, 150) : 'N/A'
+            };
+
+            await addDoc(collection(db, "auditoria"), auditData);
+        } catch (err) {
+            // Falhas de telemetria/auditoria nunca quebram a operação principal do prestador
+            console.warn('[Auditoria] Falha ao registrar log:', err);
+        }
+    };
+
+    let logsAuditoriaAdmin = [];
+    let unsubscribeAuditoria = null;
+
+    window.carregarAuditoriaAdmin = () => {
+        const isAdmin = (userEmail && userEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+        if (!isAdmin) return;
+
+        const tbody = document.getElementById('listaAuditoriaAdmin');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4"><i class="bi bi-arrow-repeat spin me-2"></i>Carregando logs de auditoria...</td></tr>';
+
+        if (unsubscribeAuditoria) {
+            unsubscribeAuditoria();
+            unsubscribeAuditoria = null;
+        }
+
+        try {
+            const q = query(collection(db, "auditoria"), orderBy("data", "desc"), limit(100));
+            unsubscribeAuditoria = onSnapshot(q, (snapshot) => {
+                logsAuditoriaAdmin = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderizarAuditoriaAdmin();
+            }, (err) => {
+                console.error('[Auditoria] Erro no listener:', err);
+                if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4">Erro ao carregar auditoria: ' + (err.message || 'Permissão negada') + '</td></tr>';
+            });
+        } catch (e) {
+            console.error('[Auditoria] Erro ao consultar:', e);
+        }
+    };
+
+    function renderizarAuditoriaAdmin() {
+        const tbody = document.getElementById('listaAuditoriaAdmin');
+        if (!tbody) return;
+
+        const txtBusca = (document.getElementById('buscaAuditoria')?.value || '').toLowerCase().trim();
+        const acaoFiltro = document.getElementById('filtroAcaoAuditoria')?.value || 'todas';
+
+        let filtrados = [...logsAuditoriaAdmin];
+
+        if (acaoFiltro !== 'todas') {
+            filtrados = filtrados.filter(l => l.acao === acaoFiltro);
+        }
+
+        if (txtBusca) {
+            filtrados = filtrados.filter(l => {
+                const uEmail = (l.usuarioEmail || '').toLowerCase();
+                const ref = (l.referencia || '').toLowerCase();
+                const ac = (l.acao || '').toLowerCase();
+                const det = JSON.stringify(l.detalhes || {}).toLowerCase();
+                return uEmail.includes(txtBusca) || ref.includes(txtBusca) || ac.includes(txtBusca) || det.includes(txtBusca);
+            });
+        }
+
+        if (filtrados.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4"><i class="bi bi-info-circle me-1"></i>Nenhum registro de auditoria encontrado.</td></tr>';
+            return;
+        }
+
+        const badgesAcao = {
+            'LOGIN': 'badge bg-secondary',
+            'CRIACAO_CLIENTE': 'badge bg-primary',
+            'ALTERACAO_CLIENTE': 'badge bg-info text-dark',
+            'EXCLUSAO_CLIENTE': 'badge bg-danger',
+            'CRIACAO_ORCAMENTO': 'badge bg-primary',
+            'ALTERACAO_ORCAMENTO': 'badge bg-info text-dark',
+            'CRIACAO_OS': 'badge bg-warning text-dark',
+            'FINALIZACAO_OS': 'badge bg-success',
+            'BAIXA_ESTOQUE': 'badge bg-dark',
+            'PAGAMENTO': 'badge bg-success',
+            'RESTAURACAO_BACKUP': 'badge bg-danger',
+            'ALTERACAO_ASSINATURA': 'badge bg-warning text-dark',
+            'ALTERACAO_PLANO': 'badge bg-primary'
+        };
+
+        tbody.innerHTML = filtrados.map(l => {
+            const badgeClass = badgesAcao[l.acao] || 'badge bg-secondary';
+            const dataFmt = l.data ? new Date(l.data).toLocaleString('pt-BR') : '--';
+
+            return `<tr>
+                <td class="small text-muted font-monospace">${dataFmt}</td>
+                <td><span class="${badgeClass} font-monospace" style="font-size:0.75rem;">${l.acao}</span></td>
+                <td class="small fw-semibold text-truncate" style="max-width: 180px;" title="${l.usuarioEmail || l.usuarioId}">${l.usuarioEmail || l.usuarioId}</td>
+                <td class="small text-dark text-truncate" style="max-width: 260px;" title="${l.referencia || ''}">${l.referencia || '--'}</td>
+                <td class="text-center">
+                    <button class="btn btn-xs btn-outline-secondary py-0 px-2" style="font-size: 0.75rem;" onclick="window.abrirDetalhesAuditoria('${l.id}')" title="Ver detalhes técnicos">
+                        <i class="bi bi-code-square"></i>
+                    </button>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+
+    window.abrirDetalhesAuditoria = (id) => {
+        const log = logsAuditoriaAdmin.find(l => l.id === id);
+        if (!log) return;
+
+        document.getElementById('auditoriaModalAcao').innerText = log.acao;
+        document.getElementById('auditoriaModalData').innerText = log.data ? new Date(log.data).toLocaleString('pt-BR') : '--';
+        document.getElementById('auditoriaModalUsuario').innerText = `${log.usuarioEmail || 'N/A'} (UID: ${log.usuarioId})`;
+        document.getElementById('auditoriaModalReferencia').innerText = log.referencia || '--';
+        document.getElementById('auditoriaModalDetalhes').innerText = JSON.stringify(log.detalhes || {}, null, 2);
+
+        new bootstrap.Modal(document.getElementById('modalDetalhesAuditoria')).show();
+    };
 
     // --- CONTROLE DO MENU LATERAL NO MOBILE (DRAWER) ---
     const toggleMobileMenu = (abrir) => {
@@ -1433,6 +1674,12 @@
 
         if (user && user.emailVerified) { 
             userId = user.uid; userEmail = user.email;
+            
+            // Auditoria de LOGIN (idempotente por sessão)
+            if (sessionStorage.getItem('servicepro_audit_login_' + userId) !== '1') {
+                sessionStorage.setItem('servicepro_audit_login_' + userId, '1');
+                window.registrarAuditoria('LOGIN', `Login realizado por ${userEmail}`, { email: userEmail });
+            }
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('userEmailNav').innerText = userEmail;
             document.getElementById('avatarPerfil').innerText = userEmail.charAt(0).toUpperCase();
@@ -1515,8 +1762,13 @@
 
     // --- PAINEL ADMIN MASTER (GESTÃO DE PLANOS E ASSINATURAS) ---
     let planoFiltroAdmin = "todos";
-    function carregarAdminData() { onSnapshot(collection(db, "assinaturas"), snap => { usuariosAdmin = snap.docs.map(d => ({ uid: d.id, ...d.data() })); renderizarPainelAdmin(); }); }
+    function carregarAdminData() { 
+        onSnapshot(collection(db, "assinaturas"), snap => { usuariosAdmin = snap.docs.map(d => ({ uid: d.id, ...d.data() })); renderizarPainelAdmin(); }); 
+        window.carregarAuditoriaAdmin();
+    }
     document.getElementById('buscaAdmin').addEventListener('input', (e) => { txtBuscaAdmin = e.target.value.toLowerCase(); renderizarPainelAdmin(); });
+    document.getElementById('buscaAuditoria')?.addEventListener('input', renderizarAuditoriaAdmin);
+    document.getElementById('filtroAcaoAuditoria')?.addEventListener('change', renderizarAuditoriaAdmin);
     document.getElementById('filtroPlanoAdmin')?.addEventListener('change', (e) => { planoFiltroAdmin = e.target.value; renderizarPainelAdmin(); });
     document.getElementById('filtroStatusAdmin').addEventListener('change', (e) => { statusFiltroAdmin = e.target.value; renderizarPainelAdmin(); });
     document.getElementById('ordemAdmin').addEventListener('change', (e) => { ordemFiltroAdmin = e.target.value; renderizarPainelAdmin(); });
@@ -1604,6 +1856,11 @@
         
         const novaDataObj = new Date(novaDataStr + 'T23:59:59'); 
         try {
+            const uAntigo = usuariosAdmin.find(u => u.uid === uid);
+            const mudouPlano = !uAntigo || uAntigo.plano !== novoPlano;
+            const mudouAssinatura = !uAntigo || uAntigo.status !== novoStatus || uAntigo.validade !== novaDataObj.toISOString();
+            const userEmailAlvo = uAntigo ? uAntigo.email : uid;
+
             await updateDoc(doc(db, "assinaturas", uid), { 
                 plano: novoPlano,
                 status: novoStatus,
@@ -1612,6 +1869,14 @@
                 validadeTimestamp: novaDataObj,
                 updatedAt: new Date().toISOString()
             }); 
+
+            if (mudouPlano) {
+                window.registrarAuditoria('ALTERACAO_PLANO', `Plano alterado para ${novoPlano} (${userEmailAlvo})`, { alvoUid: uid, alvoEmail: userEmailAlvo, planoAnterior: uAntigo?.plano || 'N/A', novoPlano });
+            }
+            if (mudouAssinatura || !mudouPlano) {
+                window.registrarAuditoria('ALTERACAO_ASSINATURA', `Assinatura de ${userEmailAlvo} alterada para ${novoStatus} até ${novaDataStr}`, { alvoUid: uid, alvoEmail: userEmailAlvo, statusAnterior: uAntigo?.status || 'N/A', novoStatus, validade: novaDataStr });
+            }
+
             Toast.fire({ icon: 'success', title: 'Assinatura e plano atualizados!' }); 
         } catch (e) {
             Toast.fire({ icon: 'error', title: 'Erro ao atualizar assinatura.' });
@@ -1758,6 +2023,7 @@
                         }
                     }
 
+                    window.registrarAuditoria('RESTAURACAO_BACKUP', 'Restauração Geral do Banco de Dados (Master)', { tipo: 'MASTER', totalUsuarios: backup.totalUsuarios || backup.assinaturas?.length || 0 });
                     Swal.fire({
                         title: 'Banco Restaurado!',
                         text: 'Todas as assinaturas, clientes e orçamentos foram restaurados com sucesso.',
@@ -1853,6 +2119,7 @@
                         }
                     }
 
+                    window.registrarAuditoria('RESTAURACAO_BACKUP', 'Restauração de Backup Pessoal', { tipo: 'PESSOAL', totalClientes: uData.clientes?.length || 0, totalItensEstoque: uData.estoque?.length || 0 });
                     Swal.fire({
                         title: 'Dados Restaurados!',
                         text: 'Seus dados foram atualizados com sucesso.',
@@ -1992,6 +2259,10 @@
         if(confirmou) { 
             try {
                 await updateDoc(doc(db, "usuarios", userId, col, idF), { apagado: true }); 
+                if (col === 'clientes') {
+                    const cExcl = clientes.find(x => x.id_firebase === idF);
+                    window.registrarAuditoria('EXCLUSAO_CLIENTE', `Exclusão do cliente: ${cExcl?.nome || idF}`, { clienteId: idF, nome: cExcl?.nome || '', numId: cExcl?.numId || null });
+                }
                 Toast.fire({ icon: 'success', title: 'Registro excluído com sucesso!' });
             } catch (e) {
                 Toast.fire({ icon: 'error', title: 'Erro ao excluir registro.' });
@@ -2067,10 +2338,12 @@
         try {
             if(idF) {
                 await updateDoc(doc(db, "usuarios", userId, "clientes", idF), d); 
+                window.registrarAuditoria('ALTERACAO_CLIENTE', `Cliente: ${d.nome}`, { clienteId: idF, nome: d.nome, tel: d.tel, cidade: d.cidade });
                 Toast.fire({ icon: 'success', title: 'Cliente atualizado com sucesso!' });
             } else { 
                 d.numId = gerarNumId(clientes); 
-                await addDoc(collection(db, "usuarios", userId, "clientes"), d); 
+                const novoCliRef = await addDoc(collection(db, "usuarios", userId, "clientes"), d); 
+                window.registrarAuditoria('CRIACAO_CLIENTE', `Cliente #${d.numId}: ${d.nome}`, { clienteId: novoCliRef.id, numId: d.numId, nome: d.nome, tel: d.tel, cidade: d.cidade });
                 Toast.fire({ icon: 'success', title: 'Cliente cadastrado com sucesso!' });
             } 
             bootstrap.Modal.getInstance(document.getElementById('modalCliente')).hide(); 
@@ -2625,11 +2898,27 @@
         try {
             if(idF) {
                 await updateDoc(doc(db, "usuarios", userId, "orcamentos", idF), d); 
+                if (d.tipoDoc === 'ORCAMENTO') {
+                    window.registrarAuditoria('ALTERACAO_ORCAMENTO', `Alteração do Orçamento #${oAtual?.numId || idF}`, { docId: idF, numId: oAtual?.numId, totalCentavos: d.totalCentavos, statusOS: d.statusOS });
+                } else {
+                    window.registrarAuditoria('ALTERACAO_ORCAMENTO', `Alteração da OS #${oAtual?.numId || idF}`, { docId: idF, numId: oAtual?.numId, totalCentavos: d.totalCentavos, statusOS: d.statusOS });
+                }
+                if (valorPagoCentavos > 0 && (!oAtual || oAtual.valorPagoCentavos !== valorPagoCentavos)) {
+                    window.registrarAuditoria('PAGAMENTO', `Recebimento de ${centavosParaReal(valorPagoCentavos)} via ${metodoPag} (${d.tipoDoc} #${oAtual?.numId || idF})`, { docId: idF, valorCentavos: valorPagoCentavos, metodo: metodoPag, statusFinanceiro });
+                }
                 Toast.fire({ icon: 'success', title: `${statusLegado} atualizado com sucesso!` });
             } else { 
                 d.numId = document.getElementById('numDoc').innerText; 
                 d.createdAt = new Date().toISOString();
-                await addDoc(collection(db, "usuarios", userId, "orcamentos"), d); 
+                const novoDocRef = await addDoc(collection(db, "usuarios", userId, "orcamentos"), d); 
+                if (d.tipoDoc === 'OS' || d.statusOS === 'OS ABERTA') {
+                    window.registrarAuditoria('CRIACAO_OS', `Criação direta da OS #${d.numId}`, { docId: novoDocRef.id, numId: d.numId, totalCentavos: d.totalCentavos });
+                } else {
+                    window.registrarAuditoria('CRIACAO_ORCAMENTO', `Criação do Orçamento #${d.numId}`, { docId: novoDocRef.id, numId: d.numId, totalCentavos: d.totalCentavos });
+                }
+                if (valorPagoCentavos > 0) {
+                    window.registrarAuditoria('PAGAMENTO', `Recebimento de ${centavosParaReal(valorPagoCentavos)} via ${metodoPag} (${d.tipoDoc} #${d.numId})`, { docId: novoDocRef.id, valorCentavos: valorPagoCentavos, metodo: metodoPag, statusFinanceiro });
+                }
                 Toast.fire({ icon: 'success', title: `${statusLegado} salvo com sucesso!` });
             } 
             bootstrap.Modal.getInstance(document.getElementById('modalOrcamento')).hide(); 
@@ -2851,6 +3140,7 @@
             });
 
             await batch.commit();
+            window.registrarAuditoria('CRIACAO_OS', `OS #${novoNumId} gerada a partir do Orçamento #${o.numId}`, { osId: novaOSRef.id, numId: novoNumId, orcamentoOrigemId: idF, numOrcamentoOrigem: o.numId, totalCentavos: novaOS.totalCentavos });
             Toast.fire({ icon: 'success', title: `OS #${novoNumId} gerada com sucesso a partir do Orçamento #${o.numId}!` });
         } catch (err) {
             console.error('Erro ao gerar OS:', err);
@@ -3022,6 +3312,11 @@
             });
 
             await batch.commit();
+            const prodsBaixados = (o.itens || []).filter(it => it.tipo === 'PROD');
+            if (prodsBaixados.length > 0) {
+                window.registrarAuditoria('BAIXA_ESTOQUE', `Baixa de estoque da OS #${o.numId}`, { osId: idF, numId: o.numId, totalItensBaixados: prodsBaixados.length, itens: prodsBaixados.map(p => ({ desc: p.desc, qtd: p.qtd })) });
+            }
+            window.registrarAuditoria('FINALIZACAO_OS', `Conclusão da OS #${o.numId}`, { osId: idF, numId: o.numId, clienteId: o.clienteId, totalCentavos: o.totalCentavos });
             Toast.fire({ icon: 'success', title: 'OS Concluída! Baixa no estoque registrada com sucesso.' });
         } catch (erro) { 
             console.error('Erro ao finalizar OS:', erro);
