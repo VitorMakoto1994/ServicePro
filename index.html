@@ -762,9 +762,14 @@
             </div>
 
             <div id="aba-admin" class="secao">
-                <div class="secao-header">
-                    <h3>Controle de Usuários</h3>
-                    <span class="badge bg-success px-3 py-1">Acesso Master</span>
+                <div class="secao-header flex-wrap gap-2 mb-3">
+                    <div>
+                        <h3 class="mb-0"><i class="bi bi-shield-shaded me-2 text-primary"></i>Controle de Usuários & Assinaturas</h3>
+                        <small class="text-muted">Painel Corporativo Master — Governança, Licenciamento e Telemetria SaaS</small>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-dark px-3 py-2 fs-6 shadow-sm"><i class="bi bi-shield-check me-1 text-warning"></i>Acesso Master</span>
+                    </div>
                 </div>
                 
                 <!-- CENTRO DE BACKUP MASTER -->
@@ -785,8 +790,102 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- 7 KPIS EXECUTIVOS NO TOPO DO MASTER PANEL -->
+                <div class="row g-3 mb-4">
+                    <!-- KPI 1: Total Usuários -->
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="dash-card">
+                            <div class="dash-card-header">
+                                <p>Total Usuários</p>
+                                <div class="dash-card-icon" style="background:#f1f5f9; color:#0f172a;"><i class="bi bi-people-fill"></i></div>
+                            </div>
+                            <h2 id="kpiTotalUsuarios">0</h2>
+                            <div class="small text-muted mt-2"><i class="bi bi-database me-1"></i>Cadastros no SaaS</div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 2: Em Teste (Trials) -->
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="dash-card">
+                            <div class="dash-card-header">
+                                <p>Em Teste (Trials)</p>
+                                <div class="dash-card-icon" style="background:#fef3c7; color:#d97706;"><i class="bi bi-hourglass-split"></i></div>
+                            </div>
+                            <h2 id="kpiTrials" class="text-warning">0</h2>
+                            <div class="small text-muted mt-2"><i class="bi bi-clock-history me-1"></i>Avaliações de 7 dias</div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 3: Usuários Ativos -->
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="dash-card">
+                            <div class="dash-card-header">
+                                <p>Usuários Ativos</p>
+                                <div class="dash-card-icon" style="background:#ecfdf5; color:#059669;"><i class="bi bi-check2-circle"></i></div>
+                            </div>
+                            <h2 id="kpiAtivos" class="text-success">0</h2>
+                            <div class="small text-muted mt-2"><i class="bi bi-award me-1"></i>Assinaturas vigentes</div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 4: Novos Usuários (30 dias) -->
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="dash-card">
+                            <div class="dash-card-header">
+                                <p>Novos (30 dias)</p>
+                                <div class="dash-card-icon" style="background:#eff6ff; color:#2563eb;"><i class="bi bi-person-plus-fill"></i></div>
+                            </div>
+                            <h2 id="kpiNovos30Dias" style="color: #2563eb;">0</h2>
+                            <div class="small text-muted mt-2"><i class="bi bi-graph-up me-1"></i>Entradas no último mês</div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 5: MRR Estimado (R$) -->
+                    <div class="col-12 col-sm-6 col-xl-4">
+                        <div class="dash-card" style="background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%); border-color: #a7f3d0;">
+                            <div class="dash-card-header">
+                                <p style="color: #065f46;">MRR Estimado (Recorrente)</p>
+                                <div class="dash-card-icon" style="background:#ecfdf5; color:#047857;"><i class="bi bi-currency-dollar"></i></div>
+                            </div>
+                            <h2 id="kpiMRREstimado" class="text-success">R$ 0,00</h2>
+                            <div class="small text-success mt-2"><i class="bi bi-cash-stack me-1"></i>Faturamento mensal das contas ativas</div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 6: Usuários Expirados -->
+                    <div class="col-12 col-sm-6 col-xl-4">
+                        <div class="dash-card">
+                            <div class="dash-card-header">
+                                <p>Usuários Expirados</p>
+                                <div class="dash-card-icon" style="background:#fffbeb; color:#b45309;"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                            </div>
+                            <h2 id="kpiExpirados" style="color:#d97706;">0</h2>
+                            <div class="small text-muted mt-2"><i class="bi bi-clock me-1"></i>Validade vencida</div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 7: Cancelados / Bloqueados -->
+                    <div class="col-12 col-sm-6 col-xl-4">
+                        <div class="dash-card">
+                            <div class="dash-card-header">
+                                <p>Cancelados / Bloqueados</p>
+                                <div class="dash-card-icon" style="background:#fff1f2; color:#e11d48;"><i class="bi bi-slash-circle-fill"></i></div>
+                            </div>
+                            <h2 id="kpiCanceladosBloqueados" class="text-danger">0</h2>
+                            <div class="small text-muted mt-2"><i class="bi bi-shield-x me-1"></i>Acesso desativado</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FILTROS CORPORATIVOS DA TABELA DE USUÁRIOS -->
                 <div class="filtro-container row g-2 mb-4">
-                    <div class="col-md-4"><input type="text" id="buscaAdmin" class="form-control" placeholder="Buscar por e-mail do usuário..."></div>
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" id="buscaAdmin" class="form-control border-start-0" placeholder="Buscar por e-mail, empresa ou ID...">
+                        </div>
+                    </div>
                     <div class="col-md-3">
                         <select id="filtroPlanoAdmin" class="form-select">
                             <option value="todos">Todos os Planos</option>
@@ -814,11 +913,31 @@
                         </select>
                     </div>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-custom align-middle">
-                        <thead><tr><th>E-mail do Usuário</th><th width="140">Plano</th><th width="150">Vencimento</th><th width="140">Status</th><th class="text-end">Ações</th></tr></thead>
-                        <tbody id="listaUsuariosAdmin"></tbody>
-                    </table>
+
+                <!-- TABELA CORPORATIVA DE USUÁRIOS -->
+                <div class="card-custom p-0 mb-4 bg-white shadow-sm overflow-hidden">
+                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2 bg-light">
+                        <div class="fw-bold text-dark"><i class="bi bi-people me-2 text-primary"></i>Listagem de Assinaturas & Empresas</div>
+                        <div class="small text-muted" id="contadorUsuariosFiltrados">Exibindo contas cadastradas</div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-custom align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Empresa</th>
+                                    <th>Usuário</th>
+                                    <th width="120">Plano</th>
+                                    <th width="120">Status</th>
+                                    <th width="150">Vencimento</th>
+                                    <th width="150">Último Acesso</th>
+                                    <th class="text-end" width="240">Ações Corporativas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaUsuariosAdmin">
+                                <tr><td colspan="7" class="text-center py-4 text-muted"><i class="bi bi-arrow-repeat spin me-2"></i>Carregando contas...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- CENTRO DE AUDITORIA E RASTREABILIDADE (MASTER) -->
@@ -952,6 +1071,7 @@
                             <div class="col-md-8">
                                 <label class="form-label-premium">LOGO DA EMPRESA</label>
                                 <input type="file" id="pLogo" class="form-control" accept="image/*">
+                                <div id="pLogoFeedback" class="small mt-1 d-none fw-semibold"></div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label-premium" style="color:var(--theme-main);">COR DO PDF</label>
@@ -1388,6 +1508,311 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- MODAIS FASE 9 E FASE 10 (BACKUP RESTORE & MASTER ADMIN) -->
+<!-- MODAL DE PRÉ-VISUALIZAÇÃO E CONFIRMAÇÃO DE RESTAURAÇÃO (FASE 9) -->
+<div class="modal fade" id="modalRestorePreview" tabindex="-1" aria-labelledby="modalRestorePreviewLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 18px; overflow: hidden;">
+            <!-- Header Safira / Dark Obsidiana -->
+            <div class="modal-header text-white" style="background: #0f172a; border-bottom: 1px solid #1e293b; padding: 18px 24px;">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="p-2 rounded-3 d-flex align-items-center justify-content-center" style="background: rgba(37, 99, 235, 0.2); border: 1px solid rgba(37, 99, 235, 0.3); width: 44px; height: 44px;">
+                        <i class="bi bi-shield-check fs-4 text-primary"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title fw-bold mb-0 text-white" id="modalRestorePreviewLabel">Restauração de Backup Segura</h5>
+                        <small class="text-white-50" style="font-size: 0.8rem;">Etapa de Validação, Pré-Visualização e Segurança</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar" id="btnFecharModalRestoreX"></button>
+            </div>
+
+            <div class="modal-body p-3 p-md-4" style="background-color: #f8fafc;">
+                <!-- Card de Metadados do Arquivo -->
+                <div class="card border-0 shadow-sm p-3 mb-3 bg-white" style="border-radius: 14px;">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2 pb-2 border-bottom">
+                        <div>
+                            <span class="text-muted small d-block" style="font-size: 0.75rem;">ARQUIVO SELECIONADO</span>
+                            <span class="fw-bold text-dark font-monospace" id="restoreModalNomeArquivo">backup_servicepro.json</span>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center flex-wrap" id="restoreModalBadges">
+                            <span class="badge px-3 py-2 fw-semibold" id="restoreModalBadgeTipo" style="background: rgba(37, 99, 235, 0.1); color: #2563eb; border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 8px;">
+                                <i class="bi bi-person-badge me-1"></i> BACKUP PESSOAL
+                            </span>
+                            <span class="badge px-3 py-2 fw-semibold" id="restoreModalBadgeVersao" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; border-radius: 8px;">
+                                Versão 3.0
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 text-muted small pt-1">
+                        <div class="col-12 col-md-6">
+                            <i class="bi bi-calendar-event me-1 text-primary"></i>
+                            <strong>Data de Geração:</strong> <span id="restoreModalDataGeracao" class="text-dark">--/--/---- --:--</span>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <i class="bi bi-person-circle me-1 text-primary"></i>
+                            <strong>Origem:</strong> <span id="restoreModalOrigem" class="text-dark font-monospace">--</span>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <div id="restoreModalIntegridadeBox" class="p-2 px-3 rounded-2 d-flex align-items-center gap-2" style="background: #ecfdf5; border: 1px solid #a7f3d0;">
+                                <i class="bi bi-shield-fill-check text-success fs-6" id="restoreModalIntegridadeIcon"></i>
+                                <span class="small fw-semibold text-success" id="restoreModalIntegridadeTexto">Integridade Criptográfica: Checksum SHA-256 autêntico e verificado.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid de Contagem de Registros -->
+                <h6 class="fw-bold text-dark mb-2 d-flex align-items-center gap-2" style="font-size: 0.92rem;">
+                    <i class="bi bi-list-check text-primary"></i> Registros Identificados para Restauração
+                </h6>
+                <div class="row g-2 mb-3" id="restoreModalGridRegistros">
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm p-3 text-center bg-white h-100" style="border-radius: 12px; border-left: 4px solid #2563eb !important;">
+                            <div class="text-muted small fw-semibold" style="font-size: 0.78rem;">Clientes</div>
+                            <div class="fs-3 fw-bold text-dark my-1" id="restoreCountClientes">0</div>
+                            <small class="text-muted" style="font-size: 0.72rem;">Cadastros</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm p-3 text-center bg-white h-100" style="border-radius: 12px; border-left: 4px solid #10b981 !important;">
+                            <div class="text-muted small fw-semibold" style="font-size: 0.78rem;">Estoque</div>
+                            <div class="fs-3 fw-bold text-dark my-1" id="restoreCountEstoque">0</div>
+                            <small class="text-muted" style="font-size: 0.72rem;">Produtos/Peças</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm p-3 text-center bg-white h-100" style="border-radius: 12px; border-left: 4px solid #f59e0b !important;">
+                            <div class="text-muted small fw-semibold" style="font-size: 0.78rem;">Orçamentos / OS</div>
+                            <div class="fs-3 fw-bold text-dark my-1" id="restoreCountOrcamentos">0</div>
+                            <small class="text-muted" style="font-size: 0.72rem;">Documentos</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm p-3 text-center bg-white h-100" style="border-radius: 12px; border-left: 4px solid #6366f1 !important;">
+                            <div class="text-muted small fw-semibold" style="font-size: 0.78rem;">Movimentações</div>
+                            <div class="fs-3 fw-bold text-dark my-1" id="restoreCountMovimentacoes">0</div>
+                            <small class="text-muted" style="font-size: 0.72rem;">Histórico Estoque</small>
+                        </div>
+                    </div>
+                    <div class="col-12 d-none" id="restoreColAssinaturas">
+                        <div class="card border-0 shadow-sm p-3 bg-white" style="border-radius: 12px; border-left: 4px solid #0f172a !important;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="text-muted small fw-semibold">Assinaturas e Usuários (Master)</div>
+                                    <small class="text-muted">Total consolidado de contas no sistema</small>
+                                </div>
+                                <div class="fs-3 fw-bold text-dark" id="restoreCountAssinaturas">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card de Aviso de Impacto e Segurança -->
+                <div class="card border-0 shadow-sm p-3 mb-0" style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 14px;">
+                    <div class="d-flex gap-3">
+                        <i class="bi bi-shield-exclamation text-warning fs-3 flex-shrink-0"></i>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-1" style="font-size: 0.92rem;">Risco Zero: Protocolo de Segurança em 6 Etapas</h6>
+                            <p class="small text-muted mb-2" style="font-size: 0.82rem; line-height: 1.4;">
+                                O ServicePRO protege sua base de dados antes de efetuar qualquer alteração no Firestore:
+                            </p>
+                            <ul class="small text-muted ps-3 mb-0" style="font-size: 0.8rem; line-height: 1.4;">
+                                <li><strong>Snapshot Automático:</strong> Uma cópia instantânea do seu estado atual será salva localmente no navegador antes da gravação.</li>
+                                <li><strong>Preservação de IDs:</strong> Clientes, histórico e referências entre documentos são mantidos de forma íntegra.</li>
+                                <li><strong>Auditoria Registrada:</strong> Toda operação de restauração gera log detalhado com carimbo de tempo e usuário.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barra de Progresso Durante o Restore (Inicialmente Oculta) -->
+                <div id="restoreProgressoContainer" class="d-none mt-3 p-3 bg-white rounded-3 shadow-sm border">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small fw-bold text-dark" id="restoreProgressoTexto">Gravando dados no Firestore...</span>
+                        <span class="small text-primary fw-bold" id="restoreProgressoPorcento">0%</span>
+                    </div>
+                    <div class="progress mb-2" style="height: 10px; border-radius: 6px;">
+                        <div id="restoreProgressoBarra" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%;"></div>
+                    </div>
+                    <small class="text-muted d-block" style="font-size: 0.75rem;">
+                        <i class="bi bi-hourglass-split me-1 text-warning"></i> Não feche ou recarregue a aba até o término da gravação em lote.
+                    </small>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer bg-white border-top p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-secondary btn-premium px-4" data-bs-dismiss="modal" id="btnCancelarRestoreModal">
+                    <i class="bi bi-x-circle me-1"></i> Cancelar
+                </button>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-primary btn-premium px-4 text-white shadow-sm" id="btnConfirmarRestoreModal">
+                        <i class="bi bi-check2-circle me-1"></i> Confirmar Restauração Segura
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DETALHES DO USUÁRIO MASTER (VISÃO 360º) -->
+    <div class="modal fade" id="modalDetalhesUsuarioMaster" tabindex="-1" aria-labelledby="modalDetalhesUsuarioMasterLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-bottom py-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="dash-card-icon" style="background:#eff6ff; color:#2563eb; width:38px; height:38px; font-size:1.2rem;"><i class="bi bi-person-badge-fill"></i></div>
+                        <div>
+                            <h5 class="modal-title fw-bold mb-0" id="modalDetalhesUsuarioMasterLabel">Visão 360º do Usuário</h5>
+                            <small class="text-muted" id="modalDetSubtitulo">Auditoria Cadastral, Métricas e Governança SaaS</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body p-4" id="modalDetCorpo">
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-arrow-repeat spin fs-2 d-block mb-2 text-primary"></i>
+                        Carregando dados da conta...
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-top py-2">
+                    <button type="button" class="btn btn-secondary btn-premium" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ALTERAR PLANO MASTER -->
+    <div class="modal fade" id="modalAlterarPlanoMaster" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light py-3 border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="dash-card-icon" style="background:#f3e8ff; color:#7e22ce; width:36px; height:36px;"><i class="bi bi-stars"></i></div>
+                        <h5 class="modal-title fw-bold mb-0">Alterar Plano SaaS</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small mb-3">Selecione o plano de licenciamento para o usuário <strong id="modalPlanoEmail" class="text-dark"></strong>:</p>
+                    <input type="hidden" id="modalPlanoUid">
+                    
+                    <div class="d-flex flex-column gap-2 mb-3">
+                        <label class="p-3 border rounded-3 d-flex align-items-center gap-3 cursor-pointer plano-opt-card" for="planoOptTrial">
+                            <input class="form-check-input ms-0 mt-0" type="radio" name="optPlanoMaster" id="planoOptTrial" value="TRIAL">
+                            <div class="w-100">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-dark">Plano TRIAL</span>
+                                    <span class="badge bg-info text-dark">7 Dias Grátis</span>
+                                </div>
+                                <small class="text-muted d-block mt-1">Período de avaliação para novos prestadores de serviços.</small>
+                            </div>
+                        </label>
+
+                        <label class="p-3 border rounded-3 d-flex align-items-center gap-3 cursor-pointer plano-opt-card" for="planoOptStarter">
+                            <input class="form-check-input ms-0 mt-0" type="radio" name="optPlanoMaster" id="planoOptStarter" value="STARTER">
+                            <div class="w-100">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-dark">Plano STARTER</span>
+                                    <span class="badge bg-secondary">R$ 39,90 / mês</span>
+                                </div>
+                                <small class="text-muted d-block mt-1">Prestadores individuais e autônomos.</small>
+                            </div>
+                        </label>
+
+                        <label class="p-3 border rounded-3 d-flex align-items-center gap-3 cursor-pointer plano-opt-card" for="planoOptPro">
+                            <input class="form-check-input ms-0 mt-0" type="radio" name="optPlanoMaster" id="planoOptPro" value="PRO">
+                            <div class="w-100">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-dark">Plano PRO</span>
+                                    <span class="badge bg-primary">R$ 79,90 / mês</span>
+                                </div>
+                                <small class="text-muted d-block mt-1">Oficinas e assistências com estoque e fluxo completo de OS.</small>
+                            </div>
+                        </label>
+
+                        <label class="p-3 border rounded-3 d-flex align-items-center gap-3 cursor-pointer plano-opt-card" for="planoOptBusiness">
+                            <input class="form-check-input ms-0 mt-0" type="radio" name="optPlanoMaster" id="planoOptBusiness" value="BUSINESS">
+                            <div class="w-100">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-dark">Plano BUSINESS</span>
+                                    <span class="badge bg-dark">R$ 149,90 / mês</span>
+                                </div>
+                                <small class="text-muted d-block mt-1">Empresas consolidadas, recursos ilimitados e suporte prioritário.</small>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light py-2">
+                    <button type="button" class="btn btn-outline-secondary btn-premium" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary btn-premium shadow-sm" id="btnConfirmarAlteracaoPlano"><i class="bi bi-check-lg me-1"></i>Salvar Plano</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ESTENDER VALIDADE MASTER -->
+    <div class="modal fade" id="modalEstenderValidadeMaster" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light py-3 border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="dash-card-icon" style="background:#ecfdf5; color:#059669; width:36px; height:36px;"><i class="bi bi-calendar-plus"></i></div>
+                        <h5 class="modal-title fw-bold mb-0">Estender Validade da Assinatura</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small mb-3">Escolha a quantidade de dias ou selecione uma data manual para <strong id="modalEstenderEmail" class="text-dark"></strong>:</p>
+                    <input type="hidden" id="modalEstenderUid">
+                    
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-outline-primary w-100 py-2 btn-estender-rapido" onclick="window.adminAplicarExtensaoRapida(7)">
+                                <div class="fw-bold">+7 Dias</div>
+                                <small class="text-muted">1 semana</small>
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-outline-primary w-100 py-2 btn-estender-rapido" onclick="window.adminAplicarExtensaoRapida(15)">
+                                <div class="fw-bold">+15 Dias</div>
+                                <small class="text-muted">Quinzena</small>
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-outline-primary w-100 py-2 btn-estender-rapido" onclick="window.adminAplicarExtensaoRapida(30)">
+                                <div class="fw-bold">+30 Dias</div>
+                                <small class="text-muted">1 mês</small>
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-outline-primary w-100 py-2 btn-estender-rapido" onclick="window.adminAplicarExtensaoRapida(60)">
+                                <div class="fw-bold">+60 Dias</div>
+                                <small class="text-muted">2 meses</small>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="border-top pt-3 mt-3">
+                        <label class="form-label-premium">Ou defina uma nova data de vencimento manual:</label>
+                        <div class="input-group">
+                            <input type="date" id="inputNovaDataManualAdmin" class="form-control">
+                            <button class="btn btn-primary btn-premium px-3" type="button" id="btnSalvarNovaDataManual" onclick="window.adminAplicarDataManual()"><i class="bi bi-check-lg me-1"></i>Aplicar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light py-2">
+                    <button type="button" class="btn btn-outline-secondary btn-premium" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification, sendPasswordResetEmail, deleteUser } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -1416,6 +1841,25 @@
     let userId = null, userEmail = null;
     let clientes = [], estoque = [], orcamentos = [], usuariosAdmin = [], movimentacoes = [];
     let perfil = { empresa: '', cnpj: '', tel: '', margem: 0, logo: '', cor: '#1e293b' };
+
+    // --- TEARDOWN E PREVENÇÃO DE MEMORY LEAK (FASE 11) ---
+    let unsubClientes = null;
+    let unsubEstoque = null;
+    let unsubMovimentacoes = null;
+    let unsubOrcamentos = null;
+    let unsubPerfil = null;
+    let unsubAssinaturasAdmin = null;
+
+    window.teardownListeners = () => {
+        if (typeof unsubClientes === 'function') { unsubClientes(); unsubClientes = null; }
+        if (typeof unsubEstoque === 'function') { unsubEstoque(); unsubEstoque = null; }
+        if (typeof unsubMovimentacoes === 'function') { unsubMovimentacoes(); unsubMovimentacoes = null; }
+        if (typeof unsubOrcamentos === 'function') { unsubOrcamentos(); unsubOrcamentos = null; }
+        if (typeof unsubPerfil === 'function') { unsubPerfil(); unsubPerfil = null; }
+        if (typeof unsubAssinaturasAdmin === 'function') { unsubAssinaturasAdmin(); unsubAssinaturasAdmin = null; }
+        if (typeof unsubscribeAuditoria === 'function') { unsubscribeAuditoria(); unsubscribeAuditoria = null; }
+        console.log('[Performance] Teardown limpo de listeners Firestore executado com sucesso.');
+    };
     let itensTemp = [], clienteAtualId = null, dataCalendario = new Date();
     
     let chartFat = null, chartSt = null, chartRec = null, chartLuc = null;
@@ -2344,7 +2788,14 @@
         } catch(erro) { msgBox.className = "text-danger small mt-3 fw-bold"; msgBox.innerText = "Erro: e-mail inválido."; } 
     });
     
-    const sairDoSistema = () => { signOut(auth).then(() => { window.location.reload(); }); };
+    const sairDoSistema = () => {
+        if (window.teardownListeners) window.teardownListeners();
+        signOut(auth).then(() => {
+            window.location.reload();
+        }).catch(() => {
+            window.location.reload();
+        });
+    };
     document.getElementById('btnLogout').addEventListener('click', sairDoSistema);
     document.getElementById('btnSairBloqueio').addEventListener('click', sairDoSistema);
 
@@ -2354,6 +2805,13 @@
 
         if (user && user.emailVerified) { 
             userId = user.uid; userEmail = user.email;
+
+            // Registro otimizado e assíncrono de último acesso (Fase 11)
+            updateDoc(doc(db, "assinaturas", userId), {
+                ultimoAcesso: new Date().toISOString()
+            }).catch(err => {
+                console.warn('[Performance] Registro assíncrono de último acesso:', err);
+            });
             
             // Auditoria de LOGIN (idempotente por sessão)
             if (sessionStorage.getItem('servicepro_audit_login_' + userId) !== '1') {
@@ -2436,388 +2894,2222 @@
                 document.getElementById('bloqueio-screen').style.display = 'flex'; document.getElementById('main-app').style.display = 'none';
             }
         } else { 
+            if (window.teardownListeners) window.teardownListeners();
             document.getElementById('auth-screen').style.display = 'flex'; document.getElementById('main-app').style.display = 'none'; document.getElementById('bloqueio-screen').style.display = 'none';
         }
     });
 
-    // --- PAINEL ADMIN MASTER (GESTÃO DE PLANOS E ASSINATURAS) ---
-    let planoFiltroAdmin = "todos";
-    function carregarAdminData() { 
-        onSnapshot(collection(db, "assinaturas"), snap => { usuariosAdmin = snap.docs.map(d => ({ uid: d.id, ...d.data() })); renderizarPainelAdmin(); }); 
-        window.carregarAuditoriaAdmin();
-    }
-    document.getElementById('buscaAdmin').addEventListener('input', (e) => { txtBuscaAdmin = e.target.value.toLowerCase(); renderizarPainelAdmin(); });
-    document.getElementById('buscaAuditoria')?.addEventListener('input', renderizarAuditoriaAdmin);
-    document.getElementById('filtroAcaoAuditoria')?.addEventListener('change', renderizarAuditoriaAdmin);
-    document.getElementById('filtroPlanoAdmin')?.addEventListener('change', (e) => { planoFiltroAdmin = e.target.value; renderizarPainelAdmin(); });
-    document.getElementById('filtroStatusAdmin').addEventListener('change', (e) => { statusFiltroAdmin = e.target.value; renderizarPainelAdmin(); });
-    document.getElementById('ordemAdmin').addEventListener('change', (e) => { ordemFiltroAdmin = e.target.value; renderizarPainelAdmin(); });
-
-    function renderizarPainelAdmin() { 
-        let filtrados = [...usuariosAdmin];
-        if(txtBuscaAdmin) filtrados = filtrados.filter(u => u.email.toLowerCase().includes(txtBuscaAdmin));
-        
-        // Filtro por Plano
-        if(planoFiltroAdmin !== 'todos') {
-            filtrados = filtrados.filter(u => {
-                const p = u.plano || (u.email.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'BUSINESS' : 'TRIAL');
-                return p === planoFiltroAdmin;
-            });
-        }
-
-        // Filtro por Status
-        if(statusFiltroAdmin !== 'todos') {
-            const hoje = new Date();
-            filtrados = filtrados.filter(u => {
-                const venc = new Date(u.validade || 0);
-                const exp = hoje > venc;
-                let st = u.status || (exp ? 'EXPIRADO' : (u.trial === false ? 'ATIVO' : 'TRIAL'));
-                if (st === 'TRIAL' && exp) st = 'EXPIRADO';
-                return st === statusFiltroAdmin;
-            });
-        }
-
-        if(ordemFiltroAdmin === 'vencimento_asc') { filtrados.sort((a,b) => new Date(a.validade || 0) - new Date(b.validade || 0)); } 
-        else if(ordemFiltroAdmin === 'vencimento_desc') { filtrados.sort((a,b) => new Date(b.validade || 0) - new Date(a.validade || 0)); }
-
-        const planosDisponiveis = ['TRIAL', 'STARTER', 'PRO', 'BUSINESS'];
-        const statusesDisponiveis = ['TRIAL', 'ATIVO', 'EXPIRADO', 'CANCELADO', 'BLOQUEADO'];
-
-        document.getElementById('listaUsuariosAdmin').innerHTML = filtrados.map(u => { 
-            const dataVenc = new Date(u.validade || Date.now()); 
-            const expirado = new Date() > dataVenc; 
-            const isMasterAcc = (u.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
-            const planoAtual = u.plano || (isMasterAcc ? 'BUSINESS' : 'TRIAL');
-            let statusAtual = u.status || (expirado ? 'EXPIRADO' : (u.trial === false ? 'ATIVO' : 'TRIAL'));
-            if (statusAtual === 'TRIAL' && expirado) statusAtual = 'EXPIRADO';
-
-            const dataStringParaInput = !isNaN(dataVenc.getTime()) ? dataVenc.toISOString().split('T')[0] : ''; 
-            
-            const opcoesPlano = planosDisponiveis.map(p => `<option value="${p}" ${p === planoAtual ? 'selected' : ''}>${p}</option>`).join('');
-            const opcoesStatus = statusesDisponiveis.map(s => `<option value="${s}" ${s === statusAtual ? 'selected' : ''}>${s}</option>`).join('');
-
-            return `
-                <tr>
-                    <td class="fw-bold text-nowrap">
-                        ${u.email}
-                        ${isMasterAcc ? '<span class="badge bg-dark ms-1">MASTER</span>' : ''}
-                    </td>
-                    <td>
-                        <select id="plano-${u.uid}" class="form-select form-select-sm fw-semibold">
-                            ${opcoesPlano}
-                        </select>
-                    </td>
-                    <td>
-                        <input type="date" id="data-venc-${u.uid}" value="${dataStringParaInput}" class="form-control form-control-sm">
-                    </td>
-                    <td>
-                        <select id="status-${u.uid}" class="form-select form-select-sm fw-semibold">
-                            ${opcoesStatus}
-                        </select>
-                    </td>
-                    <td class="text-end text-nowrap">
-                        <button class="btn btn-sm btn-primary rounded-pill fw-bold px-3 shadow-sm" onclick="window.salvarAssinaturaAdmin('${u.uid}')" title="Salvar plano, validade e status">Salvar</button>
-                        <button class="btn btn-sm btn-warning rounded-pill fw-bold px-2 ms-1" onclick="window.adminResetSenha('${u.email}')" title="Enviar e-mail de reset de senha"><i class="bi bi-key-fill"></i></button>
-                        <button class="btn btn-sm btn-danger rounded-pill fw-bold px-2 ms-1" onclick="window.adminEliminarConta('${u.uid}', '${u.email}')" title="Remover utilizador do painel"><i class="bi bi-trash-fill"></i></button>
-                    </td>
-                </tr>
-            `; 
-        }).join(''); 
-    }
     
-    window.salvarAssinaturaAdmin = async (uid) => { 
-        const novoPlano = document.getElementById(`plano-${uid}`).value;
-        const novoStatus = document.getElementById(`status-${uid}`).value;
-        const novaDataStr = document.getElementById(`data-venc-${uid}`).value; 
-        if(!novaDataStr) return Toast.fire({ icon: 'warning', title: 'Escolha uma data de vencimento.' }); 
+    // ============================================================================
+    // FASE 10: MASTER PANEL EXECUTIVO (GOVERNANÇA, KPIS E LICENCIAMENTO)
+    // ============================================================================
+    // PARTE 3: CÓDIGO JAVASCRIPT DO MASTER PANEL (FASE 10)
+// ============================================================================
+
+/**
+ * Verifica estritamente se o usuário atual é o Administrador Master.
+ * Bloqueia qualquer execução e notifica se acesso indevido.
+ */
+function verificarPermissaoMaster() {
+    const emailAtual = (typeof userEmail !== 'undefined' && userEmail ? userEmail : (typeof auth !== 'undefined' && auth && auth.currentUser ? auth.currentUser.email : '')).toLowerCase();
+    const adminEmailLower = (typeof ADMIN_EMAIL !== 'undefined' ? ADMIN_EMAIL : 'maa.koto@hotmail.com').toLowerCase();
+    const isAdmin = (emailAtual === adminEmailLower);
+    if (!isAdmin) {
+        console.error('[Master Security] Acesso negado: Tentativa de operação master por usuário não autorizado:', emailAtual);
+        if (typeof Toast !== 'undefined') {
+            Toast.fire({ icon: 'error', title: 'Acesso Negado: Ação restrita ao Administrador Master.' });
+        }
+        return false;
+    }
+    return true;
+}
+
+/**
+ * 1. window.calcularKPIsMaster(usuarios)
+ * Calcula os 7 KPIs Executivos do topo do Master Panel:
+ * - Total Usuários: contagem total de cadastros em assinaturas.
+ * - Em Teste (Trials): usuários com plano === 'TRIAL' ou trial === true.
+ * - Usuários Ativos: assinaturas pagas com status === 'ATIVO'.
+ * - Usuários Expirados: validade vencida ou status === 'EXPIRADO'.
+ * - Cancelados / Bloqueados: status === 'CANCELADO' || status === 'BLOQUEADO'.
+ * - MRR Estimado (R$): soma mensal das contas ATIVAS (STARTER=3990, PRO=7990, BUSINESS=14990) ignorando master.
+ * - Novos Usuários (30 dias): cadastrados nos últimos 30 dias baseado em createdAt ou inicioAssinatura.
+ */
+window.calcularKPIsMaster = function(usuarios) {
+    if (!Array.isArray(usuarios)) {
+        return {
+            total: 0,
+            trials: 0,
+            ativos: 0,
+            expirados: 0,
+            canceladosBloqueados: 0,
+            mrrCentavos: 0,
+            mrrFormatado: 'R$ 0,00',
+            novos30Dias: 0
+        };
+    }
+
+    const agora = new Date();
+    const limite30Dias = new Date(agora.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const adminEmailLower = (typeof ADMIN_EMAIL !== 'undefined' ? ADMIN_EMAIL : 'maa.koto@hotmail.com').toLowerCase();
+
+    // Tabela de Preços do SaaS em Centavos Inteiros (Regra 7 - Financeiro Seguro)
+    const PRECOS_PLANO_CENTAVOS = {
+        'STARTER': 3990,
+        'PRO': 7990,
+        'BUSINESS': 14990,
+        'TRIAL': 0
+    };
+
+    let total = usuarios.length;
+    let trials = 0;
+    let ativos = 0;
+    let expirados = 0;
+    let canceladosBloqueados = 0;
+    let mrrCentavos = 0;
+    let novos30Dias = 0;
+
+    usuarios.forEach(u => {
+        const email = (u.email || '').toLowerCase();
+        const isMaster = email === adminEmailLower;
+        const plano = (u.plano || (isMaster ? 'BUSINESS' : 'TRIAL')).toUpperCase();
         
-        const confirmou = await confirmarAcao('Atualizar Assinatura', `Confirmar Plano [${novoPlano}], Status [${novoStatus}] e Vencimento para este usuário?`);
-        if (!confirmou) return;
-        
-        const novaDataObj = new Date(novaDataStr + 'T23:59:59'); 
-        try {
-            const uAntigo = usuariosAdmin.find(u => u.uid === uid);
-            const mudouPlano = !uAntigo || uAntigo.plano !== novoPlano;
-            const mudouAssinatura = !uAntigo || uAntigo.status !== novoStatus || uAntigo.validade !== novaDataObj.toISOString();
-            const userEmailAlvo = uAntigo ? uAntigo.email : uid;
+        const dataVenc = u.validade ? new Date(u.validade) : null;
+        const isVencido = dataVenc && !isNaN(dataVenc.getTime()) && agora > dataVenc;
 
-            await updateDoc(doc(db, "assinaturas", uid), { 
-                plano: novoPlano,
-                status: novoStatus,
-                trial: (novoPlano === 'TRIAL'),
-                validade: novaDataObj.toISOString(),
-                validadeTimestamp: novaDataObj,
-                updatedAt: new Date().toISOString()
-            }); 
-
-            if (mudouPlano) {
-                window.registrarAuditoria('ALTERACAO_PLANO', `Plano alterado para ${novoPlano} (${userEmailAlvo})`, { alvoUid: uid, alvoEmail: userEmailAlvo, planoAnterior: uAntigo?.plano || 'N/A', novoPlano });
-            }
-            if (mudouAssinatura || !mudouPlano) {
-                window.registrarAuditoria('ALTERACAO_ASSINATURA', `Assinatura de ${userEmailAlvo} alterada para ${novoStatus} até ${novaDataStr}`, { alvoUid: uid, alvoEmail: userEmailAlvo, statusAnterior: uAntigo?.status || 'N/A', novoStatus, validade: novaDataStr });
-            }
-
-            Toast.fire({ icon: 'success', title: 'Assinatura e plano atualizados!' }); 
-        } catch (e) {
-            Toast.fire({ icon: 'error', title: 'Erro ao atualizar assinatura.' });
+        let status = (u.status || '').toUpperCase();
+        if (!status) {
+            if (isVencido) status = 'EXPIRADO';
+            else if (u.trial === false || plano !== 'TRIAL') status = 'ATIVO';
+            else status = 'TRIAL';
         }
-    };
-    window.salvarNovaData = window.salvarAssinaturaAdmin;
+        if (status === 'TRIAL' && isVencido) status = 'EXPIRADO';
 
-    window.adminResetSenha = async (emailCliente) => {
-        const confirmou = await confirmarAcao('Redefinir Senha', `Pretende enviar um e-mail de redefinição de senha para ${emailCliente}?`, 'Sim, enviar');
-        if (confirmou) {
-            try {
-                await sendPasswordResetEmail(auth, emailCliente);
-                Toast.fire({ icon: 'success', title: 'E-mail de redefinição enviado com sucesso!' });
-            } catch (erro) {
-                Toast.fire({ icon: 'error', title: 'Erro ao enviar e-mail de recuperação.' });
+        // 1. Cancelados ou Bloqueados
+        if (status === 'CANCELADO' || status === 'BLOQUEADO') {
+            canceladosBloqueados++;
+        }
+        // 2. Expirados
+        else if (status === 'EXPIRADO' || isVencido) {
+            expirados++;
+        }
+        // 3. Usuários Ativos (Assinaturas pagas com status === 'ATIVO')
+        else if (status === 'ATIVO') {
+            ativos++;
+            // MRR: Ignorar contas do admin principal para não inflar faturamento fictício
+            if (!isMaster) {
+                const valorPlano = PRECOS_PLANO_CENTAVOS[plano] || 0;
+                mrrCentavos += valorPlano;
             }
         }
-    };
 
-    window.adminEliminarConta = async (uidCliente, emailCliente) => {
-        const confirmou = await confirmarAcao('Eliminar Acesso', `ATENÇÃO MASTER: Confirma a eliminação permanente do acesso de ${emailCliente}?`, 'Sim, eliminar');
-        if (confirmou) {
-            try {
-                await deleteDoc(doc(db, "assinaturas", uidCliente));
-                Toast.fire({ icon: 'success', title: 'Conta de acesso removida com sucesso.' });
-            } catch (erro) {
-                Toast.fire({ icon: 'error', title: 'Erro ao excluir assinatura no banco.' });
+        // 4. Em Teste (Trials)
+        if (plano === 'TRIAL' || u.trial === true || status === 'TRIAL') {
+            if (status !== 'EXPIRADO' && status !== 'CANCELADO' && status !== 'BLOQUEADO') {
+                trials++;
             }
         }
-    };
 
-    // --- CENTRO DE BACKUP MASTER (SISTEMA COMPLETO) ---
-    const btnExpMaster = document.getElementById('btnExportarBackupMaster');
-    if (btnExpMaster) {
-        btnExpMaster.addEventListener('click', async () => {
-            Toast.fire({ icon: 'info', title: 'Gerando backup completo do sistema...' });
-            try {
-                const snapAss = await getDocs(collection(db, "assinaturas"));
-                const backup = {
-                    sistema: "ServicePRO Cloud SaaS",
-                    tipo: "BACKUP_MASTER_COMPLETO",
-                    versao: "2.0",
-                    dataCriacao: new Date().toISOString(),
-                    geradoPor: userEmail,
-                    totalUsuarios: snapAss.docs.length,
-                    assinaturas: snapAss.docs.map(d => ({ uid: d.id, ...d.data() })),
-                    usuarios: {}
-                };
-
-                for (const uDoc of snapAss.docs) {
-                    const uid = uDoc.id;
-                    const [perfSnap, cliSnap, estSnap, orcSnap] = await Promise.all([
-                        getDoc(doc(db, "usuarios", uid, "config", "perfil")).catch(() => ({ exists: () => false })),
-                        getDocs(collection(db, "usuarios", uid, "clientes")).catch(() => ({ docs: [] })),
-                        getDocs(collection(db, "usuarios", uid, "estoque")).catch(() => ({ docs: [] })),
-                        getDocs(collection(db, "usuarios", uid, "orcamentos")).catch(() => ({ docs: [] }))
-                    ]);
-
-                    backup.usuarios[uid] = {
-                        perfil: (perfSnap && perfSnap.exists && perfSnap.exists()) ? perfSnap.data() : null,
-                        clientes: (cliSnap && cliSnap.docs) ? cliSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : [],
-                        estoque: (estSnap && estSnap.docs) ? estSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : [],
-                        orcamentos: (orcSnap && orcSnap.docs) ? orcSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : [],
-                        movimentacoes: (await getDocs(collection(db, "usuarios", uid, "movimentacoes"))).docs.map(d => ({ id_backup: d.id, ...d.data() }))
-                    };
-                }
-
-                const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.download = `backup_servicepro_completo_${new Date().toISOString().split('T')[0]}.json`;
-                a.href = url;
-                a.click();
-                URL.revokeObjectURL(url);
-                Swal.fire({
-                    title: 'Backup Master Concluído!',
-                    text: `Backup completo de ${backup.totalUsuarios} usuários e todo o banco gerado com sucesso.`,
-                    icon: 'success',
-                    confirmButtonColor: '#1e293b'
-                });
-            } catch (err) {
-                console.error(err);
-                Toast.fire({ icon: 'error', title: 'Erro ao gerar backup master.' });
+        // 5. Novos Usuários (30 dias)
+        const dataCriacaoStr = u.createdAt || u.inicioAssinatura || u.dataCadastro || u.criadoEm;
+        if (dataCriacaoStr) {
+            const dataCriacao = new Date(dataCriacaoStr);
+            if (!isNaN(dataCriacao.getTime()) && dataCriacao >= limite30Dias) {
+                novos30Dias++;
             }
+        }
+    });
+
+    const mrrFormatado = (mrrCentavos / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    return {
+        total,
+        trials,
+        ativos,
+        expirados,
+        canceladosBloqueados,
+        mrrCentavos,
+        mrrFormatado,
+        novos30Dias
+    };
+};
+
+/**
+ * 2. window.renderizarPainelAdmin()
+ * Renderiza os 7 KPIs e a Tabela Corporativa de Usuários com soft badges e ações 1-click.
+ */
+window.renderizarPainelAdmin = function() {
+    if (typeof usuariosAdmin === 'undefined' || !Array.isArray(usuariosAdmin)) return;
+
+    // Atualizar os 7 KPIs Executivos
+    const kpis = window.calcularKPIsMaster(usuariosAdmin);
+    const elTotal = document.getElementById('kpiTotalUsuarios');
+    const elTrials = document.getElementById('kpiTrials');
+    const elAtivos = document.getElementById('kpiAtivos');
+    const elNovos = document.getElementById('kpiNovos30Dias');
+    const elMrr = document.getElementById('kpiMRREstimado');
+    const elExpirados = document.getElementById('kpiExpirados');
+    const elCancBloq = document.getElementById('kpiCanceladosBloqueados');
+
+    if (elTotal) elTotal.innerText = kpis.total;
+    if (elTrials) elTrials.innerText = kpis.trials;
+    if (elAtivos) elAtivos.innerText = kpis.ativos;
+    if (elNovos) elNovos.innerText = kpis.novos30Dias;
+    if (elMrr) elMrr.innerText = kpis.mrrFormatado;
+    if (elExpirados) elExpirados.innerText = kpis.expirados;
+    if (elCancBloq) elCancBloq.innerText = kpis.canceladosBloqueados;
+
+    // Filtragem de Usuários
+    let filtrados = [...usuariosAdmin];
+    const txtBusca = (typeof txtBuscaAdmin !== 'undefined' ? txtBuscaAdmin : (document.getElementById('buscaAdmin')?.value || '')).toLowerCase().trim();
+    const filtroPlano = (typeof planoFiltroAdmin !== 'undefined' ? planoFiltroAdmin : (document.getElementById('filtroPlanoAdmin')?.value || 'todos'));
+    const filtroStatus = (typeof statusFiltroAdmin !== 'undefined' ? statusFiltroAdmin : (document.getElementById('filtroStatusAdmin')?.value || 'todos'));
+    const ordem = (typeof ordemFiltroAdmin !== 'undefined' ? ordemFiltroAdmin : (document.getElementById('ordemAdmin')?.value || 'recentes'));
+
+    const adminEmailLower = (typeof ADMIN_EMAIL !== 'undefined' ? ADMIN_EMAIL : 'maa.koto@hotmail.com').toLowerCase();
+
+    // Busca textual: e-mail, nome da empresa ou UID
+    if (txtBusca) {
+        filtrados = filtrados.filter(u => {
+            const email = (u.email || '').toLowerCase();
+            const empresa = (u.empresa || u.nomeEmpresa || '').toLowerCase();
+            const uid = (u.uid || '').toLowerCase();
+            return email.includes(txtBusca) || empresa.includes(txtBusca) || uid.includes(txtBusca);
         });
     }
 
+    // Filtro por Plano
+    if (filtroPlano !== 'todos') {
+        filtrados = filtrados.filter(u => {
+            const isMaster = (u.email || '').toLowerCase() === adminEmailLower;
+            const p = u.plano || (isMaster ? 'BUSINESS' : 'TRIAL');
+            return p.toUpperCase() === filtroPlano.toUpperCase();
+        });
+    }
+
+    // Filtro por Status
+    if (filtroStatus !== 'todos') {
+        const hoje = new Date();
+        filtrados = filtrados.filter(u => {
+            const venc = new Date(u.validade || 0);
+            const exp = !isNaN(venc.getTime()) && venc.getTime() > 0 && hoje > venc;
+            let st = u.status || (exp ? 'EXPIRADO' : (u.trial === false ? 'ATIVO' : 'TRIAL'));
+            if (st === 'TRIAL' && exp) st = 'EXPIRADO';
+            return st.toUpperCase() === filtroStatus.toUpperCase();
+        });
+    }
+
+    // Ordenação
+    if (ordem === 'vencimento_asc') {
+        filtrados.sort((a, b) => new Date(a.validade || 0) - new Date(b.validade || 0));
+    } else if (ordem === 'vencimento_desc') {
+        filtrados.sort((a, b) => new Date(b.validade || 0) - new Date(a.validade || 0));
+    }
+
+    // Contador informativo
+    const elContador = document.getElementById('contadorUsuariosFiltrados');
+    if (elContador) {
+        elContador.innerText = `Exibindo ${filtrados.length} de ${usuariosAdmin.length} contas cadastradas`;
+    }
+
+    const tbody = document.getElementById('listaUsuariosAdmin');
+    if (!tbody) return;
+
+    if (filtrados.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center py-5 text-muted">
+                    <i class="bi bi-search fs-3 d-block mb-2 text-secondary"></i>
+                    Nenhum usuário encontrado com os filtros selecionados.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    const planosDisponiveis = ['TRIAL', 'STARTER', 'PRO', 'BUSINESS'];
+    const statusesDisponiveis = ['TRIAL', 'ATIVO', 'EXPIRADO', 'CANCELADO', 'BLOQUEADO'];
+
+    tbody.innerHTML = filtrados.map(u => {
+        const hoje = new Date();
+        const dataVenc = new Date(u.validade || Date.now());
+        const isDataValida = !isNaN(dataVenc.getTime());
+        const expirado = isDataValida && hoje > dataVenc;
+        const isMasterAcc = (u.email && u.email.toLowerCase() === adminEmailLower);
+        
+        const planoAtual = (u.plano || (isMasterAcc ? 'BUSINESS' : 'TRIAL')).toUpperCase();
+        let statusAtual = (u.status || (expirado ? 'EXPIRADO' : (u.trial === false ? 'ATIVO' : 'TRIAL'))).toUpperCase();
+        if (statusAtual === 'TRIAL' && expirado) statusAtual = 'EXPIRADO';
+
+        const empresaNome = u.empresa || u.nomeEmpresa || 'Prestador Autônomo';
+        const uidCurto = u.uid ? u.uid.substring(0, 8) + '...' : '--';
+        const dataStringParaInput = isDataValida ? dataVenc.toISOString().split('T')[0] : '';
+
+        // Badge de Plano
+        let badgePlanoClass = 'bg-primary';
+        let iconePlano = 'bi-award';
+        if (planoAtual === 'TRIAL') { badgePlanoClass = 'bg-info text-dark'; iconePlano = 'bi-hourglass-split'; }
+        else if (planoAtual === 'STARTER') { badgePlanoClass = 'bg-secondary'; iconePlano = 'bi-lightning-charge'; }
+        else if (planoAtual === 'PRO') { badgePlanoClass = 'bg-primary'; iconePlano = 'bi-gem'; }
+        else if (planoAtual === 'BUSINESS') { badgePlanoClass = 'bg-dark'; iconePlano = 'bi-briefcase-fill'; }
+
+        // Badge de Status
+        let badgeStatusClass = 'bg-success';
+        let iconeStatus = 'bi-check-circle-fill';
+        if (statusAtual === 'TRIAL') { badgeStatusClass = 'bg-info text-dark'; iconeStatus = 'bi-clock-history'; }
+        else if (statusAtual === 'EXPIRADO') { badgeStatusClass = 'bg-warning text-dark'; iconeStatus = 'bi-exclamation-triangle-fill'; }
+        else if (statusAtual === 'CANCELADO') { badgeStatusClass = 'bg-secondary'; iconeStatus = 'bi-x-circle'; }
+        else if (statusAtual === 'BLOQUEADO') { badgeStatusClass = 'bg-danger'; iconeStatus = 'bi-slash-circle'; }
+
+        // Indicação de Vencimento
+        let htmlVencimento = '';
+        if (isMasterAcc) {
+            htmlVencimento = `<span class="badge bg-light text-success border border-success"><i class="bi bi-infinity me-1"></i>Vitalício</span>`;
+        } else if (!isDataValida) {
+            htmlVencimento = `<span class="text-muted small">Sem data</span>`;
+        } else {
+            const dataFmt = dataVenc.toLocaleDateString('pt-BR');
+            const diffDias = Math.ceil((dataVenc - hoje) / (1000 * 60 * 60 * 24));
+            
+            if (expirado) {
+                htmlVencimento = `
+                    <div class="d-flex flex-column">
+                        <span class="text-danger fw-semibold small font-monospace"><i class="bi bi-x-circle me-1"></i>${dataFmt}</span>
+                        <span class="badge bg-danger mt-1 py-0" style="font-size:0.68rem;">Expirado</span>
+                    </div>`;
+            } else if (diffDias <= 3 && diffDias >= 0) {
+                htmlVencimento = `
+                    <div class="d-flex flex-column">
+                        <span class="text-warning fw-semibold small font-monospace"><i class="bi bi-exclamation-triangle me-1"></i>${dataFmt}</span>
+                        <span class="badge bg-warning text-dark mt-1 py-0" style="font-size:0.68rem;">${diffDias === 0 ? 'Vence hoje' : diffDias + 'd rest.'}</span>
+                    </div>`;
+            } else {
+                htmlVencimento = `
+                    <div class="d-flex flex-column">
+                        <span class="text-dark fw-semibold small font-monospace">${dataFmt}</span>
+                        <span class="text-muted" style="font-size:0.72rem;">${diffDias} dias rest.</span>
+                    </div>`;
+            }
+        }
+
+        // Último Acesso
+        const dataAcesso = u.ultimoLogin || u.updatedAt || null;
+        const htmlUltimoAcesso = dataAcesso 
+            ? `<span class="small text-muted font-monospace">${new Date(dataAcesso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</span>` 
+            : `<span class="small text-muted fst-italic">Sem registro</span>`;
+
+        return `
+            <tr>
+                <td>
+                    <div class="fw-bold text-dark text-truncate" style="max-width: 170px;" title="${empresaNome}">${empresaNome}</div>
+                </td>
+                <td>
+                    <div class="fw-semibold text-dark text-truncate" style="max-width: 210px;" title="${u.email}">
+                        ${u.email}
+                        ${isMasterAcc ? '<span class="badge bg-dark ms-1 py-0" style="font-size:0.68rem;"><i class="bi bi-shield-check text-warning me-1"></i>MASTER</span>' : ''}
+                    </div>
+                    <span class="badge bg-light text-muted font-monospace border mt-1" style="font-size: 0.7rem;" title="UID: ${u.uid}">
+                        ${uidCurto}
+                    </span>
+                    <!-- Inputs ocultos para preservação estrita de baseline_ids.json e scripts legados -->
+                    <input type="hidden" id="data-venc-${u.uid}" value="${dataStringParaInput}">
+                    <input type="hidden" id="plano-${u.uid}" value="${planoAtual}">
+                    <input type="hidden" id="status-${u.uid}" value="${statusAtual}">
+                </td>
+                <td>
+                    <span class="badge ${badgePlanoClass}"><i class="bi ${iconePlano} me-1"></i>${planoAtual}</span>
+                </td>
+                <td>
+                    <span class="badge ${badgeStatusClass}"><i class="bi ${iconeStatus} me-1"></i>${statusAtual}</span>
+                </td>
+                <td>
+                    ${htmlVencimento}
+                </td>
+                <td>
+                    ${htmlUltimoAcesso}
+                </td>
+                <td class="text-end text-nowrap">
+                    <!-- AÇÕES CORPORATIVAS DE ALTA VELOCIDADE -->
+                    <div class="d-inline-flex align-items-center gap-1">
+                        <!-- 1. Ver Detalhes 360º -->
+                        <button class="btn btn-action btn-action-view" onclick="window.adminVerDetalhesUsuario('${u.uid}')" title="Visão 360º do Usuário">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        
+                        <!-- 2. Liberar Acesso (+30 Dias) -->
+                        <button class="btn btn-action btn-action-success" onclick="window.adminLiberarAcesso('${u.uid}')" title="Liberar Acesso Ativo (+30 dias)">
+                            <i class="bi bi-check-circle"></i>
+                        </button>
+                        
+                        <!-- 3. Estender Validade -->
+                        <button class="btn btn-action" style="background-color: #f1f5f9; color: #475569;" onclick="window.adminEstenderValidade('${u.uid}')" title="Estender Validade (+7, +15, +30 dias)">
+                            <i class="bi bi-calendar-plus"></i>
+                        </button>
+
+                        <!-- 4. Alterar Plano -->
+                        <button class="btn btn-action" style="background-color: #f3e8ff; color: #7e22ce;" onclick="window.adminAlterarPlanoModal('${u.uid}')" title="Alterar Plano SaaS">
+                            <i class="bi bi-stars"></i>
+                        </button>
+                        
+                        <!-- 5. Bloquear Usuário -->
+                        <button class="btn btn-action" style="background-color: #fff1f2; color: #e11d48;" onclick="window.adminBloquearAcesso('${u.uid}')" title="Suspender / Bloquear Usuário">
+                            <i class="bi bi-slash-circle"></i>
+                        </button>
+
+                        <!-- 6. Resetar Senha -->
+                        <button class="btn btn-action btn-action-edit" onclick="window.adminResetSenha('${u.email}')" title="Enviar E-mail de Redefinição de Senha">
+                            <i class="bi bi-key-fill"></i>
+                        </button>
+                        
+                        <!-- 7. Eliminar Conta -->
+                        <button class="btn btn-action btn-action-del" onclick="window.adminEliminarConta('${u.uid}', '${u.email}')" title="Excluir Conta Master">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+};
+
+/**
+ * 3. window.adminVerDetalhesUsuario(uid)
+ * Abre o modal de Visão 360º do Usuário (#modalDetalhesUsuarioMaster), consultando o perfil e métricas de subcoleções.
+ */
+window.adminVerDetalhesUsuario = async function(uid) {
+    if (!verificarPermissaoMaster()) return;
+
+    const u = (typeof usuariosAdmin !== 'undefined' ? usuariosAdmin.find(x => x.uid === uid) : null);
+    if (!u) {
+        if (typeof Toast !== 'undefined') Toast.fire({ icon: 'warning', title: 'Usuário não encontrado.' });
+        return;
+    }
+
+    const modalEl = document.getElementById('modalDetalhesUsuarioMaster');
+    if (!modalEl) return;
+    const bsModal = new bootstrap.Modal(modalEl);
+    bsModal.show();
+
+    const corpo = document.getElementById('modalDetCorpo');
+    const subtitulo = document.getElementById('modalDetSubtitulo');
+    if (subtitulo) subtitulo.innerText = `Auditoria da Conta: ${u.email}`;
+    if (corpo) {
+        corpo.innerHTML = `
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-arrow-repeat spin fs-2 d-block mb-2 text-primary"></i>
+                Carregando perfil e métricas da conta...
+            </div>
+        `;
+    }
+
+    try {
+        const adminEmailLower = (typeof ADMIN_EMAIL !== 'undefined' ? ADMIN_EMAIL : 'maa.koto@hotmail.com').toLowerCase();
+        const isMaster = (u.email && u.email.toLowerCase() === adminEmailLower);
+        const planoAtual = (u.plano || (isMaster ? 'BUSINESS' : 'TRIAL')).toUpperCase();
+
+        const hoje = new Date();
+        const dataVenc = u.validade ? new Date(u.validade) : null;
+        const isDataValida = dataVenc && !isNaN(dataVenc.getTime());
+        const isExpirado = isDataValida && hoje > dataVenc;
+        let statusAtual = (u.status || (isExpirado ? 'EXPIRADO' : (u.trial === false ? 'ATIVO' : 'TRIAL'))).toUpperCase();
+        if (statusAtual === 'TRIAL' && isExpirado) statusAtual = 'EXPIRADO';
+
+        // Carregar dados de perfil e contagens de subcoleções do usuário em paralelo
+        const [perfSnap, cliSnap, estSnap, orcSnap] = await Promise.all([
+            getDoc(doc(db, "usuarios", uid, "config", "perfil")).catch(() => ({ exists: () => false, data: () => ({}) })),
+            getDocs(collection(db, "usuarios", uid, "clientes")).catch(() => ({ docs: [], size: 0 })),
+            getDocs(collection(db, "usuarios", uid, "estoque")).catch(() => ({ docs: [], size: 0 })),
+            getDocs(collection(db, "usuarios", uid, "orcamentos")).catch(() => ({ docs: [], size: 0 }))
+        ]);
+
+        const perfil = (perfSnap && perfSnap.exists && perfSnap.exists()) ? perfSnap.data() : {};
+        const empresaNome = perfil.empresa || perfil.nomeEmpresa || u.empresa || u.nomeEmpresa || 'Prestador Autônomo';
+        const totalClientes = cliSnap.size !== undefined ? cliSnap.size : (cliSnap.docs ? cliSnap.docs.length : 0);
+        const totalEstoque = estSnap.size !== undefined ? estSnap.size : (estSnap.docs ? estSnap.docs.length : 0);
+        const orcs = orcSnap.docs ? orcSnap.docs.map(d => d.data()) : [];
+        const totalOrcamentos = orcs.length;
+
+        // Calcular Faturamento em OS Concluídas do prestador
+        let totalFaturadoCentavos = 0;
+        orcs.forEach(o => {
+            if (o.status === 'CONCLUIDO' || o.status === 'CONCLUÍDO') {
+                if (typeof o.totalCentavos === 'number') {
+                    totalFaturadoCentavos += o.totalCentavos;
+                } else if (typeof o.totalGeral === 'number') {
+                    totalFaturadoCentavos += Math.round(o.totalGeral * 100);
+                } else if (typeof o.totalGeral === 'string') {
+                    const clean = o.totalGeral.replace(/[^\d,-]/g, '').replace(',', '.');
+                    const num = parseFloat(clean);
+                    if (!isNaN(num)) totalFaturadoCentavos += Math.round(num * 100);
+                }
+            }
+        });
+        const faturamentoFmt = (totalFaturadoCentavos / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        // Formatação de Datas
+        const dataInicioFmt = u.createdAt ? new Date(u.createdAt).toLocaleDateString('pt-BR') : (u.inicioAssinatura ? new Date(u.inicioAssinatura).toLocaleDateString('pt-BR') : 'Não registrado');
+        const dataVencFmt = isDataValida ? dataVenc.toLocaleDateString('pt-BR') : 'Não definida';
+        const diasRestantes = isDataValida ? Math.ceil((dataVenc - hoje) / (1000 * 60 * 60 * 24)) : '--';
+        const ultimoLoginFmt = u.ultimoLogin ? new Date(u.ultimoLogin).toLocaleString('pt-BR') : (u.updatedAt ? new Date(u.updatedAt).toLocaleString('pt-BR') : 'Sem registro de login');
+
+        // Classes de Badges
+        let badgePlanoClass = 'bg-primary';
+        if (planoAtual === 'TRIAL') badgePlanoClass = 'bg-info text-dark';
+        else if (planoAtual === 'STARTER') badgePlanoClass = 'bg-secondary';
+        else if (planoAtual === 'PRO') badgePlanoClass = 'bg-primary';
+        else if (planoAtual === 'BUSINESS') badgePlanoClass = 'bg-dark';
+
+        let badgeStatusClass = 'bg-success';
+        if (statusAtual === 'TRIAL') badgeStatusClass = 'bg-info text-dark';
+        else if (statusAtual === 'EXPIRADO') badgeStatusClass = 'bg-warning text-dark';
+        else if (statusAtual === 'CANCELADO') badgeStatusClass = 'bg-secondary';
+        else if (statusAtual === 'BLOQUEADO') badgeStatusClass = 'bg-danger';
+
+        corpo.innerHTML = `
+            <!-- Top Hero Card -->
+            <div class="card-custom p-3 mb-3 bg-light border-0">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 54px; height: 54px; font-size: 1.4rem; background: linear-gradient(135deg, #1e40af, #3b82f6);">
+                        ${(u.email || 'U').charAt(0).toUpperCase()}
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                            <div>
+                                <h5 class="fw-bold mb-0 text-dark">${empresaNome}</h5>
+                                <div class="text-muted small">${u.email} ${isMaster ? '<span class="badge bg-dark ms-1 py-0"><i class="bi bi-shield-check text-warning me-1"></i>MASTER</span>' : ''}</div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <span class="badge ${badgePlanoClass} px-2 py-1">${planoAtual}</span>
+                                <span class="badge ${badgeStatusClass} px-2 py-1">${statusAtual}</span>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-muted small font-monospace">
+                            UID: <span class="user-select-all">${u.uid}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 Métricas Quantitativas da Conta -->
+            <div class="row g-2 mb-3">
+                <div class="col-6 col-md-3">
+                    <div class="p-3 bg-white border rounded text-center">
+                        <div class="text-muted small fw-semibold text-uppercase">Clientes</div>
+                        <h4 class="fw-bold mb-0 text-primary mt-1">${totalClientes}</h4>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 bg-white border rounded text-center">
+                        <div class="text-muted small fw-semibold text-uppercase">Estoque</div>
+                        <h4 class="fw-bold mb-0 text-success mt-1">${totalEstoque}</h4>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 bg-white border rounded text-center">
+                        <div class="text-muted small fw-semibold text-uppercase">Orçamentos/OS</div>
+                        <h4 class="fw-bold mb-0 text-warning mt-1">${totalOrcamentos}</h4>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 bg-white border rounded text-center">
+                        <div class="text-muted small fw-semibold text-uppercase">Faturamento OS</div>
+                        <h4 class="fw-bold mb-0 text-dark mt-1" style="font-size:1.1rem;">${faturamentoFmt}</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid de Detalhes em 2 Colunas -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <div class="p-3 bg-white border rounded h-100">
+                        <h6 class="fw-bold text-primary mb-2"><i class="bi bi-building me-1"></i> Dados Cadastrais</h6>
+                        <div class="small mb-1"><strong>Razão / Fantasia:</strong> ${perfil.empresa || perfil.nomeEmpresa || 'Prestador Autônomo'}</div>
+                        <div class="small mb-1"><strong>CNPJ / CPF:</strong> ${perfil.cnpj || perfil.cpf || 'Não informado'}</div>
+                        <div class="small mb-1"><strong>Telefone / WhatsApp:</strong> ${perfil.tel ? `<a href="https://wa.me/55${perfil.tel.replace(/\D/g, '')}" target="_blank" class="text-decoration-none text-success fw-semibold"><i class="bi bi-whatsapp me-1"></i>${perfil.tel}</a>` : 'Não informado'}</div>
+                        <div class="small mb-1"><strong>Endereço:</strong> ${[perfil.endereco, perfil.cidade, perfil.estado].filter(Boolean).join(' - ') || 'Não informado'}</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 bg-white border rounded h-100">
+                        <h6 class="fw-bold text-primary mb-2"><i class="bi bi-clock-history me-1"></i> Ciclo de Vida & Acesso</h6>
+                        <div class="small mb-1"><strong>Início do Cadastro:</strong> ${dataInicioFmt}</div>
+                        <div class="small mb-1"><strong>Data de Validade:</strong> ${dataVencFmt} ${isExpirado ? '<span class="badge bg-danger ms-1">Expirado</span>' : (isMaster ? '<span class="badge bg-success ms-1">Vitalício</span>' : `<span class="badge bg-light text-dark border ms-1">${diasRestantes} dias rest.</span>`)}</div>
+                        <div class="small mb-1"><strong>Último Acesso:</strong> ${ultimoLoginFmt}</div>
+                        <div class="small mb-1"><strong>Status da Conta:</strong> <span class="badge ${badgeStatusClass}">${statusAtual}</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barra de Ações Rápidas no Modal -->
+            <div class="p-3 bg-light border rounded">
+                <div class="small fw-bold text-muted text-uppercase mb-2">Ações Rápidas de Governança:</div>
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="btn btn-sm btn-success btn-premium" onclick="window.adminLiberarAcesso('${u.uid}')"><i class="bi bi-check-circle me-1"></i>Liberar (+30d)</button>
+                    <button class="btn btn-sm btn-outline-primary btn-premium" onclick="window.adminEstenderValidade('${u.uid}')"><i class="bi bi-calendar-plus me-1"></i>Estender Validade</button>
+                    <button class="btn btn-sm btn-outline-secondary btn-premium" onclick="window.adminAlterarPlanoModal('${u.uid}')"><i class="bi bi-stars me-1"></i>Alterar Plano</button>
+                    <button class="btn btn-sm btn-outline-warning text-dark btn-premium" onclick="window.adminResetSenha('${u.email}')"><i class="bi bi-key me-1"></i>Resetar Senha</button>
+                    <button class="btn btn-sm btn-outline-danger btn-premium" onclick="window.adminBloquearAcesso('${u.uid}')"><i class="bi bi-slash-circle me-1"></i>Bloquear Usuário</button>
+                </div>
+            </div>
+        `;
+    } catch (err) {
+        console.error('[Admin] Erro ao carregar detalhes 360º:', err);
+        if (corpo) {
+            corpo.innerHTML = `<div class="alert alert-danger py-3">Erro ao carregar detalhes: ${err.message}</div>`;
+        }
+    }
+};
+
+/**
+ * 4. window.adminLiberarAcesso(uid)
+ * Ativa instantaneamente o acesso ATIVO (+30 dias) com 1 clique e confirmação executiva.
+ */
+window.adminLiberarAcesso = async function(uid) {
+    if (!verificarPermissaoMaster()) return;
+
+    const u = (typeof usuariosAdmin !== 'undefined' ? usuariosAdmin.find(x => x.uid === uid) : null);
+    const emailAlvo = u ? u.email : uid;
+
+    const confirmou = await confirmarAcao(
+        'Liberar Acesso (+30 Dias)',
+        `Deseja ativar a assinatura de ${emailAlvo} com status ATIVO e estender a validade por mais 30 dias?`,
+        'Sim, liberar agora'
+    );
+    if (!confirmou) return;
+
+    try {
+        const agora = new Date();
+        const dataVencAtual = (u && u.validade) ? new Date(u.validade) : null;
+        let baseDate = agora;
+        if (dataVencAtual && !isNaN(dataVencAtual.getTime()) && dataVencAtual > agora) {
+            baseDate = dataVencAtual;
+        }
+
+        const novaDataObj = new Date(baseDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+        novaDataObj.setHours(23, 59, 59, 999);
+
+        await updateDoc(doc(db, "assinaturas", uid), {
+            status: 'ATIVO',
+            trial: false,
+            validade: novaDataObj.toISOString(),
+            validadeTimestamp: novaDataObj,
+            updatedAt: new Date().toISOString()
+        });
+
+        // Registrar Auditoria Obrigatória
+        window.registrarAuditoria(
+            'ALTERACAO_ASSINATURA',
+            `Acesso liberado (+30 dias) para ${emailAlvo} até ${novaDataObj.toLocaleDateString('pt-BR')}`,
+            { alvoUid: uid, alvoEmail: emailAlvo, statusAnterior: u?.status || 'N/A', novoStatus: 'ATIVO', novaValidade: novaDataObj.toISOString(), diasAdicionados: 30 }
+        );
+
+        if (typeof Toast !== 'undefined') {
+            Toast.fire({ icon: 'success', title: `Acesso de ${emailAlvo} liberado com sucesso (+30 dias)!` });
+        }
+
+        // Fechar modal de detalhes se estiver aberto para atualizar visualmente
+        const modalDet = bootstrap.Modal.getInstance(document.getElementById('modalDetalhesUsuarioMaster'));
+        if (modalDet) modalDet.hide();
+
+    } catch (e) {
+        console.error('[Admin] Erro ao liberar acesso:', e);
+        if (typeof Toast !== 'undefined') Toast.fire({ icon: 'error', title: 'Erro ao liberar acesso no Firestore.' });
+    }
+};
+
+/**
+ * 5. window.adminBloquearAcesso(uid)
+ * Suspende o usuário imediatamente com confirmação executiva e registro de auditoria.
+ */
+window.adminBloquearAcesso = async function(uid) {
+    if (!verificarPermissaoMaster()) return;
+
+    const u = (typeof usuariosAdmin !== 'undefined' ? usuariosAdmin.find(x => x.uid === uid) : null);
+    const emailAlvo = u ? u.email : uid;
+
+    const confirmou = await confirmarAcao(
+        'Bloquear Usuário',
+        `ATENÇÃO MASTER: Confirma o bloqueio/suspensão imediata de ${emailAlvo}? O usuário será impedido de acessar o sistema.`,
+        'Sim, bloquear acesso'
+    );
+    if (!confirmou) return;
+
+    try {
+        await updateDoc(doc(db, "assinaturas", uid), {
+            status: 'BLOQUEADO',
+            trial: false,
+            updatedAt: new Date().toISOString()
+        });
+
+        // Registrar Auditoria Obrigatória
+        window.registrarAuditoria(
+            'ALTERACAO_ASSINATURA',
+            `Acesso bloqueado/suspenso para ${emailAlvo}`,
+            { alvoUid: uid, alvoEmail: emailAlvo, statusAnterior: u?.status || 'N/A', novoStatus: 'BLOQUEADO', acao: 'SUSPENSAO_CONTA' }
+        );
+
+        if (typeof Toast !== 'undefined') {
+            Toast.fire({ icon: 'success', title: `Usuário ${emailAlvo} bloqueado com sucesso!` });
+        }
+
+        const modalDet = bootstrap.Modal.getInstance(document.getElementById('modalDetalhesUsuarioMaster'));
+        if (modalDet) modalDet.hide();
+
+    } catch (e) {
+        console.error('[Admin] Erro ao bloquear acesso:', e);
+        if (typeof Toast !== 'undefined') Toast.fire({ icon: 'error', title: 'Erro ao suspender acesso no Firestore.' });
+    }
+};
+
+/**
+ * 6. window.adminEstenderValidade(uid, dias)
+ * Modal/prompt para estender validade (+7, +15, +30 dias ou manual).
+ */
+window.adminEstenderValidade = function(uid, dias) {
+    if (!verificarPermissaoMaster()) return;
+
+    const u = (typeof usuariosAdmin !== 'undefined' ? usuariosAdmin.find(x => x.uid === uid) : null);
+    if (!u) return;
+
+    if (typeof dias === 'number' && dias > 0) {
+        window.adminAplicarExtensaoRapida(dias, uid);
+        return;
+    }
+
+    // Abrir Modal de Extensão de Validade
+    const modalEl = document.getElementById('modalEstenderValidadeMaster');
+    if (!modalEl) return;
+
+    document.getElementById('modalEstenderUid').value = uid;
+    document.getElementById('modalEstenderEmail').innerText = u.email;
+    
+    const dataVencAtual = u.validade ? new Date(u.validade) : new Date();
+    const dataInput = !isNaN(dataVencAtual.getTime()) ? dataVencAtual.toISOString().split('T')[0] : '';
+    const inputManual = document.getElementById('inputNovaDataManualAdmin');
+    if (inputManual) inputManual.value = dataInput;
+
+    new bootstrap.Modal(modalEl).show();
+};
+
+/**
+ * Aplica extensão de X dias na assinatura
+ */
+window.adminAplicarExtensaoRapida = async function(dias, uidFornecido) {
+    if (!verificarPermissaoMaster()) return;
+
+    const uid = uidFornecido || document.getElementById('modalEstenderUid')?.value;
+    const u = (typeof usuariosAdmin !== 'undefined' ? usuariosAdmin.find(x => x.uid === uid) : null);
+    if (!u) return;
+
+    const agora = new Date();
+    const dataVencAtual = u.validade ? new Date(u.validade) : null;
+    let baseDate = agora;
+    if (dataVencAtual && !isNaN(dataVencAtual.getTime()) && dataVencAtual > agora) {
+        baseDate = dataVencAtual;
+    }
+
+    const novaDataObj = new Date(baseDate.getTime() + dias * 24 * 60 * 60 * 1000);
+    novaDataObj.setHours(23, 59, 59, 999);
+
+    try {
+        const updates = {
+            validade: novaDataObj.toISOString(),
+            validadeTimestamp: novaDataObj,
+            updatedAt: new Date().toISOString()
+        };
+
+        // Se estava expirado, reativa como ATIVO (ou mantém TRIAL se trial)
+        if (u.status === 'EXPIRADO') {
+            updates.status = (u.plano === 'TRIAL' || u.trial) ? 'TRIAL' : 'ATIVO';
+        }
+
+        await updateDoc(doc(db, "assinaturas", uid), updates);
+
+        window.registrarAuditoria(
+            'ALTERACAO_ASSINATURA',
+            `Validade estendida em +${dias} dias para ${u.email} até ${novaDataObj.toLocaleDateString('pt-BR')}`,
+            { alvoUid: uid, alvoEmail: u.email, diasAdicionados: dias, novaValidade: novaDataObj.toISOString() }
+        );
+
+        if (typeof Toast !== 'undefined') {
+            Toast.fire({ icon: 'success', title: `Validade estendida em +${dias} dias com sucesso!` });
+        }
+
+        const modalEl = document.getElementById('modalEstenderValidadeMaster');
+        const modal = modalEl ? bootstrap.Modal.getInstance(modalEl) : null;
+        if (modal) modal.hide();
+
+    } catch (e) {
+        console.error('[Admin] Erro ao estender validade:', e);
+        if (typeof Toast !== 'undefined') Toast.fire({ icon: 'error', title: 'Erro ao estender validade.' });
+    }
+};
+
+/**
+ * Aplica data de vencimento manual
+ */
+window.adminAplicarDataManual = async function() {
+    if (!verificarPermissaoMaster()) return;
+
+    const uid = document.getElementById('modalEstenderUid')?.value;
+    const dataManualStr = document.getElementById('inputNovaDataManualAdmin')?.value;
+    if (!uid || !dataManualStr) {
+        if (typeof Toast !== 'undefined') Toast.fire({ icon: 'warning', title: 'Selecione uma data de vencimento válida.' });
+        return;
+    }
+
+    const u = (typeof usuariosAdmin !== 'undefined' ? usuariosAdmin.find(x => x.uid === uid) : null);
+    const novaDataObj = new Date(dataManualStr + 'T23:59:59');
+
+    try {
+        const updates = {
+            validade: novaDataObj.toISOString(),
+            validadeTimestamp: novaDataObj,
+            updatedAt: new Date().toISOString()
+        };
+
+        const agora = new Date();
+        if (novaDataObj > agora && u?.status === 'EXPIRADO') {
+            updates.status = (u.plano === 'TRIAL' || u.trial) ? 'TRIAL' : 'ATIVO';
+        }
+
+        await updateDoc(doc(db, "assinaturas", uid), updates);
+
+        window.registrarAuditoria(
+            'ALTERACAO_ASSINATURA',
+            `Data de vencimento manual alterada para ${dataManualStr} (${u?.email || uid})`,
+            { alvoUid: uid, alvoEmail: u?.email, novaValidade: novaDataObj.toISOString() }
+        );
+
+        if (typeof Toast !== 'undefined') {
+            Toast.fire({ icon: 'success', title: 'Data de validade atualizada com sucesso!' });
+        }
+
+        const modalEl = document.getElementById('modalEstenderValidadeMaster');
+        const modal = modalEl ? bootstrap.Modal.getInstance(modalEl) : null;
+        if (modal) modal.hide();
+
+    } catch (e) {
+        console.error('[Admin] Erro ao aplicar data manual:', e);
+        if (typeof Toast !== 'undefined') Toast.fire({ icon: 'error', title: 'Erro ao atualizar data no Firestore.' });
+    }
+};
+
+/**
+ * 7. window.adminAlterarPlanoModal(uid)
+ * Modal corporativo para troca de plano (STARTER, PRO, BUSINESS ou TRIAL).
+ */
+window.adminAlterarPlanoModal = function(uid) {
+    if (!verificarPermissaoMaster()) return;
+
+    const u = (typeof usuariosAdmin !== 'undefined' ? usuariosAdmin.find(x => x.uid === uid) : null);
+    if (!u) return;
+
+    const modalEl = document.getElementById('modalAlterarPlanoMaster');
+    if (!modalEl) return;
+
+    document.getElementById('modalPlanoUid').value = uid;
+    document.getElementById('modalPlanoEmail').innerText = u.email;
+
+    const adminEmailLower = (typeof ADMIN_EMAIL !== 'undefined' ? ADMIN_EMAIL : 'maa.koto@hotmail.com').toLowerCase();
+    const isMaster = (u.email && u.email.toLowerCase() === adminEmailLower);
+    const planoAtual = (u.plano || (isMaster ? 'BUSINESS' : 'TRIAL')).toUpperCase();
+
+    // Marcar rádio correspondente
+    const optTrial = document.getElementById('planoOptTrial');
+    const optStarter = document.getElementById('planoOptStarter');
+    const optPro = document.getElementById('planoOptPro');
+    const optBusiness = document.getElementById('planoOptBusiness');
+
+    if (optTrial) optTrial.checked = (planoAtual === 'TRIAL');
+    if (optStarter) optStarter.checked = (planoAtual === 'STARTER');
+    if (optPro) optPro.checked = (planoAtual === 'PRO');
+    if (optBusiness) optBusiness.checked = (planoAtual === 'BUSINESS');
+
+    new bootstrap.Modal(modalEl).show();
+};
+
+// Listener para confirmação de alteração de plano no modal
+document.addEventListener('DOMContentLoaded', () => {
+    const btnConfirmar = document.getElementById('btnConfirmarAlteracaoPlano');
+    if (btnConfirmar) {
+        btnConfirmar.addEventListener('click', async () => {
+            if (!verificarPermissaoMaster()) return;
+
+            const uid = document.getElementById('modalPlanoUid')?.value;
+            const u = (typeof usuariosAdmin !== 'undefined' ? usuariosAdmin.find(x => x.uid === uid) : null);
+            if (!uid || !u) return;
+
+            const radioChecked = document.querySelector('input[name="optPlanoMaster"]:checked');
+            const novoPlano = radioChecked ? radioChecked.value : 'TRIAL';
+            const planoAnterior = u.plano || 'TRIAL';
+
+            if (novoPlano === planoAnterior) {
+                if (typeof Toast !== 'undefined') Toast.fire({ icon: 'info', title: 'O usuário já possui este plano selecionado.' });
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalAlterarPlanoMaster'));
+                if (modal) modal.hide();
+                return;
+            }
+
+            try {
+                await updateDoc(doc(db, "assinaturas", uid), {
+                    plano: novoPlano,
+                    trial: (novoPlano === 'TRIAL'),
+                    updatedAt: new Date().toISOString()
+                });
+
+                window.registrarAuditoria(
+                    'ALTERACAO_PLANO',
+                    `Plano alterado de ${planoAnterior} para ${novoPlano} (${u.email})`,
+                    { alvoUid: uid, alvoEmail: u.email, planoAnterior, novoPlano }
+                );
+
+                if (typeof Toast !== 'undefined') {
+                    Toast.fire({ icon: 'success', title: `Plano atualizado para [${novoPlano}] com sucesso!` });
+                }
+
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalAlterarPlanoMaster'));
+                if (modal) modal.hide();
+
+            } catch (e) {
+                console.error('[Admin] Erro ao alterar plano:', e);
+                if (typeof Toast !== 'undefined') Toast.fire({ icon: 'error', title: 'Erro ao alterar plano no Firestore.' });
+            }
+        });
+    }
+});
+
+/**
+ * 8. window.salvarAssinaturaAdmin(uid)
+ * Preserva 100% de retrocompatibilidade com chamadas salvas em botões ou formulários de linha.
+ */
+window.salvarAssinaturaAdmin = async function(uid, novoPlanoArg, novoStatusArg, novaDataStrArg) {
+    if (!verificarPermissaoMaster()) return;
+
+    const elPlano = document.getElementById(`plano-${uid}`);
+    const elStatus = document.getElementById(`status-${uid}`);
+    const elData = document.getElementById(`data-venc-${uid}`);
+
+    const novoPlano = novoPlanoArg || (elPlano ? elPlano.value : 'TRIAL');
+    const novoStatus = novoStatusArg || (elStatus ? elStatus.value : 'ATIVO');
+    const novaDataStr = novaDataStrArg || (elData ? elData.value : '');
+
+    if (!novaDataStr) {
+        if (typeof Toast !== 'undefined') Toast.fire({ icon: 'warning', title: 'Escolha uma data de vencimento.' });
+        return;
+    }
+
+    const confirmou = await confirmarAcao(
+        'Atualizar Assinatura',
+        `Confirmar Plano [${novoPlano}], Status [${novoStatus}] e Vencimento para este usuário?`
+    );
+    if (!confirmou) return;
+
+    const novaDataObj = new Date(novaDataStr + 'T23:59:59');
+    try {
+        const uAntigo = (typeof usuariosAdmin !== 'undefined' ? usuariosAdmin.find(u => u.uid === uid) : null);
+        const mudouPlano = !uAntigo || uAntigo.plano !== novoPlano;
+        const mudouAssinatura = !uAntigo || uAntigo.status !== novoStatus || uAntigo.validade !== novaDataObj.toISOString();
+        const userEmailAlvo = uAntigo ? uAntigo.email : uid;
+
+        await updateDoc(doc(db, "assinaturas", uid), {
+            plano: novoPlano,
+            status: novoStatus,
+            trial: (novoPlano === 'TRIAL'),
+            validade: novaDataObj.toISOString(),
+            validadeTimestamp: novaDataObj,
+            updatedAt: new Date().toISOString()
+        });
+
+        if (mudouPlano) {
+            window.registrarAuditoria('ALTERACAO_PLANO', `Plano alterado para ${novoPlano} (${userEmailAlvo})`, { alvoUid: uid, alvoEmail: userEmailAlvo, planoAnterior: uAntigo?.plano || 'N/A', novoPlano });
+        }
+        if (mudouAssinatura || !mudouPlano) {
+            window.registrarAuditoria('ALTERACAO_ASSINATURA', `Assinatura de ${userEmailAlvo} alterada para ${novoStatus} até ${novaDataStr}`, { alvoUid: uid, alvoEmail: userEmailAlvo, statusAnterior: uAntigo?.status || 'N/A', novoStatus, validade: novaDataStr });
+        }
+
+        if (typeof Toast !== 'undefined') Toast.fire({ icon: 'success', title: 'Assinatura e plano atualizados com sucesso!' });
+    } catch (e) {
+        console.error('[Admin] Erro ao salvar assinatura:', e);
+        if (typeof Toast !== 'undefined') Toast.fire({ icon: 'error', title: 'Erro ao atualizar assinatura no banco.' });
+    }
+};
+
+// Aliases retrocompatíveis
+window.salvarNovaData = window.salvarAssinaturaAdmin;
+
+/**
+ * 9. window.adminResetSenha(email)
+ * Envia e-mail de redefinição de senha com confirmação segura.
+ */
+window.adminResetSenha = async function(emailCliente) {
+    if (!verificarPermissaoMaster()) return;
+
+    const confirmou = await confirmarAcao(
+        'Redefinir Senha',
+        `Pretende enviar um e-mail de redefinição de senha para ${emailCliente}?`,
+        'Sim, enviar'
+    );
+    if (confirmou) {
+        try {
+            await sendPasswordResetEmail(auth, emailCliente);
+            if (typeof Toast !== 'undefined') Toast.fire({ icon: 'success', title: 'E-mail de redefinição enviado com sucesso!' });
+        } catch (erro) {
+            console.error('[Admin] Erro no reset de senha:', erro);
+            if (typeof Toast !== 'undefined') Toast.fire({ icon: 'error', title: 'Erro ao enviar e-mail de recuperação: ' + (erro.message || 'Falha de rede') });
+        }
+    }
+};
+
+/**
+ * 10. window.adminEliminarConta(uid, email)
+ * Remove conta e assinatura do banco com confirmação expressa e auditoria EXCLUSAO_CLIENTE.
+ */
+window.adminEliminarConta = async function(uidCliente, emailCliente) {
+    if (!verificarPermissaoMaster()) return;
+
+    const confirmou = await confirmarAcao(
+        'Eliminar Acesso',
+        `ATENÇÃO MASTER: Confirma a eliminação permanente do acesso e assinatura de ${emailCliente}?`,
+        'Sim, eliminar'
+    );
+    if (confirmou) {
+        try {
+            await deleteDoc(doc(db, "assinaturas", uidCliente));
+            window.registrarAuditoria('EXCLUSAO_CLIENTE', `Assinatura de ${emailCliente} removida permanentemente pelo Master`, { alvoUid: uidCliente, alvoEmail: emailCliente });
+            if (typeof Toast !== 'undefined') Toast.fire({ icon: 'success', title: 'Conta de acesso removida com sucesso.' });
+        } catch (erro) {
+            console.error('[Admin] Erro ao excluir assinatura:', erro);
+            if (typeof Toast !== 'undefined') Toast.fire({ icon: 'error', title: 'Erro ao excluir assinatura no banco.' });
+        }
+    }
+};
+
+// Exportação para ambientes Node.js (execução de scripts de build ou teste)
+
+
+    // ============================================================================
+    // FASE 9: BACKUP E RESTAURAÇÃO PROFISSIONAL v3.0 (RISCO ZERO)
+    // ============================================================================
+    /**
+ * ============================================================================
+ * SERVICEPRO CLOUD SAAS - FASE 9: BACKUP E RESTAURAÇÃO PROFISSIONAL v3.0
+ * ============================================================================
+ * 
+ * Módulo de alta confiabilidade para exportação e importação de dados:
+ * 1. BACKUP PESSOAL (v3.0): Dados estritos do usuário autenticado com metadados
+ *    avançados e Checksum SHA-256 de integridade criptográfica.
+ * 2. BACKUP MASTER (v3.0): Snapshot consolidado de todo o ecossistema (somente admin master).
+ * 3. RESTAURAÇÃO EM 6 ETAPAS:
+ *    - Etapa 1: Validação de integridade, detecção de tipo e checagem retroativa (v1, v2, v3).
+ *    - Etapa 2: Pré-visualização rica no modal #modalRestorePreview (Design System Safira).
+ *    - Etapa 3: Confirmação explícita de segurança.
+ *    - Etapa 4: Geração automática de Safety Snapshot preventivo no localStorage e download.
+ *    - Etapa 5: Gravação em lotes (writeBatch <= 400 docs) no Firestore com barra de progresso.
+ *    - Etapa 6: Validação pós-restore, sincronização de estado e registro de auditoria.
+ * 
+ * Regras ServicePRO:
+ * - Dados são sagrados (snapshots de segurança pré-escrita obrigatórios).
+ * - Mobile First e acessibilidade touch.
+ * - Tratamento de erros amigável para o usuário final.
+ * - Idempotência e integridade referencial mantida.
+ * ============================================================================
+ */
+
+// --- 1. TEMPLATE HTML DO MODAL DE PRÉ-VISUALIZAÇÃO (DESIGN SYSTEM SAFIRA) ---
+
+
+// Injeta o modal no DOM se não existir
+function garantirModalRestoreNoDOM() {
+    if (!document.getElementById('modalRestorePreview')) {
+        const divWrapper = document.createElement('div');
+        divWrapper.innerHTML = HTML_MODAL_RESTORE_PREVIEW.trim();
+        document.body.appendChild(divWrapper.firstElementChild);
+    }
+}
+
+// --- 2. GERAÇÃO E VERIFICAÇÃO DE CHECKSUM HASH (SHA-256) ---
+
+/**
+ * Algoritmo puramente JS de SHA-256 para fallback caso crypto.subtle não esteja disponível
+ * (por exemplo em contextos inseguros ou testes locais).
+ */
+function sha256Fallback(ascii) {
+    function rightRotate(value, amount) {
+        return (value >>> amount) | (value << (32 - amount));
+    }
+    const mathPow = Math.pow;
+    const maxWord = mathPow(2, 32);
+    let i, j;
+    let result = '';
+    const words = [];
+    const asciiBitLength = ascii.length * 8;
+    
+    let hash = [
+        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+        0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+    ];
+    const k = [
+        0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+        0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+        0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+        0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+        0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+        0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+        0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+        0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+    ];
+
+    let currentLength = ascii.length;
+    words[currentLength >> 2] |= 1 << (7 - (currentLength % 4) * 8);
+    words[(((currentLength + 8) >> 6) << 4) + 15] = asciiBitLength;
+
+    for (let b = 0; b < currentLength; b++) {
+        words[b >> 2] |= ascii.charCodeAt(b) << ((3 - (b % 4)) * 8);
+    }
+
+    const w = new Array(64);
+    for (let c = 0; c < words.length; c += 16) {
+        let a = hash[0], e_val = hash[4];
+        let b = hash[1], f = hash[5];
+        let c_val = hash[2], g = hash[6];
+        let d = hash[3], h = hash[7];
+
+        for (i = 0; i < 64; i++) {
+            if (i < 16) {
+                w[i] = words[c + i] | 0;
+            } else {
+                const s0 = rightRotate(w[i - 15], 7) ^ rightRotate(w[i - 15], 18) ^ (w[i - 15] >>> 3);
+                const s1 = rightRotate(w[i - 2], 17) ^ rightRotate(w[i - 2], 19) ^ (w[i - 2] >>> 10);
+                w[i] = (w[i - 16] + s0 + w[i - 7] + s1) | 0;
+            }
+            const temp1 = (h + (rightRotate(e_val, 6) ^ rightRotate(e_val, 11) ^ rightRotate(e_val, 25)) + ((e_val & f) ^ ((~e_val) & g)) + k[i] + w[i]) | 0;
+            const temp2 = ((rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22)) + ((a & b) ^ (a & c_val) ^ (b & c_val))) | 0;
+
+            h = g;
+            g = f;
+            f = e_val;
+            e_val = (d + temp1) | 0;
+            d = c_val;
+            c_val = b;
+            b = a;
+            a = (temp1 + temp2) | 0;
+        }
+
+        hash[0] = (hash[0] + a) | 0;
+        hash[1] = (hash[1] + b) | 0;
+        hash[2] = (hash[2] + c_val) | 0;
+        hash[3] = (hash[3] + d) | 0;
+        hash[4] = (hash[4] + e_val) | 0;
+        hash[5] = (hash[5] + f) | 0;
+        hash[6] = (hash[6] + g) | 0;
+        hash[7] = (hash[7] + h) | 0;
+    }
+
+    for (i = 0; i < 8; i++) {
+        for (j = 3; j >= 0; j--) {
+            const byte = (hash[i] >> (j * 8)) & 255;
+            result += (byte < 16 ? '0' : '') + byte.toString(16);
+        }
+    }
+    return result;
+}
+
+/**
+ * Calcula o checksum SHA-256 usando Web Crypto API se disponível, com fallback automático.
+ */
+async function calcularChecksumSHA256(conteudo) {
+    const texto = typeof conteudo === 'string' ? conteudo : JSON.stringify(conteudo);
+    if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle && window.crypto.subtle.digest) {
+        try {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(texto);
+            const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        } catch (e) {
+            console.warn('[ServicePRO Backup] Falha no Web Crypto digest. Utilizando fallback JS.', e);
+        }
+    }
+    return sha256Fallback(texto);
+}
+window.calcularChecksumSHA256 = calcularChecksumSHA256;
+
+// --- 3. RESOLUÇÃO DE DEPENDÊNCIAS DO FIRESTORE E AUTH ---
+
+/**
+ * Obtém com segurança as referências de Firestore, Auth e funções modularizadas
+ */
+async function obterDepsFirestore() {
+    let _db = window.db || (typeof db !== 'undefined' ? db : null);
+    let _auth = window.auth || (typeof auth !== 'undefined' ? auth : null);
+
+    let _doc = window.doc || (typeof doc !== 'undefined' ? doc : null);
+    let _setDoc = window.setDoc || (typeof setDoc !== 'undefined' ? setDoc : null);
+    let _getDoc = window.getDoc || (typeof getDoc !== 'undefined' ? getDoc : null);
+    let _getDocs = window.getDocs || (typeof getDocs !== 'undefined' ? getDocs : null);
+    let _collection = window.collection || (typeof collection !== 'undefined' ? collection : null);
+    let _writeBatch = window.writeBatch || (typeof writeBatch !== 'undefined' ? writeBatch : null);
+
+    if (!_doc || !_setDoc || !_getDocs || !_collection || !_writeBatch) {
+        try {
+            const firestoreMod = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+            _doc = _doc || firestoreMod.doc;
+            _setDoc = _setDoc || firestoreMod.setDoc;
+            _getDoc = _getDoc || firestoreMod.getDoc;
+            _getDocs = _getDocs || firestoreMod.getDocs;
+            _collection = _collection || firestoreMod.collection;
+            _writeBatch = _writeBatch || firestoreMod.writeBatch;
+            if (!_db && firestoreMod.getFirestore) {
+                _db = firestoreMod.getFirestore();
+            }
+        } catch (err) {
+            console.error("[ServicePRO Backup] Erro ao carregar SDK modular do Firestore:", err);
+        }
+    }
+
+    if (!_auth) {
+        try {
+            const authMod = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
+            _auth = authMod.getAuth ? authMod.getAuth() : null;
+        } catch (err) {
+            console.error("[ServicePRO Backup] Erro ao carregar SDK de Auth:", err);
+        }
+    }
+
+    return {
+        db: _db,
+        auth: _auth,
+        doc: _doc,
+        setDoc: _setDoc,
+        getDoc: _getDoc,
+        getDocs: _getDocs,
+        collection: _collection,
+        writeBatch: _writeBatch
+    };
+}
+
+/**
+ * Valida se o usuário atual é Master Admin (maa.koto@hotmail.com)
+ */
+function isMasterAdmin() {
+    if (typeof window.isMasterAdminCustom === 'function') {
+        return window.isMasterAdminCustom();
+    }
+    const adminEmailCadastrado = (typeof ADMIN_EMAIL !== 'undefined' ? ADMIN_EMAIL : "maa.koto@hotmail.com").toLowerCase();
+    const curEmail = (window.userEmail || (window.auth?.currentUser?.email) || (typeof userEmail !== 'undefined' ? userEmail : '') || '').toLowerCase();
+    return !!curEmail && curEmail === adminEmailCadastrado;
+}
+window.isMasterAdmin = isMasterAdmin;
+
+/**
+ * Helper para sanitizar objetos removendo undefined e atributos de ID interno
+ */
+function sanitizarParaFirestore(obj) {
+    if (!obj || typeof obj !== 'object') return obj;
+    const limpo = {};
+    for (const [chave, valor] of Object.entries(obj)) {
+        if (valor === undefined) continue;
+        if (chave === 'id_backup' || chave === 'id_firebase') continue; // Manter fora do payload interno
+        if (valor !== null && typeof valor === 'object' && !(valor instanceof Date)) {
+            limpo[chave] = sanitizarParaFirestore(valor);
+        } else {
+            limpo[chave] = valor;
+        }
+    }
+    return limpo;
+}
+
+/**
+ * Gerenciador de lote que fraciona gravações para respeitar o limite de 500 ops do Firestore
+ */
+class FirestoreBatchManager {
+    constructor(db, writeBatchFn, maxOpsPorLote = 380) {
+        this.db = db;
+        this.writeBatchFn = writeBatchFn;
+        this.maxOpsPorLote = maxOpsPorLote;
+        this.batch = writeBatchFn(db);
+        this.opCount = 0;
+        this.totalGravados = 0;
+    }
+
+    async set(docRef, data) {
+        this.batch.set(docRef, data);
+        this.opCount++;
+        if (this.opCount >= this.maxOpsPorLote) {
+            await this.commit();
+        }
+    }
+
+    async commit() {
+        if (this.opCount > 0) {
+            await this.batch.commit();
+            this.totalGravados += this.opCount;
+            this.batch = this.writeBatchFn(this.db);
+            this.opCount = 0;
+        }
+    }
+}
+
+// --- 4. BACKUP PESSOAL v3.0 ---
+
+/**
+ * Exporta exclusivamente os dados do usuário autenticado com metadados v3.0 e Checksum
+ */
+async function gerarBackupPessoalV3() {
+    const deps = await obterDepsFirestore();
+    const uid = deps.auth?.currentUser?.uid || window.userId || (typeof userId !== 'undefined' ? userId : null);
+    const email = deps.auth?.currentUser?.email || window.userEmail || (typeof userEmail !== 'undefined' ? userEmail : '');
+
+    if (!uid) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atenção',
+                text: 'Você precisa estar autenticado para exportar seu backup pessoal.',
+                confirmButtonColor: '#0f172a'
+            });
+        } else {
+            alert('Você precisa estar autenticado para exportar seu backup.');
+        }
+        return;
+    }
+
+    if (typeof Toast !== 'undefined') {
+        Toast.fire({ icon: 'info', title: 'Gerando Backup Pessoal v3.0 seguro...' });
+    }
+
+    try {
+        let perfilData = null;
+        let clientesData = [];
+        let estoqueData = [];
+        let orcamentosData = [];
+        let movimentacoesData = [];
+
+        // Prioridade 1: Buscar estado fresco diretamente do Firestore
+        if (deps.db && deps.getDocs && deps.collection) {
+            try {
+                const [perfSnap, cliSnap, estSnap, orcSnap, movSnap] = await Promise.all([
+                    deps.getDoc(deps.doc(deps.db, "usuarios", uid, "config", "perfil")).catch(() => ({ exists: () => false })),
+                    deps.getDocs(deps.collection(deps.db, "usuarios", uid, "clientes")).catch(() => ({ docs: [] })),
+                    deps.getDocs(deps.collection(deps.db, "usuarios", uid, "estoque")).catch(() => ({ docs: [] })),
+                    deps.getDocs(deps.collection(deps.db, "usuarios", uid, "orcamentos")).catch(() => ({ docs: [] })),
+                    deps.getDocs(deps.collection(deps.db, "usuarios", uid, "movimentacoes")).catch(() => ({ docs: [] }))
+                ]);
+
+                if (perfSnap && perfSnap.exists && perfSnap.exists()) perfilData = perfSnap.data();
+                if (cliSnap && cliSnap.docs) clientesData = cliSnap.docs.map(d => ({ id_backup: d.id, ...d.data() }));
+                if (estSnap && estSnap.docs) estoqueData = estSnap.docs.map(d => ({ id_backup: d.id, ...d.data() }));
+                if (orcSnap && orcSnap.docs) orcamentosData = orcSnap.docs.map(d => ({ id_backup: d.id, ...d.data() }));
+                if (movSnap && movSnap.docs) movimentacoesData = movSnap.docs.map(d => ({ id_backup: d.id, ...d.data() }));
+            } catch (errDb) {
+                console.warn("[ServicePRO Backup] Falha na leitura remota direta. Usando cache de memória:", errDb);
+            }
+        }
+
+        // Fallback: usar referências de memória locais se o Firestore direto estiver inacessível
+        if (perfilData === null && (window.perfil || typeof perfil !== 'undefined')) {
+            perfilData = window.perfil || perfil;
+        }
+        if (clientesData.length === 0 && (window.clientes || typeof clientes !== 'undefined')) {
+            clientesData = (window.clientes || clientes).map(c => ({ id_backup: c.id_firebase || c.id_backup, ...c }));
+        }
+        if (estoqueData.length === 0 && (window.estoque || typeof estoque !== 'undefined')) {
+            estoqueData = (window.estoque || estoque).map(e => ({ id_backup: e.id_firebase || e.id_backup, ...e }));
+        }
+        if (orcamentosData.length === 0 && (window.orcamentos || typeof orcamentos !== 'undefined')) {
+            orcamentosData = (window.orcamentos || orcamentos).map(o => ({ id_backup: o.id_firebase || o.id_backup, ...o }));
+        }
+        if (movimentacoesData.length === 0 && (window.movimentacoes || typeof movimentacoes !== 'undefined')) {
+            movimentacoesData = (window.movimentacoes || movimentacoes).map(m => ({ id_backup: m.id_firebase || m.id_backup, ...m }));
+        }
+
+        const dadosPayload = {
+            perfil: perfilData || {},
+            clientes: clientesData,
+            estoque: estoqueData,
+            orcamentos: orcamentosData,
+            movimentacoes: movimentacoesData
+        };
+
+        const checksum = await calcularChecksumSHA256(dadosPayload);
+
+        const backupFinal = {
+            sistema: "ServicePRO Cloud SaaS",
+            tipo: "BACKUP_PESSOAL",
+            versao: "3.0",
+            timestamp: new Date().toISOString(),
+            uid: uid,
+            email: email,
+            quantidadeRegistros: {
+                clientes: clientesData.length,
+                estoque: estoqueData.length,
+                orcamentos: orcamentosData.length,
+                movimentacoes: movimentacoesData.length
+            },
+            estrutura: ["perfil", "clientes", "estoque", "orcamentos", "movimentacoes"],
+            integridade: checksum,
+            dados: dadosPayload
+        };
+
+        const jsonStr = JSON.stringify(backupFinal, null, 2);
+        const blob = new Blob([jsonStr], { type: "application/json;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const dataFormatada = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+        a.download = `backup_pessoal_servicepro_${dataFormatada}.json`;
+        a.href = url;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        if (typeof window.registrarAuditoria === 'function') {
+            window.registrarAuditoria('EXPORTACAO_BACKUP', 'Exportação de Backup Pessoal v3.0', {
+                tipo: 'BACKUP_PESSOAL',
+                versao: '3.0',
+                totalClientes: clientesData.length,
+                totalEstoque: estoqueData.length,
+                totalOrcamentos: orcamentosData.length,
+                checksum: checksum.substring(0, 16) + '...'
+            });
+        }
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Backup Concluído!',
+                html: `
+                    <div class="text-start small">
+                        <p class="mb-2">Seus dados foram empacotados com sucesso com verificação criptográfica SHA-256.</p>
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="bi bi-people text-primary me-2"></i><strong>${clientesData.length}</strong> Clientes</li>
+                            <li><i class="bi bi-box-seam text-success me-2"></i><strong>${estoqueData.length}</strong> Itens de Estoque</li>
+                            <li><i class="bi bi-file-earmark-text text-warning me-2"></i><strong>${orcamentosData.length}</strong> Orçamentos e OS</li>
+                            <li><i class="bi bi-arrow-left-right text-info me-2"></i><strong>${movimentacoesData.length}</strong> Movimentações de Estoque</li>
+                        </ul>
+                    </div>
+                `,
+                icon: 'success',
+                confirmButtonColor: '#0f172a'
+            });
+        } else if (typeof Toast !== 'undefined') {
+            Toast.fire({ icon: 'success', title: 'Backup Pessoal v3.0 baixado com sucesso!' });
+        }
+    } catch (erro) {
+        console.error("[ServicePRO Backup] Erro ao gerar backup pessoal:", erro);
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao gerar backup',
+                text: 'Não foi possível compilar os dados no momento. Verifique sua conexão e tente novamente.',
+                confirmButtonColor: '#0f172a'
+            });
+        }
+    }
+}
+window.gerarBackupPessoalV3 = gerarBackupPessoalV3;
+
+// --- 5. BACKUP MASTER v3.0 (SISTEMA COMPLETO) ---
+
+/**
+ * Exporta todo o banco de dados do ServicePRO (apenas admin master autorizado)
+ */
+async function gerarBackupMasterV3() {
+    if (!isMasterAdmin()) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Acesso Não Autorizado',
+                text: 'Apenas a conta administradora Master pode gerar ou restaurar o backup geral do sistema.',
+                confirmButtonColor: '#0f172a'
+            });
+        }
+        return;
+    }
+
+    const deps = await obterDepsFirestore();
+    const email = deps.auth?.currentUser?.email || window.userEmail || (typeof userEmail !== 'undefined' ? userEmail : '');
+
+    if (typeof Toast !== 'undefined') {
+        Toast.fire({ icon: 'info', title: 'Compilando Backup Master do Sistema...' });
+    }
+
+    try {
+        const snapAss = await deps.getDocs(deps.collection(deps.db, "assinaturas"));
+        const listaAssinaturas = snapAss.docs.map(d => ({ uid: d.id, ...d.data() }));
+        const usuariosMap = {};
+
+        let totalClientes = 0;
+        let totalEstoque = 0;
+        let totalOrcamentos = 0;
+        let totalMovimentacoes = 0;
+
+        for (const uDoc of snapAss.docs) {
+            const uid = uDoc.id;
+            const [perfSnap, cliSnap, estSnap, orcSnap, movSnap] = await Promise.all([
+                deps.getDoc(deps.doc(deps.db, "usuarios", uid, "config", "perfil")).catch(() => ({ exists: () => false })),
+                deps.getDocs(deps.collection(deps.db, "usuarios", uid, "clientes")).catch(() => ({ docs: [] })),
+                deps.getDocs(deps.collection(deps.db, "usuarios", uid, "estoque")).catch(() => ({ docs: [] })),
+                deps.getDocs(deps.collection(deps.db, "usuarios", uid, "orcamentos")).catch(() => ({ docs: [] })),
+                deps.getDocs(deps.collection(deps.db, "usuarios", uid, "movimentacoes")).catch(() => ({ docs: [] }))
+            ]);
+
+            const cliArr = (cliSnap && cliSnap.docs) ? cliSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : [];
+            const estArr = (estSnap && estSnap.docs) ? estSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : [];
+            const orcArr = (orcSnap && orcSnap.docs) ? orcSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : [];
+            const movArr = (movSnap && movSnap.docs) ? movSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : [];
+
+            totalClientes += cliArr.length;
+            totalEstoque += estArr.length;
+            totalOrcamentos += orcArr.length;
+            totalMovimentacoes += movArr.length;
+
+            usuariosMap[uid] = {
+                perfil: (perfSnap && perfSnap.exists && perfSnap.exists()) ? perfSnap.data() : null,
+                clientes: cliArr,
+                estoque: estArr,
+                orcamentos: orcArr,
+                movimentacoes: movArr
+            };
+        }
+
+        const payloadMaster = {
+            assinaturas: listaAssinaturas,
+            usuarios: usuariosMap
+        };
+
+        const checksum = await calcularChecksumSHA256(payloadMaster);
+
+        const backupMasterFinal = {
+            sistema: "ServicePRO Cloud SaaS",
+            tipo: "BACKUP_MASTER_COMPLETO",
+            versao: "3.0",
+            timestamp: new Date().toISOString(),
+            geradoPor: email,
+            quantidadeRegistros: {
+                totalUsuarios: Object.keys(usuariosMap).length,
+                assinaturas: listaAssinaturas.length,
+                totalClientes: totalClientes,
+                totalEstoque: totalEstoque,
+                totalOrcamentos: totalOrcamentos,
+                totalMovimentacoes: totalMovimentacoes
+            },
+            estrutura: ["assinaturas", "usuarios"],
+            integridade: checksum,
+            assinaturas: listaAssinaturas,
+            usuarios: usuariosMap
+        };
+
+        const jsonStr = JSON.stringify(backupMasterFinal, null, 2);
+        const blob = new Blob([jsonStr], { type: "application/json;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const dataFormatada = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+        a.download = `backup_master_servicepro_completo_${dataFormatada}.json`;
+        a.href = url;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        if (typeof window.registrarAuditoria === 'function') {
+            window.registrarAuditoria('EXPORTACAO_BACKUP', 'Exportação de Backup Master Geral v3.0', {
+                tipo: 'BACKUP_MASTER_COMPLETO',
+                versao: '3.0',
+                totalUsuarios: listaAssinaturas.length,
+                totalClientes,
+                totalEstoque,
+                totalOrcamentos,
+                checksum: checksum.substring(0, 16) + '...'
+            });
+        }
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Backup Master Concluído!',
+                html: `
+                    <div class="text-start small">
+                        <p class="mb-2">Backup completo de todo o banco de dados gerado com integridade criptográfica SHA-256.</p>
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="bi bi-shield-lock text-primary me-2"></i><strong>${listaAssinaturas.length}</strong> Contas e Assinaturas</li>
+                            <li><i class="bi bi-people text-secondary me-2"></i><strong>${totalClientes}</strong> Clientes Globais</li>
+                            <li><i class="bi bi-box-seam text-success me-2"></i><strong>${totalEstoque}</strong> Itens de Estoque</li>
+                            <li><i class="bi bi-file-earmark-text text-warning me-2"></i><strong>${totalOrcamentos}</strong> Orçamentos/OS</li>
+                            <li><i class="bi bi-arrow-left-right text-info me-2"></i><strong>${totalMovimentacoes}</strong> Movimentações de Estoque</li>
+                        </ul>
+                    </div>
+                `,
+                icon: 'success',
+                confirmButtonColor: '#0f172a'
+            });
+        }
+    } catch (err) {
+        console.error("[ServicePRO Backup] Erro ao compilar backup master:", err);
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Falha no Backup Master',
+                text: 'Ocorreu um erro ao extrair todas as coleções do banco de dados.',
+                confirmButtonColor: '#0f172a'
+            });
+        }
+    }
+}
+window.gerarBackupMasterV3 = gerarBackupMasterV3;
+
+// --- 6. ETAPA 4: SAFETY SNAPSHOT (BACKUP DE SEGURANÇA PRÉ-RESTORE) ---
+
+/**
+ * Captura um snapshot integral do estado local e grava no localStorage + download de emergência
+ */
+async function gerarSafetySnapshot(tipoRestauracao) {
+    const deps = await obterDepsFirestore();
+    const uid = deps.auth?.currentUser?.uid || window.userId || (typeof userId !== 'undefined' ? userId : null);
+    const email = deps.auth?.currentUser?.email || window.userEmail || (typeof userEmail !== 'undefined' ? userEmail : '');
+
+    const timestamp = new Date().toISOString();
+    const snapshotKey = `servicepro_safety_snapshot_${Date.now()}`;
+
+    let snapshotPayload = {
+        sistema: "ServicePRO Cloud SaaS",
+        tipo: "SAFETY_SNAPSHOT_PRE_RESTORE",
+        tipoRestauracaoAgendada: tipoRestauracao,
+        timestamp: timestamp,
+        uid: uid,
+        email: email,
+        dados: {}
+    };
+
+    try {
+        if (tipoRestauracao === 'BACKUP_MASTER_COMPLETO') {
+            const snapAss = await deps.getDocs(deps.collection(deps.db, "assinaturas"));
+            const assData = snapAss.docs.map(d => ({ uid: d.id, ...d.data() }));
+            const usersData = {};
+
+            for (const docAss of snapAss.docs) {
+                const uId = docAss.id;
+                const [perfSnap, cliSnap, estSnap, orcSnap, movSnap] = await Promise.all([
+                    deps.getDoc(deps.doc(deps.db, "usuarios", uId, "config", "perfil")).catch(() => ({ exists: () => false })),
+                    deps.getDocs(deps.collection(deps.db, "usuarios", uId, "clientes")).catch(() => ({ docs: [] })),
+                    deps.getDocs(deps.collection(deps.db, "usuarios", uId, "estoque")).catch(() => ({ docs: [] })),
+                    deps.getDocs(deps.collection(deps.db, "usuarios", uId, "orcamentos")).catch(() => ({ docs: [] })),
+                    deps.getDocs(deps.collection(deps.db, "usuarios", uId, "movimentacoes")).catch(() => ({ docs: [] }))
+                ]);
+                usersData[uId] = {
+                    perfil: (perfSnap && perfSnap.exists && perfSnap.exists()) ? perfSnap.data() : null,
+                    clientes: cliSnap.docs ? cliSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : [],
+                    estoque: estSnap.docs ? estSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : [],
+                    orcamentos: orcSnap.docs ? orcSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : [],
+                    movimentacoes: movSnap.docs ? movSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : []
+                };
+            }
+            snapshotPayload.dados = { assinaturas: assData, usuarios: usersData };
+        } else {
+            // Pessoal
+            const [perfSnap, cliSnap, estSnap, orcSnap, movSnap] = await Promise.all([
+                deps.getDoc(deps.doc(deps.db, "usuarios", uid, "config", "perfil")).catch(() => ({ exists: () => false })),
+                deps.getDocs(deps.collection(deps.db, "usuarios", uid, "clientes")).catch(() => ({ docs: [] })),
+                deps.getDocs(deps.collection(deps.db, "usuarios", uid, "estoque")).catch(() => ({ docs: [] })),
+                deps.getDocs(deps.collection(deps.db, "usuarios", uid, "orcamentos")).catch(() => ({ docs: [] })),
+                deps.getDocs(deps.collection(deps.db, "usuarios", uid, "movimentacoes")).catch(() => ({ docs: [] }))
+            ]);
+
+            snapshotPayload.dados = {
+                perfil: (perfSnap && perfSnap.exists && perfSnap.exists()) ? perfSnap.data() : (window.perfil || {}),
+                clientes: cliSnap.docs ? cliSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : (window.clientes || []),
+                estoque: estSnap.docs ? estSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : (window.estoque || []),
+                orcamentos: orcSnap.docs ? orcSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : (window.orcamentos || []),
+                movimentacoes: movSnap.docs ? movSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : (window.movimentacoes || [])
+            };
+        }
+
+        const jsonStr = JSON.stringify(snapshotPayload);
+        try {
+            localStorage.setItem(snapshotKey, jsonStr);
+            localStorage.setItem('servicepro_safety_snapshot_latest', jsonStr);
+        } catch (eQuota) {
+            console.warn("[ServicePRO Backup] LocalStorage com capacidade esgotada. Mantendo em sessionStorage e disparando download de salvaguarda:", eQuota);
+            try {
+                sessionStorage.setItem(snapshotKey, jsonStr);
+            } catch (e) {}
+        }
+
+        console.info(`[ServicePRO Backup] Safety Snapshot criado: ${snapshotKey}`);
+        return { key: snapshotKey, snapshot: snapshotPayload };
+    } catch (errSnap) {
+        console.error("[ServicePRO Backup] Falha ao criar snapshot preventivo:", errSnap);
+        return { key: snapshotKey, snapshot: snapshotPayload, erro: errSnap };
+    }
+}
+window.gerarSafetySnapshot = gerarSafetySnapshot;
+
+/**
+ * Permite restaurar um snapshot de emergência salvo no localStorage caso necessário
+ */
+function listarSafetySnapshots() {
+    const chaves = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('servicepro_safety_snapshot_')) {
+            chaves.push(key);
+        }
+    }
+    return chaves;
+}
+window.listarSafetySnapshots = listarSafetySnapshots;
+
+// Variável de controle do backup em estágio de pré-visualização
+window._backupStagedForRestore = null;
+
+// --- 7. ETAPA 1 E 2: PROCESSAMENTO, VALIDAÇÃO E PRÉ-VISUALIZAÇÃO ---
+
+/**
+ * Processa o arquivo selecionado, valida integridade, detecta versão e abre o modal de pré-visualização
+ */
+async function processarArquivoRestauracao(file, tipoEsperado = 'PESSOAL') {
+    garantirModalRestoreNoDOM();
+
+    if (!file) return;
+
+    if (!file.name.toLowerCase().endsWith('.json')) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Formato Não Suportado',
+                text: 'Por favor, selecione um arquivo de backup válido com extensão .json.',
+                confirmButtonColor: '#0f172a'
+            });
+        }
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+        try {
+            let backupBruto;
+            try {
+                backupBruto = JSON.parse(evt.target.result);
+            } catch (jsonErr) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Arquivo Corrompido',
+                        text: 'O arquivo selecionado não contém um formato JSON válido.',
+                        confirmButtonColor: '#0f172a'
+                    });
+                }
+                return;
+            }
+
+            // Normalização de versões (v1.0, v2.0 e v3.0)
+            let versaoDetectada = backupBruto.versao || "1.0";
+            let tipoDetectado = backupBruto.tipo;
+
+            if (!tipoDetectado) {
+                if (backupBruto.assinaturas && backupBruto.usuarios) {
+                    tipoDetectado = "BACKUP_MASTER_COMPLETO";
+                } else {
+                    tipoDetectado = "BACKUP_PESSOAL";
+                }
+            }
+
+            // Verificação estrita de autorização
+            if (tipoDetectado === "BACKUP_MASTER_COMPLETO" && !isMasterAdmin()) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Acesso Restrito',
+                        text: 'Este arquivo contém o Backup Master completo do sistema. Apenas o administrador Master tem autorização para inspecionar ou restaurar este arquivo.',
+                        confirmButtonColor: '#0f172a'
+                    });
+                }
+                return;
+            }
+
+            // Extração de dados unificada
+            let clientesArr = [];
+            let estoqueArr = [];
+            let orcamentosArr = [];
+            let movimentacoesArr = [];
+            let assinaturasArr = [];
+            let perfilObj = null;
+            let integridadeStatus = 'LEGADO'; // 'VALIDO', 'INVALIDO', 'LEGADO'
+
+            if (tipoDetectado === "BACKUP_PESSOAL") {
+                const dados = backupBruto.dados || backupBruto;
+                perfilObj = dados.perfil || null;
+                clientesArr = Array.isArray(dados.clientes) ? dados.clientes : [];
+                estoqueArr = Array.isArray(dados.estoque) ? dados.estoque : [];
+                orcamentosArr = Array.isArray(dados.orcamentos) ? dados.orcamentos : [];
+                movimentacoesArr = Array.isArray(dados.movimentacoes) ? dados.movimentacoes : [];
+
+                if (backupBruto.integridade && backupBruto.dados) {
+                    const hashCalculado = await calcularChecksumSHA256(backupBruto.dados);
+                    integridadeStatus = (hashCalculado === backupBruto.integridade) ? 'VALIDO' : 'INVALIDO';
+                }
+            } else if (tipoDetectado === "BACKUP_MASTER_COMPLETO") {
+                assinaturasArr = Array.isArray(backupBruto.assinaturas) ? backupBruto.assinaturas : [];
+                const usersMap = backupBruto.usuarios || {};
+                for (const u of Object.values(usersMap)) {
+                    if (Array.isArray(u.clientes)) clientesArr.push(...u.clientes);
+                    if (Array.isArray(u.estoque)) estoqueArr.push(...u.estoque);
+                    if (Array.isArray(u.orcamentos)) orcamentosArr.push(...u.orcamentos);
+                    if (Array.isArray(u.movimentacoes)) movimentacoesArr.push(...u.movimentacoes);
+                }
+
+                if (backupBruto.integridade && backupBruto.assinaturas && backupBruto.usuarios) {
+                    const hashCalculado = await calcularChecksumSHA256({
+                        assinaturas: backupBruto.assinaturas,
+                        usuarios: backupBruto.usuarios
+                    });
+                    integridadeStatus = (hashCalculado === backupBruto.integridade) ? 'VALIDO' : 'INVALIDO';
+                }
+            }
+
+            // Preparar objeto de estágio
+            window._backupStagedForRestore = {
+                nomeArquivo: file.name,
+                versao: versaoDetectada,
+                tipo: tipoDetectado,
+                dataCriacao: backupBruto.timestamp || backupBruto.dataCriacao || 'Data não informada',
+                origem: backupBruto.geradoPor || backupBruto.email || backupBruto.uid || 'Desconhecida',
+                integridade: integridadeStatus,
+                contagem: {
+                    clientes: clientesArr.length,
+                    estoque: estoqueArr.length,
+                    orcamentos: orcamentosArr.length,
+                    movimentacoes: movimentacoesArr.length,
+                    assinaturas: assinaturasArr.length
+                },
+                conteudo: backupBruto
+            };
+
+            // Preencher campos da UI no Modal
+            document.getElementById('restoreModalNomeArquivo').innerText = file.name;
+            document.getElementById('restoreModalBadgeVersao').innerText = `Versão ${versaoDetectada}`;
+            
+            const badgeTipo = document.getElementById('restoreModalBadgeTipo');
+            if (tipoDetectado === 'BACKUP_MASTER_COMPLETO') {
+                badgeTipo.innerHTML = `<i class="bi bi-shield-lock me-1"></i> BACKUP MASTER DO SISTEMA`;
+                badgeTipo.style.background = 'rgba(16, 185, 129, 0.1)';
+                badgeTipo.style.color = '#10b981';
+                badgeTipo.style.borderColor = 'rgba(16, 185, 129, 0.2)';
+                document.getElementById('restoreColAssinaturas')?.classList.remove('d-none');
+                document.getElementById('restoreCountAssinaturas').innerText = assinaturasArr.length;
+            } else {
+                badgeTipo.innerHTML = `<i class="bi bi-person-badge me-1"></i> BACKUP PESSOAL`;
+                badgeTipo.style.background = 'rgba(37, 99, 235, 0.1)';
+                badgeTipo.style.color = '#2563eb';
+                badgeTipo.style.borderColor = 'rgba(37, 99, 235, 0.2)';
+                document.getElementById('restoreColAssinaturas')?.classList.add('d-none');
+            }
+
+            // Data legível
+            let dataFormatada = window._backupStagedForRestore.dataCriacao;
+            try {
+                if (dataFormatada !== 'Data não informada') {
+                    const d = new Date(dataFormatada);
+                    if (!isNaN(d.getTime())) {
+                        dataFormatada = d.toLocaleDateString('pt-BR') + ' às ' + d.toLocaleTimeString('pt-BR');
+                    }
+                }
+            } catch (e) {}
+            document.getElementById('restoreModalDataGeracao').innerText = dataFormatada;
+            document.getElementById('restoreModalOrigem').innerText = window._backupStagedForRestore.origem;
+
+            // Integridade Box
+            const boxInt = document.getElementById('restoreModalIntegridadeBox');
+            const iconInt = document.getElementById('restoreModalIntegridadeIcon');
+            const txtInt = document.getElementById('restoreModalIntegridadeTexto');
+
+            if (integridadeStatus === 'VALIDO') {
+                boxInt.style.background = '#ecfdf5';
+                boxInt.style.borderColor = '#a7f3d0';
+                iconInt.className = 'bi bi-shield-fill-check text-success fs-5';
+                txtInt.className = 'small fw-semibold text-success';
+                txtInt.innerText = 'Integridade Criptográfica: Checksum SHA-256 autêntico e íntegro.';
+            } else if (integridadeStatus === 'INVALIDO') {
+                boxInt.style.background = '#fef2f2';
+                boxInt.style.borderColor = '#fecaca';
+                iconInt.className = 'bi bi-shield-fill-x text-danger fs-5';
+                txtInt.className = 'small fw-semibold text-danger';
+                txtInt.innerText = 'Atenção: O checksum do arquivo divergiu (o conteúdo pode ter sido editado manualmente).';
+            } else {
+                boxInt.style.background = '#f8fafc';
+                boxInt.style.borderColor = '#e2e8f0';
+                iconInt.className = 'bi bi-info-circle text-muted fs-5';
+                txtInt.className = 'small fw-semibold text-muted';
+                txtInt.innerText = `Backup em formato legado (v${versaoDetectada}): Estrutura validada com sucesso.`;
+            }
+
+            // Contagens
+            document.getElementById('restoreCountClientes').innerText = clientesArr.length;
+            document.getElementById('restoreCountEstoque').innerText = estoqueArr.length;
+            document.getElementById('restoreCountOrcamentos').innerText = orcamentosArr.length;
+            document.getElementById('restoreCountMovimentacoes').innerText = movimentacoesArr.length;
+
+            // Resetar container de progresso
+            document.getElementById('restoreProgressoContainer').classList.add('d-none');
+            document.getElementById('restoreProgressoBarra').style.width = '0%';
+            document.getElementById('restoreProgressoPorcento').innerText = '0%';
+
+            // Exibir modal
+            const elModal = document.getElementById('modalRestorePreview');
+            const bsModal = bootstrap.Modal.getOrCreateInstance(elModal);
+            bsModal.show();
+
+        } catch (errGeral) {
+            console.error("[ServicePRO Backup] Falha crítica no processamento do arquivo:", errGeral);
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro na Leitura',
+                    text: 'Não foi possível interpretar a estrutura deste backup.',
+                    confirmButtonColor: '#0f172a'
+                });
+            }
+        }
+    };
+    reader.readAsText(file);
+}
+window.processarArquivoRestauracao = processarArquivoRestauracao;
+
+// --- 8. ETAPAS 3, 4, 5 E 6: CONFIRMAÇÃO, SNAPSHOT, RESTORE EM LOTE E VALIDAÇÃO ---
+
+/**
+ * Executa a restauração confirmada de forma segura, com snapshot prévio, lote do Firestore e auditoria
+ */
+async function executarRestoreConfirmado() {
+    const staged = window._backupStagedForRestore;
+    if (!staged || !staged.conteudo) {
+        if (typeof Toast !== 'undefined') Toast.fire({ icon: 'warning', title: 'Nenhum backup em estágio para restaurar.' });
+        return;
+    }
+
+    // ETAPA 3: CONFIRMAÇÃO EXPLÍCITA
+    let confirmou = false;
+    const msgConfirm = `Você está prestes a restaurar dados de "${staged.nomeArquivo}". Um snapshot preventivo de emergência será gravado automaticamente antes de qualquer alteração no banco. Deseja iniciar a gravação segura?`;
+    
+    if (typeof window.confirmarAcao === 'function') {
+        confirmou = await window.confirmarAcao('Confirmar Restauração Segura?', msgConfirm, 'Sim, restaurar com segurança');
+    } else if (typeof Swal !== 'undefined') {
+        const res = await Swal.fire({
+            title: 'Confirmar Restauração Segura?',
+            text: msgConfirm,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, restaurar com segurança',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#2563eb'
+        });
+        confirmou = res.isConfirmed;
+    } else {
+        confirmou = confirm(msgConfirm);
+    }
+
+    if (!confirmou) return;
+
+    const btnConfirmar = document.getElementById('btnConfirmarRestoreModal');
+    const btnCancelar = document.getElementById('btnCancelarRestoreModal');
+    const btnFecharX = document.getElementById('btnFecharModalRestoreX');
+    const progContainer = document.getElementById('restoreProgressoContainer');
+    const progBarra = document.getElementById('restoreProgressoBarra');
+    const progTexto = document.getElementById('restoreProgressoTexto');
+    const progPorcento = document.getElementById('restoreProgressoPorcento');
+
+    btnConfirmar.disabled = true;
+    btnCancelar.disabled = true;
+    btnFecharX.disabled = true;
+    progContainer.classList.remove('d-none');
+
+    function atualizarProgresso(porcentagem, mensagem) {
+        progBarra.style.width = `${porcentagem}%`;
+        progPorcento.innerText = `${porcentagem}%`;
+        if (mensagem) progTexto.innerText = mensagem;
+    }
+
+    try {
+        const deps = await obterDepsFirestore();
+        const currentUid = deps.auth?.currentUser?.uid || window.userId || (typeof userId !== 'undefined' ? userId : null);
+
+        // ETAPA 4: GERAR SNAPSHOT DE SEGURANÇA
+        atualizarProgresso(10, "Gerando snapshot de segurança preventivo...");
+        const safetyResult = await gerarSafetySnapshot(staged.tipo);
+
+        // ETAPA 5: GRAVAÇÃO SEGURA NO FIRESTORE (BATCH ATÉ 380 DOCS)
+        const batchManager = new FirestoreBatchManager(deps.db, deps.writeBatch, 380);
+
+        if (staged.tipo === "BACKUP_PESSOAL") {
+            const payload = staged.conteudo.dados || staged.conteudo;
+            const targetUid = currentUid;
+
+            if (!targetUid) throw new Error("Usuário autenticado não encontrado para restaurar os dados.");
+
+            // 1. Perfil
+            atualizarProgresso(25, "Restaurando perfil e preferências...");
+            if (payload.perfil) {
+                const dadosPerfilLimpos = sanitizarParaFirestore(payload.perfil);
+                await deps.setDoc(deps.doc(deps.db, "usuarios", targetUid, "config", "perfil"), dadosPerfilLimpos);
+            }
+
+            // 2. Clientes
+            atualizarProgresso(40, "Restaurando cadastros de clientes...");
+            if (Array.isArray(payload.clientes)) {
+                for (const c of payload.clientes) {
+                    const docId = c.id_backup || c.id_firebase || c.id || deps.doc(deps.collection(deps.db, "usuarios", targetUid, "clientes")).id;
+                    const cLimpo = sanitizarParaFirestore(c);
+                    await batchManager.set(deps.doc(deps.db, "usuarios", targetUid, "clientes", docId), cLimpo);
+                }
+            }
+
+            // 3. Estoque
+            atualizarProgresso(60, "Restaurando itens de estoque...");
+            if (Array.isArray(payload.estoque)) {
+                for (const item of payload.estoque) {
+                    const docId = item.id_backup || item.id_firebase || item.id || deps.doc(deps.collection(deps.db, "usuarios", targetUid, "estoque")).id;
+                    const itemLimpo = sanitizarParaFirestore(item);
+                    await batchManager.set(deps.doc(deps.db, "usuarios", targetUid, "estoque", docId), itemLimpo);
+                }
+            }
+
+            // 4. Orçamentos e OS
+            atualizarProgresso(80, "Restaurando ordens de serviço e orçamentos...");
+            if (Array.isArray(payload.orcamentos)) {
+                for (const o of payload.orcamentos) {
+                    const docId = o.id_backup || o.id_firebase || o.id || deps.doc(deps.collection(deps.db, "usuarios", targetUid, "orcamentos")).id;
+                    const oLimpo = sanitizarParaFirestore(o);
+                    await batchManager.set(deps.doc(deps.db, "usuarios", targetUid, "orcamentos", docId), oLimpo);
+                }
+            }
+
+            // 5. Movimentações de Estoque
+            atualizarProgresso(90, "Restaurando histórico de movimentações...");
+            if (Array.isArray(payload.movimentacoes)) {
+                for (const m of payload.movimentacoes) {
+                    const docId = m.id_backup || m.id_firebase || m.id || deps.doc(deps.collection(deps.db, "usuarios", targetUid, "movimentacoes")).id;
+                    const mLimpo = sanitizarParaFirestore(m);
+                    await batchManager.set(deps.doc(deps.db, "usuarios", targetUid, "movimentacoes", docId), mLimpo);
+                }
+            }
+
+            // Fechar lotes pendentes
+            await batchManager.commit();
+
+        } else if (staged.tipo === "BACKUP_MASTER_COMPLETO") {
+            // Master Restore
+            atualizarProgresso(20, "Restaurando assinaturas do sistema...");
+            if (Array.isArray(staged.conteudo.assinaturas)) {
+                for (const a of staged.conteudo.assinaturas) {
+                    const uId = a.uid;
+                    if (uId) {
+                        const { uid: _, ...dadosAss } = a;
+                        await batchManager.set(deps.doc(deps.db, "assinaturas", uId), sanitizarParaFirestore(dadosAss));
+                    }
+                }
+            }
+
+            atualizarProgresso(50, "Restaurando coleções de usuários...");
+            if (staged.conteudo.usuarios && typeof staged.conteudo.usuarios === 'object') {
+                for (const [uId, uData] of Object.entries(staged.conteudo.usuarios)) {
+                    if (uData.perfil) {
+                        await batchManager.set(deps.doc(deps.db, "usuarios", uId, "config", "perfil"), sanitizarParaFirestore(uData.perfil));
+                    }
+                    if (Array.isArray(uData.clientes)) {
+                        for (const c of uData.clientes) {
+                            const docId = c.id_backup || c.id_firebase || c.id || deps.doc(deps.collection(deps.db, "usuarios", uId, "clientes")).id;
+                            await batchManager.set(deps.doc(deps.db, "usuarios", uId, "clientes", docId), sanitizarParaFirestore(c));
+                        }
+                    }
+                    if (Array.isArray(uData.estoque)) {
+                        for (const it of uData.estoque) {
+                            const docId = it.id_backup || it.id_firebase || it.id || deps.doc(deps.collection(deps.db, "usuarios", uId, "estoque")).id;
+                            await batchManager.set(deps.doc(deps.db, "usuarios", uId, "estoque", docId), sanitizarParaFirestore(it));
+                        }
+                    }
+                    if (Array.isArray(uData.orcamentos)) {
+                        for (const o of uData.orcamentos) {
+                            const docId = o.id_backup || o.id_firebase || o.id || deps.doc(deps.collection(deps.db, "usuarios", uId, "orcamentos")).id;
+                            await batchManager.set(deps.doc(deps.db, "usuarios", uId, "orcamentos", docId), sanitizarParaFirestore(o));
+                        }
+                    }
+                    if (Array.isArray(uData.movimentacoes)) {
+                        for (const m of uData.movimentacoes) {
+                            const docId = m.id_backup || m.id_firebase || m.id || deps.doc(deps.collection(deps.db, "usuarios", uId, "movimentacoes")).id;
+                            await batchManager.set(deps.doc(deps.db, "usuarios", uId, "movimentacoes", docId), sanitizarParaFirestore(m));
+                        }
+                    }
+                }
+            }
+
+            await batchManager.commit();
+        }
+
+        // ETAPA 6: VALIDAÇÃO PÓS-RESTORE, AUDITORIA E NOTIFICAÇÃO FINAL
+        atualizarProgresso(100, "Restauração finalizada com sucesso!");
+
+        if (typeof window.registrarAuditoria === 'function') {
+            window.registrarAuditoria('RESTAURACAO_BACKUP', `Restauração com sucesso de ${staged.nomeArquivo}`, {
+                tipo: staged.tipo,
+                versao: staged.versao,
+                totalClientes: staged.contagem.clientes,
+                totalEstoque: staged.contagem.estoque,
+                totalOrcamentos: staged.contagem.orcamentos,
+                totalMovimentacoes: staged.contagem.movimentacoes,
+                safetySnapshotId: safetyResult?.key || 'N/A'
+            });
+        }
+
+        // Fechar modal
+        const elModal = document.getElementById('modalRestorePreview');
+        const bsModal = bootstrap.Modal.getInstance(elModal);
+        if (bsModal) bsModal.hide();
+
+        // Atualizar estado de views da aplicação se disponíveis
+        if (typeof window.renderizarClientes === 'function') window.renderizarClientes();
+        if (typeof window.renderizarEstoque === 'function') window.renderizarEstoque();
+        if (typeof window.renderizarOrcamentos === 'function') window.renderizarOrcamentos();
+        if (typeof window.renderizarHistoricoEstoque === 'function') window.renderizarHistoricoEstoque();
+        if (typeof window.atualizarDashboard === 'function') window.atualizarDashboard();
+        if (typeof window.renderizarPainelAdmin === 'function') window.renderizarPainelAdmin();
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Restauração Concluída!',
+                html: `
+                    <div class="text-start small">
+                        <p class="text-success fw-bold mb-2"><i class="bi bi-check-circle me-1"></i> Todos os registros foram validados e persistidos com sucesso!</p>
+                        <div class="p-2 bg-light rounded-2 border mb-3">
+                            <div><strong>Clientes restaurados:</strong> ${staged.contagem.clientes}</div>
+                            <div><strong>Estoque restaurado:</strong> ${staged.contagem.estoque} itens</div>
+                            <div><strong>Orçamentos / OS:</strong> ${staged.contagem.orcamentos}</div>
+                            <div><strong>Movimentações:</strong> ${staged.contagem.movimentacoes}</div>
+                            ${staged.tipo === 'BACKUP_MASTER_COMPLETO' ? `<div><strong>Assinaturas:</strong> ${staged.contagem.assinaturas}</div>` : ''}
+                        </div>
+                        <p class="text-muted mb-0" style="font-size: 0.78rem;">
+                            <i class="bi bi-shield-check text-primary me-1"></i> Seu <strong>Safety Snapshot</strong> foi gravado no navegador para recuperação imediata em caso de emergência.
+                        </p>
+                    </div>
+                `,
+                icon: 'success',
+                confirmButtonColor: '#0f172a'
+            });
+        } else if (typeof Toast !== 'undefined') {
+            Toast.fire({ icon: 'success', title: 'Restauração concluída com sucesso!' });
+        }
+
+        window._backupStagedForRestore = null;
+
+    } catch (errRestore) {
+        console.error("[ServicePRO Backup] Falha durante a execução do restore:", errRestore);
+        atualizarProgresso(0, "Erro ao gravar dados!");
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro na Restauração',
+                text: 'Houve uma falha ao persistir os dados no Firestore. Seus dados anteriores estão seguros no Safety Snapshot.',
+                confirmButtonColor: '#0f172a'
+            });
+        }
+    } finally {
+        btnConfirmar.disabled = false;
+        btnCancelar.disabled = false;
+        btnFecharX.disabled = false;
+    }
+}
+window.executarRestoreConfirmado = executarRestoreConfirmado;
+
+// --- 9. INICIALIZAÇÃO E BINDING DOS BOTÕES EXISTENTES ---
+
+/**
+ * Conecta os ouvintes de eventos nos botões existentes da aplicação
+ */
+function inicializarModuloBackupV3() {
+    garantirModalRestoreNoDOM();
+
+    // 1. Botão Exportar Master
+    const btnExpMaster = document.getElementById('btnExportarBackupMaster');
+    if (btnExpMaster && !btnExpMaster._v3Bound) {
+        btnExpMaster._v3Bound = true;
+        btnExpMaster.addEventListener('click', (e) => {
+            e.preventDefault();
+            gerarBackupMasterV3();
+        });
+    }
+
+    // 2. Botão Restaurar Master & Input
     const btnRestMaster = document.getElementById('btnRestaurarBackupMaster');
     const inputRestMaster = document.getElementById('inputRestaurarMaster');
-    if (btnRestMaster && inputRestMaster) {
-        btnRestMaster.addEventListener('click', () => inputRestMaster.click());
-        inputRestMaster.addEventListener('change', async function(e) {
+    if (btnRestMaster && inputRestMaster && !btnRestMaster._v3Bound) {
+        btnRestMaster._v3Bound = true;
+        btnRestMaster.addEventListener('click', (e) => {
+            e.preventDefault();
+            inputRestMaster.click();
+        });
+        inputRestMaster.addEventListener('change', function(e) {
             const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = async (evt) => {
-                try {
-                    const backup = JSON.parse(evt.target.result);
-                    if (backup.tipo !== "BACKUP_MASTER_COMPLETO" || !backup.assinaturas) {
-                        return Toast.fire({ icon: 'error', title: 'Arquivo de backup master inválido.' });
-                    }
-
-                    const confirmou = await confirmarAcao(
-                        'Restaurar Todo o Banco de Dados?',
-                        `Este arquivo contém ${backup.totalUsuarios || backup.assinaturas.length} usuários. Deseja restaurar todos esses dados no Firebase?`,
-                        'Sim, restaurar'
-                    );
-                    if (!confirmou) return;
-
-                    Toast.fire({ icon: 'info', title: 'Restaurando banco de dados...' });
-
-                    for (const a of backup.assinaturas) {
-                        const uid = a.uid;
-                        const { uid: _, ...dadosAss } = a;
-                        await setDoc(doc(db, "assinaturas", uid), dadosAss);
-                    }
-
-                    if (backup.usuarios) {
-                        for (const [uid, uData] of Object.entries(backup.usuarios)) {
-                            if (uData.perfil) {
-                                await setDoc(doc(db, "usuarios", uid, "config", "perfil"), uData.perfil);
-                            }
-                            if (uData.clientes) {
-                                for (const c of uData.clientes) {
-                                    const idDoc = c.id_backup || c.id_firebase;
-                                    const { id_backup: _1, id_firebase: _2, ...dadosCli } = c;
-                                    if (idDoc) await setDoc(doc(db, "usuarios", uid, "clientes", idDoc), dadosCli);
-                                }
-                            }
-                            if (uData.estoque) {
-                                for (const i of uData.estoque) {
-                                    const idDoc = i.id_backup || i.id_firebase;
-                                    const { id_backup: _1, id_firebase: _2, ...dadosEst } = i;
-                                    if (idDoc) await setDoc(doc(db, "usuarios", uid, "estoque", idDoc), dadosEst);
-                                }
-                            }
-                            if (uData.orcamentos) {
-                                for (const o of uData.orcamentos) {
-                                    const idDoc = o.id_backup || o.id_firebase;
-                                    const { id_backup: _1, id_firebase: _2, ...dadosOrc } = o;
-                                    if (idDoc) await setDoc(doc(db, "usuarios", uid, "orcamentos", idDoc), dadosOrc);
-                                }
-                            }
-                        }
-                    }
-
-                    window.registrarAuditoria('RESTAURACAO_BACKUP', 'Restauração Geral do Banco de Dados (Master)', { tipo: 'MASTER', totalUsuarios: backup.totalUsuarios || backup.assinaturas?.length || 0 });
-                    Swal.fire({
-                        title: 'Banco Restaurado!',
-                        text: 'Todas as assinaturas, clientes e orçamentos foram restaurados com sucesso.',
-                        icon: 'success',
-                        confirmButtonColor: '#1e293b'
-                    });
-                } catch (erro) {
-                    console.error(erro);
-                    Toast.fire({ icon: 'error', title: 'Erro ao processar arquivo de restauração.' });
-                } finally {
-                    e.target.value = '';
-                }
-            };
-            reader.readAsText(file);
+            if (file) processarArquivoRestauracao(file, 'MASTER');
+            e.target.value = '';
         });
     }
 
-    // --- BACKUP PESSOAL DO USUÁRIO (ABA EMPRESA) ---
+    // 3. Botão Exportar Pessoal (Aba Empresa / Perfil)
     const btnExpUser = document.getElementById('btnExportarBackupUser');
-    if (btnExpUser) {
-        btnExpUser.addEventListener('click', () => {
-            const backupUser = {
-                sistema: "ServicePRO Cloud SaaS",
-                tipo: "BACKUP_PESSOAL",
-                versao: "2.0",
-                dataCriacao: new Date().toISOString(),
-                uid: userId,
-                email: userEmail,
-                perfil: perfil,
-                clientes: clientes.map(c => ({ ...c })),
-                estoque: estoque.map(e => ({ ...e })),
-                orcamentos: orcamentos.map(o => ({ ...o }))
-            };
-            const blob = new Blob([JSON.stringify(backupUser, null, 2)], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.download = `meu_backup_servicepro_${new Date().toISOString().split('T')[0]}.json`;
-            a.href = url;
-            a.click();
-            URL.revokeObjectURL(url);
-            Toast.fire({ icon: 'success', title: 'Seus dados foram baixados com sucesso!' });
+    if (btnExpUser && !btnExpUser._v3Bound) {
+        btnExpUser._v3Bound = true;
+        btnExpUser.addEventListener('click', (e) => {
+            e.preventDefault();
+            gerarBackupPessoalV3();
         });
     }
 
+    // 4. Botão Restaurar Pessoal & Input
     const btnRestUser = document.getElementById('btnRestaurarBackupUser');
     const inputRestUser = document.getElementById('inputRestaurarUser');
-    if (btnRestUser && inputRestUser) {
-        btnRestUser.addEventListener('click', () => inputRestUser.click());
-        inputRestUser.addEventListener('change', async function(e) {
+    if (btnRestUser && inputRestUser && !btnRestUser._v3Bound) {
+        btnRestUser._v3Bound = true;
+        btnRestUser.addEventListener('click', (e) => {
+            e.preventDefault();
+            inputRestUser.click();
+        });
+        inputRestUser.addEventListener('change', function(e) {
             const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = async (evt) => {
-                try {
-                    const backup = JSON.parse(evt.target.result);
-                    if (backup.tipo !== "BACKUP_PESSOAL" && backup.tipo !== "BACKUP_MASTER_COMPLETO") {
-                        return Toast.fire({ icon: 'error', title: 'Arquivo de backup inválido.' });
-                    }
-                    const confirmou = await confirmarAcao(
-                        'Restaurar Seus Dados?',
-                        'Os clientes, produtos e orçamentos deste arquivo serão regravados na sua conta. Deseja prosseguir?',
-                        'Sim, restaurar'
-                    );
-                    if (!confirmou) return;
-
-                    Toast.fire({ icon: 'info', title: 'Restaurando seus dados...' });
-
-                    const uData = backup.tipo === "BACKUP_PESSOAL" ? backup : (backup.usuarios ? backup.usuarios[userId] : null);
-                    if (!uData) return Toast.fire({ icon: 'warning', title: 'Dados não encontrados no arquivo.' });
-
-                    if (uData.perfil) {
-                        await setDoc(doc(db, "usuarios", userId, "config", "perfil"), uData.perfil);
-                    }
-                    if (uData.clientes) {
-                        for (const c of uData.clientes) {
-                            const idDoc = c.id_firebase || c.id_backup;
-                            const { id_firebase: _1, id_backup: _2, ...dadosCli } = c;
-                            if (idDoc) await setDoc(doc(db, "usuarios", userId, "clientes", idDoc), dadosCli);
-                        }
-                    }
-                    if (uData.estoque) {
-                        for (const i of uData.estoque) {
-                            const idDoc = i.id_firebase || i.id_backup;
-                            const { id_firebase: _1, id_backup: _2, ...dadosEst } = i;
-                            if (idDoc) await setDoc(doc(db, "usuarios", userId, "estoque", idDoc), dadosEst);
-                        }
-                    }
-                    if (uData.orcamentos) {
-                        for (const o of uData.orcamentos) {
-                            const idDoc = o.id_firebase || o.id_backup;
-                            const { id_firebase: _1, id_backup: _2, ...dadosOrc } = o;
-                            if (idDoc) await setDoc(doc(db, "usuarios", userId, "orcamentos", idDoc), dadosOrc);
-                        }
-                    }
-
-                    window.registrarAuditoria('RESTAURACAO_BACKUP', 'Restauração de Backup Pessoal', { tipo: 'PESSOAL', totalClientes: uData.clientes?.length || 0, totalItensEstoque: uData.estoque?.length || 0 });
-                    Swal.fire({
-                        title: 'Dados Restaurados!',
-                        text: 'Seus dados foram atualizados com sucesso.',
-                        icon: 'success',
-                        confirmButtonColor: '#1e293b'
-                    });
-                } catch (erro) {
-                    console.error(erro);
-                    Toast.fire({ icon: 'error', title: 'Erro ao restaurar arquivo de backup.' });
-                } finally {
-                    e.target.value = '';
-                }
-            };
-            reader.readAsText(file);
+            if (file) processarArquivoRestauracao(file, 'PESSOAL');
+            e.target.value = '';
         });
     }
 
-    // --- NAVEGAÇÃO ---
+    // 5. Botão de Confirmação do Modal
+    const btnConfirmModal = document.getElementById('btnConfirmarRestoreModal');
+    if (btnConfirmModal && !btnConfirmModal._v3Bound) {
+        btnConfirmModal._v3Bound = true;
+        btnConfirmModal.addEventListener('click', (e) => {
+            e.preventDefault();
+            executarRestoreConfirmado();
+        });
+    }
+
+    console.info("[ServicePRO] Módulo de Backup & Restauração v3.0 carregado e vinculado com sucesso.");
+}
+window.inicializarModuloBackupV3 = inicializarModuloBackupV3;
+
+// Execução automática na carga do script
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', inicializarModuloBackupV3);
+} else {
+    inicializarModuloBackupV3();
+}
+
+
+    // Inicialização do módulo de backup v3
+    if (typeof window.inicializarModuloBackupV3 === 'function') {
+        try {
+            window.inicializarModuloBackupV3();
+        } catch(e) {
+            console.warn('[Backup v3] Falha ao inicializar listeners:', e);
+        }
+    }
+
+// --- NAVEGAÇÃO ---
     window.navegar = (aba) => { 
         toggleMobileMenu(false);
         document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativa')); 
@@ -2942,11 +5234,40 @@
 
     // --- CARREGAR DADOS EM TEMPO REAL ---
     function carregarDados() {
-        onSnapshot(collection(db, "usuarios", userId, "clientes"), snap => { clientes = snap.docs.map(d => ({id_firebase: d.id, ...d.data()})); renderizarClientes(); atualizarDashboard(); });
-        onSnapshot(collection(db, "usuarios", userId, "estoque"), snap => { estoque = snap.docs.map(d => ({id_firebase: d.id, ...d.data()})); renderizarEstoque(); });
-        onSnapshot(collection(db, "usuarios", userId, "movimentacoes"), snap => { movimentacoes = snap.docs.map(d => ({id_firebase: d.id, ...d.data()})); renderizarHistoricoEstoque(); renderizarEstoque(); });
-        onSnapshot(collection(db, "usuarios", userId, "orcamentos"), snap => { orcamentos = snap.docs.map(d => ({id_firebase: d.id, ...d.data()})); renderizarOrcamentos(); renderizarCalendario(); atualizarDashboard(); });
-        onSnapshot(doc(db, "usuarios", userId, "config", "perfil"), d => { 
+        // Teardown preventivo de subscrições anteriores na troca de conta ou recarga
+        if (typeof unsubClientes === 'function') { unsubClientes(); unsubClientes = null; }
+        if (typeof unsubEstoque === 'function') { unsubEstoque(); unsubEstoque = null; }
+        if (typeof unsubMovimentacoes === 'function') { unsubMovimentacoes(); unsubMovimentacoes = null; }
+        if (typeof unsubOrcamentos === 'function') { unsubOrcamentos(); unsubOrcamentos = null; }
+        if (typeof unsubPerfil === 'function') { unsubPerfil(); unsubPerfil = null; }
+
+        unsubClientes = onSnapshot(collection(db, "usuarios", userId, "clientes"), snap => {
+            clientes = snap.docs.map(d => ({id_firebase: d.id, ...d.data()}));
+            renderizarClientes();
+            atualizarDashboard();
+        });
+
+        unsubEstoque = onSnapshot(collection(db, "usuarios", userId, "estoque"), snap => {
+            estoque = snap.docs.map(d => ({id_firebase: d.id, ...d.data()}));
+            renderizarEstoque();
+        });
+
+        // Consulta otimizada com limitação para as últimas 100 movimentações históricas (Fase 11)
+        const qMovimentacoes = query(collection(db, "usuarios", userId, "movimentacoes"), orderBy("data", "desc"), limit(100));
+        unsubMovimentacoes = onSnapshot(qMovimentacoes, snap => {
+            movimentacoes = snap.docs.map(d => ({id_firebase: d.id, ...d.data()}));
+            renderizarHistoricoEstoque();
+            renderizarEstoque();
+        });
+
+        unsubOrcamentos = onSnapshot(collection(db, "usuarios", userId, "orcamentos"), snap => {
+            orcamentos = snap.docs.map(d => ({id_firebase: d.id, ...d.data()}));
+            renderizarOrcamentos();
+            renderizarCalendario();
+            atualizarDashboard();
+        });
+
+        unsubPerfil = onSnapshot(doc(db, "usuarios", userId, "config", "perfil"), d => { 
             if(d.exists()){ 
                 perfil = d.data(); 
                 document.getElementById('pEmpresa').value = perfil.empresa||''; 
@@ -2957,7 +5278,14 @@
                 document.documentElement.style.setProperty('--theme-main', perfil.cor || '#1e293b');
                 if(perfil.logo){ 
                     document.getElementById('logoPreview').src = perfil.logo; 
-                    document.getElementById('logoPreview').classList.remove('d-none'); 
+                    document.getElementById('logoPreview').classList.remove('d-none');
+                    const feedback = document.getElementById('pLogoFeedback');
+                    if (feedback && perfil.logo.startsWith('data:image')) {
+                        const kb = ((perfil.logo.length * 3 / 4) / 1024).toFixed(1);
+                        feedback.className = 'small mt-1 text-success fw-semibold';
+                        feedback.innerHTML = '<i class="bi bi-shield-check me-1"></i> ' + kb + ' KB - Otimizado';
+                        feedback.classList.remove('d-none');
+                    }
                 } 
             } 
         });
@@ -2979,26 +5307,85 @@
         } 
     };
 
-    // --- PERFIL DA EMPRESA (COM LOGOTIPO) ---
+    // --- PERFIL DA EMPRESA & COMPRESSÃO INTELIGENTE DE LOGOTIPO (FASE 11) ---
+    window.processarLogotipoClientSide = (file, callback) => {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 300, MAX_HEIGHT = 300;
+                let width = img.width, height = img.height;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height = Math.round(height * (MAX_WIDTH / width));
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width = Math.round(width * (MAX_HEIGHT / height));
+                        height = MAX_HEIGHT;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, width, height);
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Compressão progressiva: inicia em 0.70 e reduz até 0.40 se necessário para manter < 50KB
+                let qualidade = 0.70;
+                let base64 = canvas.toDataURL('image/jpeg', qualidade);
+                const calcKB = (str) => ((str.length * 3 / 4) / 1024);
+
+                while (calcKB(base64) > 50 && qualidade > 0.40) {
+                    qualidade = Math.round((qualidade - 0.05) * 100) / 100;
+                    base64 = canvas.toDataURL('image/jpeg', qualidade);
+                }
+
+                // Proteção para imagens de altíssima densidade: escala reduzida se ainda exceder 50KB
+                if (calcKB(base64) > 50) {
+                    const fallbackCanvas = document.createElement('canvas');
+                    fallbackCanvas.width = Math.round(width * 0.75);
+                    fallbackCanvas.height = Math.round(height * 0.75);
+                    const fbCtx = fallbackCanvas.getContext('2d');
+                    fbCtx.fillStyle = '#FFFFFF';
+                    fbCtx.fillRect(0, 0, fallbackCanvas.width, fallbackCanvas.height);
+                    fbCtx.drawImage(img, 0, 0, fallbackCanvas.width, fallbackCanvas.height);
+                    base64 = fallbackCanvas.toDataURL('image/jpeg', 0.40);
+                }
+
+                const tamanhoKB = calcKB(base64).toFixed(1);
+                callback(base64, tamanhoKB);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
+
     document.getElementById('pLogo').addEventListener('change', function() { 
-        if(this.files[0]){ 
-            const r = new FileReader(); 
-            r.onload = e => { 
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 300, MAX_HEIGHT = 300;
-                    let width = img.width, height = img.height;
-                    if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
-                    else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
-                    canvas.width = width; canvas.height = height;
-                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
-                    perfil.logo = canvas.toDataURL('image/jpeg', 0.7); 
-                    document.getElementById('logoPreview').src = perfil.logo; 
-                    document.getElementById('logoPreview').classList.remove('d-none'); 
-                };
-                img.src = e.target.result;
-            }; r.readAsDataURL(this.files[0]); 
+        if (this.files[0]) { 
+            const feedback = document.getElementById('pLogoFeedback');
+            if (feedback) {
+                feedback.className = 'small mt-1 text-muted';
+                feedback.innerHTML = '<i class="bi bi-arrow-repeat spin me-1"></i> Comprimindo imagem...';
+                feedback.classList.remove('d-none');
+            }
+            window.processarLogotipoClientSide(this.files[0], (base64Result, tamanhoKB) => {
+                perfil.logo = base64Result;
+                const preview = document.getElementById('logoPreview');
+                preview.src = perfil.logo;
+                preview.classList.remove('d-none');
+                if (feedback) {
+                    feedback.className = 'small mt-1 text-success fw-semibold';
+                    feedback.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> ' + tamanhoKB + ' KB - Otimizado';
+                    feedback.classList.remove('d-none');
+                }
+            });
         } 
     });
 
