@@ -62,6 +62,55 @@
         .main-content { flex: 1; height: 100vh; height: 100dvh; overflow-y: auto; padding: 28px 32px; background-color: var(--app-bg); }
 
         /* BARRA SUPERIOR MOBILE (Exibida apenas em telas pequenas) */
+        
+        /* FAB NOVO ATENDIMENTO FLUTUANTE (MOBILE ERGONÔMICO) */
+        .btn-fab-atendimento {
+            display: none;
+            position: fixed;
+            bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+            right: 20px;
+            z-index: 1020;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4), 0 2px 6px rgba(0, 0, 0, 0.12);
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, opacity 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .btn-fab-atendimento:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            box-shadow: 0 10px 28px rgba(37, 99, 235, 0.5);
+            transform: translateY(-2px);
+        }
+        .btn-fab-atendimento:active {
+            transform: scale(0.94);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+        }
+        .btn-fab-atendimento i {
+            font-size: 1.15rem;
+            color: #facc15;
+        }
+        @media (max-width: 991.98px) {
+            .btn-fab-atendimento {
+                display: inline-flex;
+            }
+        }
+        @media (min-width: 992px) {
+            .sidebar-backdrop {
+                display: none !important;
+                pointer-events: none !important;
+            }
+        }
+
         .mobile-topbar {
             display: none;
             align-items: center;
@@ -548,17 +597,12 @@
             <div class="mobile-topbar-brand">
                 <i class="bi bi-layers-half me-2 text-primary"></i>ServicePRO
             </div>
-            <div class="d-flex align-items-center gap-2">
-                <button id="btnNovoAtendimentoMobile" class="btn btn-warning btn-sm fw-bold rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center gap-1 text-dark" onclick="window.abrirNovoAtendimento()" style="font-size: 0.78rem; min-height: 38px;" title="Novo Atendimento Express">
-                    <i class="bi bi-lightning-charge-fill text-dark"></i> + Atendimento
-                </button>
-                <div class="mobile-topbar-avatar" id="avatarPerfilMobile" title="Perfil / Menu">U</div>
-            </div>
+            <div class="mobile-topbar-avatar" id="avatarPerfilMobile" title="Perfil / Menu">U</div>
         </header>
 
         <nav id="sidebar" class="sidebar">
             <!-- CABEÇALHO DO DRAWER MOBILE COM BOTÃO FECHAR -->
-            <div class="sidebar-mobile-header justify-content-between align-items-center mb-4">
+            <div class="sidebar-mobile-header justify-content-between align-items-center mb-3">
                 <div class="fw-bold text-white d-flex align-items-center fs-5">
                     <i class="bi bi-layers-half me-2 text-primary"></i>ServicePRO
                 </div>
@@ -566,18 +610,24 @@
                     <i class="bi bi-x-lg"></i>
                 </button>
             </div>
+            <!-- BOTÃO EXPRESS NO DRAWER MOBILE -->
+            <div class="px-3 mb-3 d-lg-none">
+                <button class="btn btn-warning w-100 fw-bold py-2 rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2 text-dark" onclick="window.abrirNovoAtendimento(); window.toggleMobileMenu(false);" style="min-height: 44px;">
+                    <i class="bi bi-lightning-charge-fill text-dark"></i> + Novo Atendimento Express
+                </button>
+            </div>
 
             <a href="#" class="sidebar-brand">
                 <i class="bi bi-layers-half me-2 text-primary"></i>ServicePRO
             </a>
             <ul class="sidebar-nav">
-                <li><button class="nav-btn active-nav" id="btnNavHome"><i class="bi bi-grid-1x2-fill"></i> Dashboard</button></li>
-                <li><button class="nav-btn" id="btnNavClientes"><i class="bi bi-people-fill"></i> Clientes</button></li>
-                <li><button class="nav-btn" id="btnNavEstoque"><i class="bi bi-box-seam-fill"></i> Estoque</button></li>
-                <li><button class="nav-btn" id="btnNavOrcamentos"><i class="bi bi-file-earmark-text-fill"></i> Orçamentos / OS</button></li>
-                <li><button class="nav-btn" id="btnNavAgenda"><i class="bi bi-calendar3"></i> Agenda</button></li>
-                <li><button class="nav-btn" id="btnNavPerfil"><i class="bi bi-gear-fill"></i> Empresa</button></li>
-                <li><button class="nav-btn text-success fw-bold d-none" id="btnNavAdmin"><i class="bi bi-shield-lock-fill"></i> Admin</button></li>
+                <li><button class="nav-btn active-nav" id="btnNavHome" onclick="window.navegar('home')"><i class="bi bi-grid-1x2-fill"></i> Dashboard</button></li>
+                <li><button class="nav-btn" id="btnNavClientes" onclick="window.navegar('clientes')"><i class="bi bi-people-fill"></i> Clientes</button></li>
+                <li><button class="nav-btn" id="btnNavEstoque" onclick="window.navegar('estoque')"><i class="bi bi-box-seam-fill"></i> Estoque</button></li>
+                <li><button class="nav-btn" id="btnNavOrcamentos" onclick="window.navegar('orcamentos')"><i class="bi bi-file-earmark-text-fill"></i> Orçamentos / OS</button></li>
+                <li><button class="nav-btn" id="btnNavAgenda" onclick="window.navegar('agenda')"><i class="bi bi-calendar3"></i> Agenda</button></li>
+                <li><button class="nav-btn" id="btnNavPerfil" onclick="window.navegar('perfil')"><i class="bi bi-gear-fill"></i> Empresa</button></li>
+                <li><button class="nav-btn text-success fw-bold d-none" id="btnNavAdmin" onclick="window.navegar('admin')"><i class="bi bi-shield-lock-fill"></i> Admin</button></li>
             </ul>
             <div class="sidebar-profile-section">
                 <div class="sidebar-profile-info">
@@ -1108,6 +1158,13 @@
         </div>
     </div>
 </div>
+
+
+    <!-- BOTÃO FLUTUANTE (FAB) ATENDIMENTO RÁPIDO NO CELULAR -->
+    <button id="btnNovoAtendimentoMobile" class="btn-fab-atendimento" onclick="window.abrirNovoAtendimento()" title="Novo Atendimento Rápido" aria-label="Novo Atendimento Express">
+        <i class="bi bi-lightning-charge-fill"></i>
+        <span>+ Atendimento</span>
+    </button>
 
 <div class="modal fade" id="modalOrcamento" tabindex="-1">
     <div class="modal-dialog modal-lg modal-fullscreen-md-down modal-dialog-centered">
@@ -1860,6 +1917,83 @@
         if (typeof unsubscribeAuditoria === 'function') { unsubscribeAuditoria(); unsubscribeAuditoria = null; }
         console.log('[Performance] Teardown limpo de listeners Firestore executado com sucesso.');
     };
+
+    // --- CONTROLE DO MENU LATERAL (MOBILE DRAWER) E NAVEGAÇÃO IMEDIATA (RESILIENTE) ---
+    window.toggleMobileMenu = (abrir) => {
+        try {
+            const sb = document.getElementById('sidebar');
+            const bd = document.getElementById('sidebarBackdrop');
+            if (!sb) return;
+            if (abrir === undefined) {
+                const isOpen = sb.classList.contains('mobile-open');
+                if (isOpen) {
+                    sb.classList.remove('mobile-open');
+                    if (bd) bd.classList.remove('show');
+                } else {
+                    sb.classList.add('mobile-open');
+                    if (bd) bd.classList.add('show');
+                }
+            } else if (abrir) {
+                sb.classList.add('mobile-open');
+                if (bd) bd.classList.add('show');
+            } else {
+                sb.classList.remove('mobile-open');
+                if (bd) bd.classList.remove('show');
+            }
+        } catch (e) {
+            console.warn('[Menu Mobile] Erro toggleMobileMenu:', e);
+        }
+    };
+    const toggleMobileMenu = window.toggleMobileMenu;
+
+    window.navegar = (aba) => {
+        try {
+            window.toggleMobileMenu(false);
+            document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativa')); 
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-nav'));
+            const alvo = document.getElementById('aba-' + aba);
+            if (alvo) {
+                alvo.classList.add('ativa');
+            } else {
+                console.warn('[Navegação] Aba não encontrada: aba-' + aba);
+            }
+            const mapaBotoes = { home: 'btnNavHome', clientes: 'btnNavClientes', estoque: 'btnNavEstoque', orcamentos: 'btnNavOrcamentos', agenda: 'btnNavAgenda', perfil: 'btnNavPerfil', admin: 'btnNavAdmin' };
+            if (mapaBotoes[aba]) {
+                const btn = document.getElementById(mapaBotoes[aba]);
+                if (btn) btn.classList.add('active-nav');
+            }
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        } catch(err) {
+            console.error('[Navegação] Erro ao alternar para aba ' + aba + ':', err);
+        }
+    };
+
+    const registrarListenersNavegacao = () => {
+        try {
+            document.getElementById('btnNavHome')?.addEventListener('click', () => window.navegar('home'));
+            document.getElementById('btnNavClientes')?.addEventListener('click', () => window.navegar('clientes'));
+            document.getElementById('btnNavEstoque')?.addEventListener('click', () => window.navegar('estoque'));
+            document.getElementById('btnNavOrcamentos')?.addEventListener('click', () => window.navegar('orcamentos'));
+            document.getElementById('btnNavAgenda')?.addEventListener('click', () => window.navegar('agenda'));
+            document.getElementById('btnNavPerfil')?.addEventListener('click', () => window.navegar('perfil'));
+            document.getElementById('btnNavAdmin')?.addEventListener('click', () => window.navegar('admin'));
+            document.getElementById('btnToggleMobileMenu')?.addEventListener('click', () => window.toggleMobileMenu(true));
+            document.getElementById('btnCloseMobileMenu')?.addEventListener('click', () => window.toggleMobileMenu(false));
+            document.getElementById('sidebarBackdrop')?.addEventListener('click', () => window.toggleMobileMenu(false));
+            document.getElementById('avatarPerfilMobile')?.addEventListener('click', () => window.toggleMobileMenu());
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') window.toggleMobileMenu(false);
+            });
+        } catch(e) {
+            console.warn('[Navegação] Erro ao vincular listeners:', e);
+        }
+    };
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', registrarListenersNavegacao);
+    } else {
+        registrarListenersNavegacao();
+    }
+
     let itensTemp = [], clienteAtualId = null, dataCalendario = new Date();
     
     let chartFat = null, chartSt = null, chartRec = null, chartLuc = null;
@@ -2015,34 +2149,9 @@
         new bootstrap.Modal(document.getElementById('modalDetalhesAuditoria')).show();
     };
 
-    // --- CONTROLE DO MENU LATERAL NO MOBILE (DRAWER) ---
-    const toggleMobileMenu = (abrir) => {
-        const sb = document.getElementById('sidebar');
-        const bd = document.getElementById('sidebarBackdrop');
-        if (!sb || !bd) return;
-        if (abrir === undefined) {
-            sb.classList.toggle('mobile-open');
-            bd.classList.toggle('show');
-        } else if (abrir) {
-            sb.classList.add('mobile-open');
-            bd.classList.add('show');
-        } else {
-            sb.classList.remove('mobile-open');
-            bd.classList.remove('show');
-        }
-    };
-    document.getElementById('btnToggleMobileMenu')?.addEventListener('click', () => toggleMobileMenu(true));
-    document.getElementById('btnCloseMobileMenu')?.addEventListener('click', () => toggleMobileMenu(false));
-    document.getElementById('sidebarBackdrop')?.addEventListener('click', () => toggleMobileMenu(false));
-    document.getElementById('avatarPerfilMobile')?.addEventListener('click', () => toggleMobileMenu());
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') toggleMobileMenu(false);
-    });
     let txtBuscaEstoque = "", ordemFiltroEstoque = "recentes";
     let txtBuscaOrc = "", statusFiltroOrc = "todos", ordemFiltroOrc = "recentes";
     let txtBuscaAdmin = "", statusFiltroAdmin = "todos", ordemFiltroAdmin = "recentes";
-
-    // --- NOTIFICAÇÕES E CONFIRMAÇÕES MODERNAS (SWEETALERT2) ---
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
@@ -3953,14 +4062,174 @@ window.adminEliminarConta = async function(uidCliente, emailCliente) {
  */
 
 // --- 1. TEMPLATE HTML DO MODAL DE PRÉ-VISUALIZAÇÃO (DESIGN SYSTEM SAFIRA) ---
+const HTML_MODAL_RESTORE_PREVIEW = `
+<!-- MODAL DE PRÉ-VISUALIZAÇÃO E CONFIRMAÇÃO DE RESTAURAÇÃO (FASE 9) -->
+<div class="modal fade" id="modalRestorePreview" tabindex="-1" aria-labelledby="modalRestorePreviewLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 18px; overflow: hidden;">
+            <!-- Header Safira / Dark Obsidiana -->
+            <div class="modal-header text-white" style="background: #0f172a; border-bottom: 1px solid #1e293b; padding: 18px 24px;">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="p-2 rounded-3 d-flex align-items-center justify-content-center" style="background: rgba(37, 99, 235, 0.2); border: 1px solid rgba(37, 99, 235, 0.3); width: 44px; height: 44px;">
+                        <i class="bi bi-shield-check fs-4 text-primary"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title fw-bold mb-0 text-white" id="modalRestorePreviewLabel">Restauração de Backup Segura</h5>
+                        <small class="text-white-50" style="font-size: 0.8rem;">Etapa de Validação, Pré-Visualização e Segurança</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar" id="btnFecharModalRestoreX"></button>
+            </div>
+
+            <div class="modal-body p-3 p-md-4" style="background-color: #f8fafc;">
+                <!-- Card de Metadados do Arquivo -->
+                <div class="card border-0 shadow-sm p-3 mb-3 bg-white" style="border-radius: 14px;">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2 pb-2 border-bottom">
+                        <div>
+                            <span class="text-muted small d-block" style="font-size: 0.75rem;">ARQUIVO SELECIONADO</span>
+                            <span class="fw-bold text-dark font-monospace" id="restoreModalNomeArquivo">backup_servicepro.json</span>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center flex-wrap" id="restoreModalBadges">
+                            <span class="badge px-3 py-2 fw-semibold" id="restoreModalBadgeTipo" style="background: rgba(37, 99, 235, 0.1); color: #2563eb; border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 8px;">
+                                <i class="bi bi-person-badge me-1"></i> BACKUP PESSOAL
+                            </span>
+                            <span class="badge px-3 py-2 fw-semibold" id="restoreModalBadgeVersao" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; border-radius: 8px;">
+                                Versão 3.0
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 text-muted small pt-1">
+                        <div class="col-12 col-md-6">
+                            <i class="bi bi-calendar-event me-1 text-primary"></i>
+                            <strong>Data de Geração:</strong> <span id="restoreModalDataGeracao" class="text-dark">--/--/---- --:--</span>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <i class="bi bi-person-circle me-1 text-primary"></i>
+                            <strong>Origem:</strong> <span id="restoreModalOrigem" class="text-dark font-monospace">--</span>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <div id="restoreModalIntegridadeBox" class="p-2 px-3 rounded-2 d-flex align-items-center gap-2" style="background: #ecfdf5; border: 1px solid #a7f3d0;">
+                                <i class="bi bi-shield-fill-check text-success fs-6" id="restoreModalIntegridadeIcon"></i>
+                                <span class="small fw-semibold text-success" id="restoreModalIntegridadeTexto">Integridade Criptográfica: Checksum SHA-256 autêntico e verificado.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid de Contagem de Registros -->
+                <h6 class="fw-bold text-dark mb-2 d-flex align-items-center gap-2" style="font-size: 0.92rem;">
+                    <i class="bi bi-list-check text-primary"></i> Registros Identificados para Restauração
+                </h6>
+                <div class="row g-2 mb-3" id="restoreModalGridRegistros">
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm p-3 text-center bg-white h-100" style="border-radius: 12px; border-left: 4px solid #2563eb !important;">
+                            <div class="text-muted small fw-semibold" style="font-size: 0.78rem;">Clientes</div>
+                            <div class="fs-3 fw-bold text-dark my-1" id="restoreCountClientes">0</div>
+                            <small class="text-muted" style="font-size: 0.72rem;">Cadastros</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm p-3 text-center bg-white h-100" style="border-radius: 12px; border-left: 4px solid #10b981 !important;">
+                            <div class="text-muted small fw-semibold" style="font-size: 0.78rem;">Estoque</div>
+                            <div class="fs-3 fw-bold text-dark my-1" id="restoreCountEstoque">0</div>
+                            <small class="text-muted" style="font-size: 0.72rem;">Produtos/Peças</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm p-3 text-center bg-white h-100" style="border-radius: 12px; border-left: 4px solid #f59e0b !important;">
+                            <div class="text-muted small fw-semibold" style="font-size: 0.78rem;">Orçamentos / OS</div>
+                            <div class="fs-3 fw-bold text-dark my-1" id="restoreCountOrcamentos">0</div>
+                            <small class="text-muted" style="font-size: 0.72rem;">Documentos</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm p-3 text-center bg-white h-100" style="border-radius: 12px; border-left: 4px solid #6366f1 !important;">
+                            <div class="text-muted small fw-semibold" style="font-size: 0.78rem;">Movimentações</div>
+                            <div class="fs-3 fw-bold text-dark my-1" id="restoreCountMovimentacoes">0</div>
+                            <small class="text-muted" style="font-size: 0.72rem;">Histórico Estoque</small>
+                        </div>
+                    </div>
+                    <div class="col-12 d-none" id="restoreColAssinaturas">
+                        <div class="card border-0 shadow-sm p-3 bg-white" style="border-radius: 12px; border-left: 4px solid #0f172a !important;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="text-muted small fw-semibold">Assinaturas e Usuários (Master)</div>
+                                    <small class="text-muted">Total consolidado de contas no sistema</small>
+                                </div>
+                                <div class="fs-3 fw-bold text-dark" id="restoreCountAssinaturas">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card de Aviso de Impacto e Segurança -->
+                <div class="card border-0 shadow-sm p-3 mb-0" style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 14px;">
+                    <div class="d-flex gap-3">
+                        <i class="bi bi-shield-exclamation text-warning fs-3 flex-shrink-0"></i>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-1" style="font-size: 0.92rem;">Risco Zero: Protocolo de Segurança em 6 Etapas</h6>
+                            <p class="small text-muted mb-2" style="font-size: 0.82rem; line-height: 1.4;">
+                                O ServicePRO protege sua base de dados antes de efetuar qualquer alteração no Firestore:
+                            </p>
+                            <ul class="small text-muted ps-3 mb-0" style="font-size: 0.8rem; line-height: 1.4;">
+                                <li><strong>Snapshot Automático:</strong> Uma cópia instantânea do seu estado atual será salva localmente no navegador antes da gravação.</li>
+                                <li><strong>Preservação de IDs:</strong> Clientes, histórico e referências entre documentos são mantidos de forma íntegra.</li>
+                                <li><strong>Auditoria Registrada:</strong> Toda operação de restauração gera log detalhado com carimbo de tempo e usuário.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barra de Progresso Durante o Restore (Inicialmente Oculta) -->
+                <div id="restoreProgressoContainer" class="d-none mt-3 p-3 bg-white rounded-3 shadow-sm border">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small fw-bold text-dark" id="restoreProgressoTexto">Gravando dados no Firestore...</span>
+                        <span class="small text-primary fw-bold" id="restoreProgressoPorcento">0%</span>
+                    </div>
+                    <div class="progress mb-2" style="height: 10px; border-radius: 6px;">
+                        <div id="restoreProgressoBarra" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%;"></div>
+                    </div>
+                    <small class="text-muted d-block" style="font-size: 0.75rem;">
+                        <i class="bi bi-hourglass-split me-1 text-warning"></i> Não feche ou recarregue a aba até o término da gravação em lote.
+                    </small>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer bg-white border-top p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-secondary btn-premium px-4" data-bs-dismiss="modal" id="btnCancelarRestoreModal">
+                    <i class="bi bi-x-circle me-1"></i> Cancelar
+                </button>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-primary btn-premium px-4 text-white shadow-sm" id="btnConfirmarRestoreModal">
+                        <i class="bi bi-check2-circle me-1"></i> Confirmar Restauração Segura
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+`;
+
 
 
 // Injeta o modal no DOM se não existir
 function garantirModalRestoreNoDOM() {
-    if (!document.getElementById('modalRestorePreview')) {
-        const divWrapper = document.createElement('div');
-        divWrapper.innerHTML = HTML_MODAL_RESTORE_PREVIEW.trim();
-        document.body.appendChild(divWrapper.firstElementChild);
+    try {
+        if (!document.getElementById('modalRestorePreview')) {
+            const tpl = (typeof HTML_MODAL_RESTORE_PREVIEW !== 'undefined' ? HTML_MODAL_RESTORE_PREVIEW : '').trim();
+            if (tpl) {
+                const divWrapper = document.createElement('div');
+                divWrapper.innerHTML = tpl;
+                if (divWrapper.firstElementChild) {
+                    document.body.appendChild(divWrapper.firstElementChild);
+                }
+            }
+        }
+    } catch(err) {
+        console.warn('[Backup v3] Falha defensiva ao injetar modal no DOM:', err);
     }
 }
 
