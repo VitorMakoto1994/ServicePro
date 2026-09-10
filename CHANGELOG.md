@@ -2,6 +2,20 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [2.15.0] - 2026-09-10
+### Adicionado (Fase 13 - Release Profissional & Homologação de Produção)
+- **Homologação Final de Produção (RELEASE READY):**
+  - Auditoria completa dos 15 pilares do sistema (Segurança, Multi-tenant, Dados, Auth, Firestore, Estoque, Financeiro, Backup v3.0, Master Panel, UX Mobile, Desktop, PWA, Performance, PDF e WhatsApp).
+  - Criação da suíte integrada de testes automatizados `scratch/test_release_phase13.js` com 23 asserções críticas homologadas (100% aprovado).
+  - Validação estrita do isolamento multi-tenant e regras do servidor (`firestore.rules`).
+  - Validação do pipeline de restauração de backup com Checksum Criptográfico SHA-256 e Safety Snapshots preventivos.
+  - Validação do layout mobile-first com Floating Action Button (FAB) ergonômico no polegar e touch targets de 44px.
+  - Validação de ausência de erros no console em Strict Mode (`"use strict"`).
+- **Documentação de Governança Criada:**
+  - `VERSION.md`: Especificação formal da versão 2.15.0, stack de dependências, arquitetura e governança.
+  - `README.md`: Manual oficial de produto, arquitetura, segurança, execução local e deploy em produção.
+  - `RELEASE_CHECKLIST.md`: Matriz de homologação ponto a ponto com assinatura de aprovação para produção.
+
 ## [2.14.2] - 2026-09-10
 ### Corrigido (Painel Admin & Carregamento de Contas)
 - **Correção da Listagem de Contas e Assinaturas no Painel Admin:**
