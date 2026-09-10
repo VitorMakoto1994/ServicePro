@@ -596,13 +596,37 @@
                     </div>
                 </div>
                 <div class="filtro-container row g-2 mb-4">
-                    <div class="col-md-6"><input type="text" id="buscaAdmin" class="form-control" placeholder="Buscar por e-mail do usuário..."></div>
-                    <div class="col-md-3"><select id="filtroStatusAdmin" class="form-select"><option value="todos">Todos os Status</option><option value="ativo">Contas Ativas</option><option value="bloqueado">Contas Bloqueadas</option></select></div>
-                    <div class="col-md-3"><select id="ordemAdmin" class="form-select"><option value="recentes">Padrão</option><option value="vencimento_asc">Vencimento (Próximos)</option><option value="vencimento_desc">Vencimento (Distantes)</option></select></div>
+                    <div class="col-md-4"><input type="text" id="buscaAdmin" class="form-control" placeholder="Buscar por e-mail do usuário..."></div>
+                    <div class="col-md-3">
+                        <select id="filtroPlanoAdmin" class="form-select">
+                            <option value="todos">Todos os Planos</option>
+                            <option value="TRIAL">Plano TRIAL</option>
+                            <option value="STARTER">Plano STARTER</option>
+                            <option value="PRO">Plano PRO</option>
+                            <option value="BUSINESS">Plano BUSINESS</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="filtroStatusAdmin" class="form-select">
+                            <option value="todos">Todos os Status</option>
+                            <option value="TRIAL">Status Trial</option>
+                            <option value="ATIVO">Status Ativo</option>
+                            <option value="EXPIRADO">Status Expirado</option>
+                            <option value="CANCELADO">Status Cancelado</option>
+                            <option value="BLOQUEADO">Status Bloqueado</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select id="ordemAdmin" class="form-select">
+                            <option value="recentes">Padrão</option>
+                            <option value="vencimento_asc">Vencimento (Próximos)</option>
+                            <option value="vencimento_desc">Vencimento (Distantes)</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-custom align-middle">
-                        <thead><tr><th>E-mail do Usuário</th><th width="200">Vencimento</th><th>Status</th><th class="text-end">Ação</th></tr></thead>
+                        <thead><tr><th>E-mail do Usuário</th><th width="140">Plano</th><th width="150">Vencimento</th><th width="140">Status</th><th class="text-end">Ações</th></tr></thead>
                         <tbody id="listaUsuariosAdmin"></tbody>
                     </table>
                 </div>
@@ -1134,11 +1158,18 @@
         if (!regexSenha.test(p)) return msgBox.innerText = "A senha deve ter mín. 6 caracteres, 1 maiúscula, 1 número e 1 especial.";
         try { 
             const uc = await createUserWithEmailAndPassword(auth, email, p); 
+            const agora = new Date();
             const validade = new Date(); validade.setDate(validade.getDate() + 7);
             await setDoc(doc(db, "assinaturas", uc.user.uid), { 
                 email: email, 
+                plano: 'TRIAL',
+                status: 'TRIAL',
+                trial: true,
+                inicioAssinatura: agora.toISOString(),
                 validade: validade.toISOString(),
-                validadeTimestamp: validade
+                validadeTimestamp: validade,
+                createdAt: agora.toISOString(),
+                updatedAt: agora.toISOString()
             });
             await sendEmailVerification(uc.user);
             await signOut(auth); 
@@ -1186,30 +1217,54 @@
             let infoAssinaturaDiv = document.getElementById('infoAssinatura');
             
             if(assDoc.exists()) {
-                const dataFim = new Date(assDoc.data().validade);
-                infoAssinaturaDiv.innerHTML = `<i class="bi bi-info-circle me-1"></i> Assinatura válida até <strong>${dataFim.toLocaleDateString('pt-BR')}</strong>.`;
-                
-                if(new Date() <= dataFim || isAdmin) {
+                const assData = assDoc.data();
+                const plano = assData.plano || (isAdmin ? 'BUSINESS' : 'TRIAL');
+                const dataFim = assData.validade ? new Date(assData.validade) : new Date();
+                const agora = new Date();
+                const expirado = agora > dataFim;
+                let status = assData.status || (expirado ? 'EXPIRADO' : (assData.trial === false ? 'ATIVO' : 'TRIAL'));
+                if (status === 'TRIAL' && expirado) status = 'EXPIRADO';
+
+                // Badges de exibição moderna na aba Empresa/Perfil
+                const badgePlano = `<span class="badge bg-primary px-2 py-1 ms-1 text-uppercase">${plano}</span>`;
+                let badgeStatusClass = 'bg-success';
+                if (status === 'TRIAL') badgeStatusClass = 'bg-info text-dark';
+                else if (status === 'EXPIRADO') badgeStatusClass = 'bg-warning text-dark';
+                else if (status === 'BLOQUEADO' || status === 'CANCELADO') badgeStatusClass = 'bg-danger';
+                const badgeStatus = `<span class="badge ${badgeStatusClass} px-2 py-1 ms-1">${status}</span>`;
+
+                infoAssinaturaDiv.innerHTML = `<i class="bi bi-award me-1"></i> Plano: ${badgePlano} | Status: ${badgeStatus} | Validade: <strong>${dataFim.toLocaleDateString('pt-BR')}</strong>`;
+
+                if(isAdmin) {
                     taLiberado = true;
-                    if(!isAdmin) {
-                        const diffDias = Math.ceil((dataFim - new Date()) / (1000 * 60 * 60 * 24));
-                        if(diffDias <= 3 && diffDias >= 0) {
-                            document.getElementById('diasVencimentoCount').innerText = diffDias;
-                            document.getElementById('alerta-vencimento').style.display = 'block';
-                        }
+                } else if(status === 'BLOQUEADO' || status === 'CANCELADO' || status === 'EXPIRADO' || expirado) {
+                    taLiberado = false;
+                } else {
+                    taLiberado = true;
+                    const diffDias = Math.ceil((dataFim - agora) / (1000 * 60 * 60 * 24));
+                    if(diffDias <= 3 && diffDias >= 0) {
+                        document.getElementById('diasVencimentoCount').innerText = diffDias === 0 ? 'hoje' : diffDias;
+                        document.getElementById('alerta-vencimento').style.display = 'block';
                     }
                 }
             } else if (isAdmin) {
+                const agora = new Date();
                 const validadeEterna = new Date(); validadeEterna.setFullYear(validadeEterna.getFullYear() + 100);
                 await setDoc(doc(db, "assinaturas", userId), { 
                     email: userEmail, 
+                    plano: 'BUSINESS',
+                    status: 'ATIVO',
+                    trial: false,
+                    inicioAssinatura: agora.toISOString(),
                     validade: validadeEterna.toISOString(),
-                    validadeTimestamp: validadeEterna
+                    validadeTimestamp: validadeEterna,
+                    createdAt: agora.toISOString(),
+                    updatedAt: agora.toISOString()
                 });
                 taLiberado = true;
             }
 
-            if (isAdmin) infoAssinaturaDiv.innerHTML = `<i class="bi bi-shield-check me-1"></i> Acesso Master.`;
+            if (isAdmin) infoAssinaturaDiv.innerHTML = `<i class="bi bi-shield-check me-1"></i> Acesso Master | Plano: <span class="badge bg-dark px-2 py-1 ms-1">BUSINESS (MASTER)</span> | Status: <span class="badge bg-success px-2 py-1 ms-1">ATIVO</span>`;
 
             if(taLiberado) {
                 document.getElementById('bloqueio-screen').style.display = 'none'; 
@@ -1230,37 +1285,78 @@
         }
     });
 
-    // --- PAINEL ADMIN MASTER ---
+    // --- PAINEL ADMIN MASTER (GESTÃO DE PLANOS E ASSINATURAS) ---
+    let planoFiltroAdmin = "todos";
     function carregarAdminData() { onSnapshot(collection(db, "assinaturas"), snap => { usuariosAdmin = snap.docs.map(d => ({ uid: d.id, ...d.data() })); renderizarPainelAdmin(); }); }
     document.getElementById('buscaAdmin').addEventListener('input', (e) => { txtBuscaAdmin = e.target.value.toLowerCase(); renderizarPainelAdmin(); });
+    document.getElementById('filtroPlanoAdmin')?.addEventListener('change', (e) => { planoFiltroAdmin = e.target.value; renderizarPainelAdmin(); });
     document.getElementById('filtroStatusAdmin').addEventListener('change', (e) => { statusFiltroAdmin = e.target.value; renderizarPainelAdmin(); });
     document.getElementById('ordemAdmin').addEventListener('change', (e) => { ordemFiltroAdmin = e.target.value; renderizarPainelAdmin(); });
 
     function renderizarPainelAdmin() { 
         let filtrados = [...usuariosAdmin];
         if(txtBuscaAdmin) filtrados = filtrados.filter(u => u.email.toLowerCase().includes(txtBuscaAdmin));
+        
+        // Filtro por Plano
+        if(planoFiltroAdmin !== 'todos') {
+            filtrados = filtrados.filter(u => {
+                const p = u.plano || (u.email.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'BUSINESS' : 'TRIAL');
+                return p === planoFiltroAdmin;
+            });
+        }
+
+        // Filtro por Status
         if(statusFiltroAdmin !== 'todos') {
             const hoje = new Date();
             filtrados = filtrados.filter(u => {
-                const venc = new Date(u.validade);
-                return statusFiltroAdmin === 'bloqueado' ? hoje > venc : hoje <= venc;
+                const venc = new Date(u.validade || 0);
+                const exp = hoje > venc;
+                let st = u.status || (exp ? 'EXPIRADO' : (u.trial === false ? 'ATIVO' : 'TRIAL'));
+                if (st === 'TRIAL' && exp) st = 'EXPIRADO';
+                return st === statusFiltroAdmin;
             });
         }
-        if(ordemFiltroAdmin === 'vencimento_asc') { filtrados.sort((a,b) => new Date(a.validade) - new Date(b.validade)); } else if(ordemFiltroAdmin === 'vencimento_desc') { filtrados.sort((a,b) => new Date(b.validade) - new Date(a.validade)); }
+
+        if(ordemFiltroAdmin === 'vencimento_asc') { filtrados.sort((a,b) => new Date(a.validade || 0) - new Date(b.validade || 0)); } 
+        else if(ordemFiltroAdmin === 'vencimento_desc') { filtrados.sort((a,b) => new Date(b.validade || 0) - new Date(a.validade || 0)); }
+
+        const planosDisponiveis = ['TRIAL', 'STARTER', 'PRO', 'BUSINESS'];
+        const statusesDisponiveis = ['TRIAL', 'ATIVO', 'EXPIRADO', 'CANCELADO', 'BLOQUEADO'];
 
         document.getElementById('listaUsuariosAdmin').innerHTML = filtrados.map(u => { 
-            const dataVenc = new Date(u.validade); 
+            const dataVenc = new Date(u.validade || Date.now()); 
             const expirado = new Date() > dataVenc; 
-            const statusBadge = expirado ? '<span class="badge bg-danger rounded-pill px-3">Bloqueado</span>' : '<span class="badge bg-success rounded-pill px-3">Ativo</span>'; 
-            const dataStringParaInput = dataVenc.toISOString().split('T')[0]; 
+            const isMasterAcc = (u.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+            const planoAtual = u.plano || (isMasterAcc ? 'BUSINESS' : 'TRIAL');
+            let statusAtual = u.status || (expirado ? 'EXPIRADO' : (u.trial === false ? 'ATIVO' : 'TRIAL'));
+            if (statusAtual === 'TRIAL' && expirado) statusAtual = 'EXPIRADO';
+
+            const dataStringParaInput = !isNaN(dataVenc.getTime()) ? dataVenc.toISOString().split('T')[0] : ''; 
             
+            const opcoesPlano = planosDisponiveis.map(p => `<option value="${p}" ${p === planoAtual ? 'selected' : ''}>${p}</option>`).join('');
+            const opcoesStatus = statusesDisponiveis.map(s => `<option value="${s}" ${s === statusAtual ? 'selected' : ''}>${s}</option>`).join('');
+
             return `
                 <tr>
-                    <td class="fw-bold">${u.email}</td>
-                    <td><input type="date" id="data-venc-${u.uid}" value="${dataStringParaInput}" class="form-control form-control-sm"></td>
-                    <td>${statusBadge}</td>
+                    <td class="fw-bold text-nowrap">
+                        ${u.email}
+                        ${isMasterAcc ? '<span class="badge bg-dark ms-1">MASTER</span>' : ''}
+                    </td>
+                    <td>
+                        <select id="plano-${u.uid}" class="form-select form-select-sm fw-semibold">
+                            ${opcoesPlano}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="date" id="data-venc-${u.uid}" value="${dataStringParaInput}" class="form-control form-control-sm">
+                    </td>
+                    <td>
+                        <select id="status-${u.uid}" class="form-select form-select-sm fw-semibold">
+                            ${opcoesStatus}
+                        </select>
+                    </td>
                     <td class="text-end text-nowrap">
-                        <button class="btn btn-sm btn-primary rounded-pill fw-bold px-3" onclick="window.salvarNovaData('${u.uid}')" title="Atualizar data">Salvar</button>
+                        <button class="btn btn-sm btn-primary rounded-pill fw-bold px-3 shadow-sm" onclick="window.salvarAssinaturaAdmin('${u.uid}')" title="Salvar plano, validade e status">Salvar</button>
                         <button class="btn btn-sm btn-warning rounded-pill fw-bold px-2 ms-1" onclick="window.adminResetSenha('${u.email}')" title="Enviar e-mail de reset de senha"><i class="bi bi-key-fill"></i></button>
                         <button class="btn btn-sm btn-danger rounded-pill fw-bold px-2 ms-1" onclick="window.adminEliminarConta('${u.uid}', '${u.email}')" title="Remover utilizador do painel"><i class="bi bi-trash-fill"></i></button>
                     </td>
@@ -1269,22 +1365,31 @@
         }).join(''); 
     }
     
-    window.salvarNovaData = async (uid) => { 
+    window.salvarAssinaturaAdmin = async (uid) => { 
+        const novoPlano = document.getElementById(`plano-${uid}`).value;
+        const novoStatus = document.getElementById(`status-${uid}`).value;
         const novaDataStr = document.getElementById(`data-venc-${uid}`).value; 
-        if(!novaDataStr) return Toast.fire({ icon: 'warning', title: 'Escolha uma data.' }); 
-        const confirmou = await confirmarAcao('Atualizar Assinatura', 'Confirmar nova data de validade para este usuário?');
+        if(!novaDataStr) return Toast.fire({ icon: 'warning', title: 'Escolha uma data de vencimento.' }); 
+        
+        const confirmou = await confirmarAcao('Atualizar Assinatura', `Confirmar Plano [${novoPlano}], Status [${novoStatus}] e Vencimento para este usuário?`);
         if (!confirmou) return;
+        
         const novaDataObj = new Date(novaDataStr + 'T23:59:59'); 
         try {
             await updateDoc(doc(db, "assinaturas", uid), { 
+                plano: novoPlano,
+                status: novoStatus,
+                trial: (novoPlano === 'TRIAL'),
                 validade: novaDataObj.toISOString(),
-                validadeTimestamp: novaDataObj
+                validadeTimestamp: novaDataObj,
+                updatedAt: new Date().toISOString()
             }); 
-            Toast.fire({ icon: 'success', title: 'Validade atualizada com sucesso!' }); 
+            Toast.fire({ icon: 'success', title: 'Assinatura e plano atualizados!' }); 
         } catch (e) {
             Toast.fire({ icon: 'error', title: 'Erro ao atualizar assinatura.' });
         }
     };
+    window.salvarNovaData = window.salvarAssinaturaAdmin;
 
     window.adminResetSenha = async (emailCliente) => {
         const confirmou = await confirmarAcao('Redefinir Senha', `Pretende enviar um e-mail de redefinição de senha para ${emailCliente}?`, 'Sim, enviar');
