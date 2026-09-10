@@ -2151,7 +2151,7 @@
 
     let txtBuscaEstoque = "", ordemFiltroEstoque = "recentes";
     let txtBuscaOrc = "", statusFiltroOrc = "todos", ordemFiltroOrc = "recentes";
-    let txtBuscaAdmin = "", statusFiltroAdmin = "todos", ordemFiltroAdmin = "recentes";
+    let txtBuscaAdmin = "", planoFiltroAdmin = "todos", statusFiltroAdmin = "todos", ordemFiltroAdmin = "recentes";
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
@@ -3027,6 +3027,10 @@
                 }
             }, err => {
                 console.error('[Admin] Erro no listener de assinaturas:', err);
+                const tbody = document.getElementById('listaUsuariosAdmin');
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Erro ao carregar assinaturas: ' + (err.message || 'Verifique sua conexão ou permissões.') + '</td></tr>';
+                }
             }); 
         } catch(e) {
             console.error('[Admin] Erro ao subscrever assinaturas:', e);
@@ -3183,7 +3187,8 @@ window.calcularKPIsMaster = function(usuarios) {
  * 2. window.renderizarPainelAdmin()
  * Renderiza os 7 KPIs e a Tabela Corporativa de Usuários com soft badges e ações 1-click.
  */
-window.renderizarPainelAdmin = function() {
+function renderizarPainelAdmin() {
+    window.renderizarPainelAdmin = renderizarPainelAdmin;
     if (typeof usuariosAdmin === 'undefined' || !Array.isArray(usuariosAdmin)) return;
 
     // Atualizar os 7 KPIs Executivos
@@ -5781,9 +5786,9 @@ if (document.readyState === 'loading') {
                 <div class="card-header-custom" onclick="window.toggleDet('det-${c.id_firebase}')">
                     <div class="d-flex align-items-center gap-3">
                         <div style="width:40px; height:40px; background:#e0f2fe; color:#0284c7; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:bold;">
-                            ${c.nome.charAt(0).toUpperCase()}
+                            ${(c.nome || 'C').charAt(0).toUpperCase()}
                         </div>
-                        <div><h6 class="mb-0 fw-bold">#${c.numId||'?'} - ${c.nome}</h6></div>
+                        <div><h6 class="mb-0 fw-bold">#${c.numId||'?'} - ${c.nome || 'Cliente sem nome'}</h6></div>
                     </div>
                     <div>
                         <button class="btn-action btn-action-edit" onclick="event.stopPropagation(); window.editarCliente('${c.id_firebase}')"><i class="bi bi-pencil"></i></button>
@@ -5797,7 +5802,7 @@ if (document.readyState === 'loading') {
                     </p>
                     <div class="historico-container mb-3"><label class="form-label-premium">Histórico de Serviços</label>${hist || '<div class="text-muted small">Nenhum serviço registrado.</div>'}</div>
                     <div class="d-flex gap-2 flex-wrap">
-                        <a href="https://wa.me/55${c.tel.replace(/\D/g,'')}" target="_blank" class="btn btn-success btn-sm rounded-pill px-3 fw-bold"><i class="bi bi-whatsapp"></i> WhatsApp</a>
+                        <a href="https://wa.me/55${(c.tel || '').replace(/\D/g,'')}" target="_blank" class="btn btn-success btn-sm rounded-pill px-3 fw-bold"><i class="bi bi-whatsapp"></i> WhatsApp</a>
                         <a href="${linkMapa}" target="_blank" class="btn btn-dark btn-sm rounded-pill px-3 text-white fw-bold" style="background-color: var(--theme-main); border:none;"><i class="bi bi-geo-alt-fill"></i> Mapa</a>
                         <button class="btn btn-primary btn-sm rounded-pill px-3 fw-bold" onclick="window.iniciarOrc('${c.id_firebase}')"><i class="bi bi-file-earmark-plus"></i> Novo Orçamento</button>
                     </div>
