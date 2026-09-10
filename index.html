@@ -2886,10 +2886,13 @@
                 const nomeParte = userEmail.split('@')[0];
                 document.getElementById('boasVindasTxt').innerText = `Bem-vindo(a), ${nomeParte}`;
 
-                if(isAdmin) { document.getElementById('btnNavAdmin').classList.remove('d-none'); carregarAdminData(); }
+                if(isAdmin) { 
+                    document.getElementById('btnNavAdmin').classList.remove('d-none'); 
+                    try { carregarAdminData(); } catch(e) { console.error('Erro ao carregar dados admin:', e); }
+                }
                 
-                inicializarGraficos(); 
-                carregarDados();
+                try { inicializarGraficos(); } catch(e) { console.error('Erro inicializarGraficos:', e); }
+                try { carregarDados(); } catch(e) { console.error('Erro carregarDados:', e); }
             } else {
                 document.getElementById('bloqueio-screen').style.display = 'flex'; document.getElementById('main-app').style.display = 'none';
             }
@@ -2899,7 +2902,40 @@
         }
     });
 
-    
+    // --- CARREGAMENTO DE DADOS DO MASTER PANEL ---
+    planoFiltroAdmin = "todos";
+    statusFiltroAdmin = "todos";
+    ordemFiltroAdmin = "recentes";
+    txtBuscaAdmin = "";
+
+    function carregarAdminData() { 
+        if (typeof unsubAssinaturasAdmin === 'function') { unsubAssinaturasAdmin(); unsubAssinaturasAdmin = null; }
+        try {
+            unsubAssinaturasAdmin = onSnapshot(collection(db, "assinaturas"), snap => {
+                usuariosAdmin = snap.docs.map(d => ({ uid: d.id, ...d.data() }));
+                if (typeof renderizarPainelAdmin === 'function') {
+                    renderizarPainelAdmin();
+                }
+            }, err => {
+                console.error('[Admin] Erro no listener de assinaturas:', err);
+            }); 
+        } catch(e) {
+            console.error('[Admin] Erro ao subscrever assinaturas:', e);
+        }
+        if (typeof window.carregarAuditoriaAdmin === 'function') {
+            try { window.carregarAuditoriaAdmin(); } catch(e) {}
+        }
+    }
+    window.carregarAdminData = carregarAdminData;
+
+    // Filtros do Painel Master
+    document.getElementById('buscaAdmin')?.addEventListener('input', (e) => { txtBuscaAdmin = e.target.value.toLowerCase(); renderizarPainelAdmin(); });
+    document.getElementById('filtroPlanoAdmin')?.addEventListener('change', (e) => { planoFiltroAdmin = e.target.value; renderizarPainelAdmin(); });
+    document.getElementById('filtroStatusAdmin')?.addEventListener('change', (e) => { statusFiltroAdmin = e.target.value; renderizarPainelAdmin(); });
+    document.getElementById('ordemAdmin')?.addEventListener('change', (e) => { ordemFiltroAdmin = e.target.value; renderizarPainelAdmin(); });
+    document.getElementById('buscaAuditoria')?.addEventListener('input', () => { if (typeof renderizarAuditoriaAdmin === 'function') renderizarAuditoriaAdmin(); });
+    document.getElementById('filtroAcaoAuditoria')?.addEventListener('change', () => { if (typeof renderizarAuditoriaAdmin === 'function') renderizarAuditoriaAdmin(); });
+
     // ============================================================================
     // FASE 10: MASTER PANEL EXECUTIVO (GOVERNANÇA, KPIS E LICENCIAMENTO)
     // ============================================================================
