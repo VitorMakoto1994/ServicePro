@@ -168,21 +168,19 @@ Avaliação detalhada:
 
 ---
 
-# 10. ASSINATURAS
+# 10. ASSINATURAS E PLANOS
 
 ### Resultado
-[ APROVADO COM RESSALVAS ]
+[ APROVADO — RESOLVIDO NA FASE 2 ]
 
-* **Trial:** 7 dias concedidos no cadastro via script: `validade.setDate(validade.getDate() + 7)`.
-* **Aviso de Vencimento:** Banner dinâmico `#alerta-vencimento` ativado nos últimos 3 dias.
-* **Bloqueio:** Tela `#bloqueio-screen` cobre a visualização do app caso a data atual ultrapasse `validade`.
-* **Conta Master:** Usuário `maa.koto@hotmail.com` recebe validade eterna (+100 anos) automaticamente.
-
-### Riscos
-
-| ID | Severidade | Problema | Impacto |
-|---|---|---|---|
-| SUB-001 | ALTO | Criação do documento `/assinaturas/{uid}` no front-end | Um usuário pode interceptar a requisição e gravar data posterior a 7 dias. |
+* **Catálogo de Planos:** Suporte estruturado para `TRIAL`, `STARTER`, `PRO` e `BUSINESS`.
+* **Estados de Assinatura:** Ciclo de vida gerenciado por `TRIAL`, `ATIVO`, `EXPIRADO`, `CANCELADO` e `BLOQUEADO`.
+* **Trial de 7 Dias:** Concedido no cadastro com campos `plano: 'TRIAL'`, `status: 'TRIAL'`, `trial: true`, `inicioAssinatura`, `validade`, `validadeTimestamp`, `createdAt`, `updatedAt`.
+* **Teto no Servidor (SUB-001 Resolvido):** Regra no Firestore restringe criação de trial a no máximo 8 dias a partir de `request.time`.
+* **Aviso de Vencimento:** Banner dinâmico `#alerta-vencimento` ativado nos últimos 3 dias com contagem regressiva precisa.
+* **Bloqueio e Resiliência:** Tela `#bloqueio-screen` cobre a interface caso a data expire ou a conta seja suspensa. Regras do Firestore bloqueiam acesso de contas `BLOQUEADO` ou `CANCELADO`.
+* **Gestão Master:** Superadministrador possui controles rápidos no painel para alterar planos, status e estender prazos de validade com 1 clique.
+* **Conta Master:** Usuário `maa.koto@hotmail.com` homologado com plano `BUSINESS`, status `ATIVO` e validade perpétua (+100 anos).
 
 ---
 
