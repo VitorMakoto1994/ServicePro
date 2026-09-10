@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isAuth() {
+      return request.auth != null;
+    }
+    
+    function isMaster() {
+      return isAuth() && request.auth.token.email.lower() == 'maa.koto@hotmail.com';
+    }
+    
+    function isOwner(userId) {
+      return isAuth() && request.auth.uid == userId;
+    }
+    
+    // Assinaturas:
+    // - Leitura: Próprio usuário ou Master
+    // - Criação: Próprio usuário no registro (com validação de email correspondente)
+    // - Alteração e Exclusão: Exclusivo Master
+    match /assinaturas/{userId} {
+      allow read: if isOwner(userId) || isMaster();
+      allow create: if isOwner(userId) && request.resource.data.email == request.auth.token.email;
+      allow update, delete: if isMaster();
+    }
+    
+    // Subcoleções do usuário (clientes, estoque, orçamentos, perfil):
+    // - Isolamento estrito por UID: somente o dono ou o Master têm acesso
+    match /usuarios/{userId}/{document=**} {
+      allow read, write: if isOwner(userId) || isMaster();
+    }
+  }
+}
