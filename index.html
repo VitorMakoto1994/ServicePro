@@ -1135,7 +1135,11 @@
         try { 
             const uc = await createUserWithEmailAndPassword(auth, email, p); 
             const validade = new Date(); validade.setDate(validade.getDate() + 7);
-            await setDoc(doc(db, "assinaturas", uc.user.uid), { email: email, validade: validade.toISOString() });
+            await setDoc(doc(db, "assinaturas", uc.user.uid), { 
+                email: email, 
+                validade: validade.toISOString(),
+                validadeTimestamp: validade
+            });
             await sendEmailVerification(uc.user);
             await signOut(auth); 
             Swal.fire({
@@ -1197,7 +1201,11 @@
                 }
             } else if (isAdmin) {
                 const validadeEterna = new Date(); validadeEterna.setFullYear(validadeEterna.getFullYear() + 100);
-                await setDoc(doc(db, "assinaturas", userId), { email: userEmail, validade: validadeEterna.toISOString() });
+                await setDoc(doc(db, "assinaturas", userId), { 
+                    email: userEmail, 
+                    validade: validadeEterna.toISOString(),
+                    validadeTimestamp: validadeEterna
+                });
                 taLiberado = true;
             }
 
@@ -1268,7 +1276,10 @@
         if (!confirmou) return;
         const novaDataObj = new Date(novaDataStr + 'T23:59:59'); 
         try {
-            await updateDoc(doc(db, "assinaturas", uid), { validade: novaDataObj.toISOString() }); 
+            await updateDoc(doc(db, "assinaturas", uid), { 
+                validade: novaDataObj.toISOString(),
+                validadeTimestamp: novaDataObj
+            }); 
             Toast.fire({ icon: 'success', title: 'Validade atualizada com sucesso!' }); 
         } catch (e) {
             Toast.fire({ icon: 'error', title: 'Erro ao atualizar assinatura.' });
