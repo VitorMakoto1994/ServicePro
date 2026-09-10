@@ -24,6 +24,14 @@ service cloud.firestore {
       return isOwner(userId) && request.auth.token.email_verified == true;
     }
     
+    // Verifica se a conta do usuário foi administrativamente bloqueada ou cancelada
+    function isUserBlocked(userId) {
+      let ass = get(/databases/$(database)/documents/assinaturas/$(userId)).data;
+      return ass != null && (
+        ('status' in ass && (ass.status == 'BLOQUEADO' || ass.status == 'CANCELADO'))
+      );
+    }
+    
     // Coleção /assinaturas/{userId}
     // - Leitura: Dono da conta ou Master
     // - Criação: Master livremente, ou o próprio usuário no signup com teto de 7/8 dias
@@ -34,6 +42,8 @@ service cloud.firestore {
       allow create: if isMaster() || (
         isOwner(userId) 
         && request.resource.data.email == request.auth.token.email
+        && (!('plano' in request.resource.data) || request.resource.data.plano in ['TRIAL', 'STARTER', 'PRO', 'BUSINESS'])
+        && (!('status' in request.resource.data) || request.resource.data.status in ['TRIAL', 'ATIVO', 'EXPIRADO', 'CANCELADO', 'BLOQUEADO'])
         && (!('validadeTimestamp' in request.resource.data) || (
           request.resource.data.validadeTimestamp is timestamp 
           && request.resource.data.validadeTimestamp <= request.time + duration.value(8, 'd')
@@ -46,10 +56,10 @@ service cloud.firestore {
     // Coleção /usuarios/{userId}/{document=**}
     // Contém subcoleções: clientes, estoque, orcamentos, config
     // - Isolamento absoluto: Usuário A JAMAIS lê ou escreve dados do Usuário B
-    // - Acesso a dados de negócio requer e-mail verificado
-    // - Master possui acesso para suporte, auditoria e backup global
+    // - Acesso a dados de negócio requer e-mail verificado e conta não-bloqueada
+    // - Master possui acesso irrestrito para suporte, auditoria e backup global
     match /usuarios/{userId}/{document=**} {
-      allow read, write: if isVerifiedOwner(userId) || isMaster();
+      allow read, write: if (isVerifiedOwner(userId) && !isUserBlocked(userId)) || isMaster();
     }
     
     // Bloqueio explícito por padrão de qualquer outra coleção não declarada
