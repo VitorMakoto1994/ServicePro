@@ -2,6 +2,16 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [2.10.0] - 2026-09-09
+### Adicionado (Fase 4 - Estoque Profissional)
+- **Histórico Completo de Movimentações:** Criação da subcoleção `/usuarios/{userId}/movimentacoes` rastreando `ENTRADA`, `SAIDA`, `AJUSTE` e `ESTORNO` com `produtoId`, `quantidade`, `quantidadeAnterior`, `quantidadeNova`, `data`, `referencia`, `osId` e `usuarioId`.
+- **Monitoramento de Estoque Mínimo:** Novo campo `estoqueMinimo` em materiais, com alertas visuais inteligentes de reposição necessária (`⚠️ Reposição`) e status de item zerado.
+- **Modal de Histórico com Filtros:** Modal interativo para visualização de movimentações por produto específico ou listagem global, com busca textual e filtro por tipo de movimentação.
+- **Baixa Automática Idempotente em OS:** Conclusão de OS deduz materiais via `writeBatch` atômico, registra logs de `SAIDA` e marca a flag definitiva `estoqueBaixado: true`.
+- **Garantia Contra Baixa Dupla:** Teste mandatório homologado: OS finalizada -> reaberta -> finalizada novamente -> **NÃO baixa o estoque uma segunda vez**.
+- **Reabertura Inteligente com Estorno:** Opção ao reabrir ordens de serviço concluídas de manter a baixa efetuada ou realizar o estorno atômico dos insumos de volta ao estoque com log de `ESTORNO`.
+- **Backup Integrado:** Exportação e restauração de movimentações adicionadas ao Backup Geral Master e ao Backup Pessoal do prestador.
+
 ## [2.9.0] - 2026-09-09
 ### Adicionado (Fase 3 - Motor Financeiro)
 - **Aritmética Centesimal Exata:** Reestruturação de todos os cálculos internos para inteiros de centavos (`subtotalCentavos`, `descontoCentavos`, `totalCentavos`, `valorPagoCentavos`, `saldoCentavos`, `custoCentavos`, `lucroCentavos`), eliminando strings monetárias como fonte matemática e desvios de ponto flutuante IEEE 754.
