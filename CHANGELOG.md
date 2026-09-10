@@ -2,6 +2,20 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [2.6.0] - 2026-09-09
+### Segurança
+- Criação e implantação de `firestore.rules` com isolamento multi-tenant estrito por UID, proteção permanente da conta Master (`maa.koto@hotmail.com`) e bloqueio contra alteração indevida de validade pelo cliente.
+
+### Corrigido
+- **Idempotência no Estoque:** Finalização de OS agora utiliza `writeBatch` atômico e flag `estoqueBaixado: true`, impedindo baixas parciais ou deduções duplicadas de estoque.
+- **Consistência Financeira:** Orçamentos e OS agora armazenam `totalNumerico` (ponto flutuante puro) e `totalCentavos` (inteiro), além da string visual, garantindo integridade matemática no Dashboard.
+
+### Adicionado
+- **Empty States (UX):** Cards informativos e ilustrados para novos usuários quando as listas de Clientes, Estoque ou Orçamentos estiverem vazias, com botões de primeiro passo.
+- Atualização do Service Worker para `servicepro-cache-v5` com invalidação automática de cache.
+
+---
+
 ## [2.5.0] - 2026-09-09
 ### Adicionado
 - Menu lateral responsivo tipo gaveta (drawer/offcanvas) no celular com botão hambúrguer e backdrop blur.
