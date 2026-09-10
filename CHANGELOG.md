@@ -2,6 +2,66 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [2.14.0] - 2026-09-09
+### Adicionado (Fase 9 - Backup e Restauração Profissional)
+- **Schema v3.0 com Checksum Criptográfico:**
+  - `versao: "3.0"`, `timestamp: ISO`, `quantidadeRegistros`, `estrutura` e payload consolidado.
+  - Checksum SHA-256 gerado via Web Crypto API nativa (`crypto.subtle.digest`) para atestar integridade e detectar corrupção de dados.
+- **Backup Pessoal v3.0 (`#btnExportarBackupUser`):**
+  - Exportação estrita dos dados do usuário autenticado (`perfil`, `clientes`, `estoque`, `orcamentos`, `movimentacoes`).
+- **Backup Master v3.0 (`#btnExportarBackupMaster`):**
+  - Snapshot global de todo o ecossistema (todas as assinaturas, usuários e coleções do banco), restrito e protegido para o Superadministrador (`isMasterAdmin()`).
+- **Pipeline de Restauração em 6 Etapas Seguras:**
+  - *Etapa 1 (Validação & Compatibilidade):* Suporte retroativo completo a backups v1.0, v2.0 e v3.0 com bloqueio estrito caso usuário comum tente restaurar dados Master.
+  - *Etapa 2 (Pré-Visualização no Modal `#modalRestorePreview`):* Resumo detalhado com nome do arquivo, versão, timestamp, e-mail de origem, status da integridade e grid de contagem de Clientes, Estoque, Orçamentos/OS e Movimentações.
+  - *Etapa 3 (Confirmação Explícita):* Diálogo de confirmação com SweetAlert2 / confirmação com trava antes de qualquer escrita.
+  - *Etapa 4 (Safety Snapshot Preventivo):* Gravação automática de snapshot de segurança no `localStorage` sob chave `servicepro_safety_snapshot_<timestamp>` antes de qualquer operação destrutiva.
+  - *Etapa 5 (Restauração Atômica em Lotes):* Processamento seguro em lotes de até 380 documentos por `writeBatch` respeitando limites do Firestore, com barra de progresso em tempo real.
+  - *Etapa 6 (Validação Pós-Restore & Auditoria):* Atualização dos arrays de estado em memória e registro inviolável de auditoria com ação `RESTAURACAO_BACKUP`.
+
+### Adicionado (Fase 10 - Master Panel Executivo)
+- **7 KPIs Executivos no Topo de `#aba-admin`:**
+  - Total de Usuários cadastrados no SaaS (`#kpiTotalUsuarios`).
+  - Contas em Período de Teste (`#kpiTrials`).
+  - Assinaturas Ativas e vigentes (`#kpiAtivos`).
+  - Novos Usuários nos últimos 30 dias (`#kpiNovos30Dias`).
+  - MRR Estimado em R$ com cálculo centesimal preciso (Starter R$ 39,90, Pro R$ 79,90, Business R$ 149,90 - excluindo conta master para não gerar receita fictícia) (`#kpiMRREstimado`).
+  - Usuários Expirados com alerta visual (`#kpiExpirados`).
+  - Contas Canceladas ou Bloqueadas administrativamente (`#kpiCanceladosBloqueados`).
+- **Tabela Corporativa com Soft Badges:**
+  - Colunas: Empresa, Usuário/E-mail com UID mono, Plano, Status, Vencimento com alerta dinâmico de proximidade e Último Acesso.
+- **Ações Administrativas Rápidas de 1 Clique:**
+  - *Ver (Visão 360º):* Modal `#modalDetalhesUsuarioMaster` com métricas quantitativas de uso em tempo real (Clientes, Estoque, Orçamentos, Faturamento em OS).
+  - *Liberar:* Ativação instantânea para status `ATIVO` e +30 dias com confirmação e auditoria `ALTERACAO_ASSINATURA`.
+  - *Bloquear:* Suspensão imediata de conta (`status: 'BLOQUEADO'`) com confirmação.
+  - *Estender:* Modal `#modalEstenderValidadeMaster` com atalhos (+7, +15, +30, +60 dias) e data manual.
+  - *Alterar Plano:* Modal `#modalAlterarPlanoMaster` para alternar entre TRIAL, STARTER, PRO e BUSINESS com registro de auditoria `ALTERACAO_PLANO`.
+  - *Reset de Senha e Exclusão:* Ações preservadas com confirmações de segurança.
+- **Proteção Estrita e Auditoria Inviolável:**
+  - Bloqueio imediato no frontend e backend (`firestore.rules`) caso usuário não autenticado como Master tente executar qualquer ação administrativa.
+
+### Adicionado (Fase 11 - Performance e Escalabilidade)
+- **Compressão Inteligente de Logotipo Client-Side:**
+  - Redimensionamento matemático proporcional via Canvas (máximo 300x300px) com preservação de aspect ratio.
+  - Compressão progressiva JPEG com degradação controlada de qualidade (0.70 a 0.40) garantindo payload Base64 estritamente abaixo de 50KB.
+  - Feedback visual em tempo real no formulário de Perfil (`#pLogoFeedback`) exibindo o tamanho final otimizado (ex: `24.5 KB - Otimizado`).
+- **Teardown Limpo de Listeners Firestore (`Memory Leak Prevention`):**
+  - Implementação da rotina universal `window.teardownListeners()` para cancelamento de todas as 7 subscrições ativas (`unsubClientes`, `unsubEstoque`, `unsubMovimentacoes`, `unsubOrcamentos`, `unsubPerfil`, `unsubAssinaturasAdmin`, `unsubscribeAuditoria`).
+  - Conexão do teardown ao logout (`sairDoSistema`), no desligamento de sessão em `onAuthStateChanged` e de forma preventiva antes de reconectar listeners em `carregarDados()`.
+- **Otimização de Queries e Limitação Histórica (`limit(100)`):**
+  - Subscrição em `movimentacoes` refatorada para utilizar `query(..., orderBy("data", "desc"), limit(100))` eliminando downloads massivos de dados históricos antigos.
+  - Alinhamento da consulta com a telemetria append-only de `auditoria` também sob limite de 100 registros.
+- **Registro Otimizado e Assíncrono de Último Acesso:**
+  - Atualização não-bloqueante de `ultimoAcesso` em `assinaturas/{userId}` no login, garantindo telemetria sem atrasar a inicialização da interface.
+- **Índices Compostos do Firestore (`firestore.indexes.json`):**
+  - Configuração formal de 4 índices compostos e override de campo para consultas ordenadas de `auditoria`, `movimentacoes` e `orcamentos` (por status e status financeiro).
+  - Integração pronta para deploy no Firebase CLI através de `firebase.json`.
+- **Cache do Service Worker Atualizado para `v13`:**
+  - Incremento de cache no `sw.js` para `servicepro-cache-v13`, garantindo ativação imediata dos novos recursos nos dispositivos dos prestadores.
+- **Estudo Executivo de Escalabilidade (`PERFORMANCE.md`):**
+  - Análise completa de carga e custos para 100, 1.000 e 10.000 prestadores ativos com margem de nuvem superior a 99.7% no plano Firebase Blaze.
+  - Metrificação de latência (FCP 0.9s, LCP 1.3s, INP 38ms) e footprint de memória (32-46 MB) para smartphones de entrada (320px-390px).
+
 ## [2.13.0] - 2026-09-09
 ### Adicionado (Fase 7 - Dashboard Executivo)
 - **Painel de Gestão com 9 KPIs em Tempo Real:**
