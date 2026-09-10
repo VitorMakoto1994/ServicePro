@@ -2,6 +2,15 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [2.6.1] - 2026-09-09
+### Corrigido
+- **Menu Lateral no Celular (Mobile Drawer):** Restaurada e aperfeiçoada a barra superior mobile (`.mobile-topbar`) com botão hambúrguer, avatar do usuário, backdrop blur com transição suave e botão de fechar dedicado na gaveta lateral.
+- **Responsividade Expandida:** Breakpoint mobile ajustado para 991.98px cobrindo celulares, tablets e dispositivos em modo paisagem, com suporte a alturas dinâmicas `100dvh`.
+- **Ergonomia Touch:** Alvos de toque ajustados para no mínimo 44px x 44px conforme diretrizes de UX Mobile B2B.
+- **Navegação Fluida:** Fechamento automático da gaveta lateral ao selecionar qualquer item do menu, clicar fora (backdrop) ou pressionar Escape.
+- **Artefato Visual Eliminado:** Removido vazamento de sombra lateral da sidebar quando recolhida fora da tela.
+- Atualização do Service Worker para `servicepro-cache-v7` com recarregamento e atualização imediata nos celulares.
+
 ## [2.6.0] - 2026-09-09
 ### Segurança
 - Criação e implantação de `firestore.rules` com isolamento multi-tenant estrito por UID, proteção permanente da conta Master (`maa.koto@hotmail.com`) e bloqueio contra alteração indevida de validade pelo cliente.
