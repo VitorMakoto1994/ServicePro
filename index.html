@@ -648,15 +648,21 @@
             </div>
 
             <div id="aba-estoque" class="secao">
-                <div class="secao-header">
-                    <h3>Estoque e Materiais</h3>
-                    <button class="btn btn-primary btn-premium shadow-sm" id="btnNovoEstoque"><i class="bi bi-plus-lg me-1"></i> Entrada de Material</button>
+                <div class="secao-header flex-wrap gap-2">
+                    <div>
+                        <h3 class="mb-0">Estoque e Materiais</h3>
+                        <small class="text-muted">Controle de insumos, estoque mínimo e histórico com rastreabilidade</small>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-outline-secondary btn-premium shadow-sm bg-white" id="btnHistoricoEstoqueGlobal"><i class="bi bi-clock-history me-1"></i> Histórico de Movimentações</button>
+                        <button class="btn btn-primary btn-premium shadow-sm" id="btnNovoEstoque"><i class="bi bi-plus-lg me-1"></i> Entrada de Material</button>
+                    </div>
                 </div>
                 <div class="filtro-container row g-2 mb-4">
                     <div class="col-md-8"><input type="text" id="buscaEstoque" class="form-control" placeholder="Buscar produto no estoque..."></div>
                     <div class="col-md-4"><select id="ordemEstoque" class="form-select"><option value="recentes">Mais Recentes</option><option value="az">Ordem Alfabética (A-Z)</option><option value="qtd">Maior Quantidade</option><option value="valor">Maior Valor em Estoque</option></select></div>
                 </div>
-                <div class="table-responsive"><table class="table table-custom align-middle"><thead><tr><th class="ps-4">SKU</th><th>Produto</th><th>Qtd</th><th>Custo Médio</th><th class="text-end pe-4">Ações</th></tr></thead><tbody id="listaEstoque"></tbody></table></div>
+                <div class="table-responsive"><table class="table table-custom align-middle"><thead><tr><th class="ps-4">SKU</th><th>Produto</th><th>Qtd Atual</th><th>Estoque Mín.</th><th>Custo Médio</th><th>Status</th><th class="text-end pe-4">Ações</th></tr></thead><tbody id="listaEstoque"></tbody></table></div>
             </div>
 
             <div id="aba-orcamentos" class="secao">
@@ -892,7 +898,93 @@
 </div>
 <div class="mb-3"><label class="form-label-premium">ENDEREÇO (LOGRADOURO, NÚMERO, COMPL.)</label><input type="text" id="cEnd" class="form-control" placeholder="Rua / Av, Número, Apto..."></div><div><label class="form-label-premium">OBSERVAÇÕES</label><textarea id="cObs" class="form-control" rows="3"></textarea></div></div><div class="modal-footer"><button type="submit" class="btn btn-primary w-100 btn-premium py-2">Salvar na Nuvem</button></div></form></div></div></div>
 
-<div class="modal fade" id="modalEstoque" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><form id="formEstoque"><div class="modal-header"><h5>Estoque</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="editEstoqueSku"><div class="mb-3"><label class="form-label-premium">PRODUTO</label><input type="text" id="iNome" class="form-control" required></div><div class="row g-3"><div class="col-6"><label class="form-label-premium">QTD TOTAL</label><input type="number" id="iQtd" class="form-control" required></div><div class="col-6"><label class="form-label-premium">CUSTO COMPRA</label><input type="text" id="iPreco" class="form-control mask-money" required></div></div></div><div class="modal-footer"><button type="submit" class="btn btn-primary w-100 btn-premium py-2">Salvar no Estoque</button></div></form></div></div></div>
+<div class="modal fade" id="modalEstoque" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="formEstoque">
+                <div class="modal-header">
+                    <h5 class="fw-bold"><i class="bi bi-box-seam me-2 text-primary"></i>Material / Produto no Estoque</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editEstoqueSku">
+                    <div class="mb-3">
+                        <label class="form-label-premium">NOME DO MATERIAL / PRODUTO</label>
+                        <input type="text" id="iNome" class="form-control" required placeholder="Ex: DISJUNTOR BIPOLAR 32A">
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label-premium">QUANTIDADE</label>
+                            <input type="number" id="iQtd" class="form-control" required step="any" min="0" placeholder="0">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label-premium">ESTOQUE MÍNIMO</label>
+                            <input type="number" id="iEstoqueMinimo" class="form-control" value="0" min="0" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label-premium">VALOR TOTAL DA COMPRA (R$)</label>
+                        <input type="text" id="iPreco" class="form-control mask-money" required placeholder="R$ 0,00">
+                        <small class="text-muted d-block mt-1">O Custo Médio Unitário é apurado automaticamente pelo valor total / quantidade.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary w-100 btn-premium py-2">Salvar no Estoque</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalHistoricoEstoque" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="fw-bold mb-0"><i class="bi bi-clock-history me-2 text-primary"></i>Histórico de Movimentações de Estoque</h5>
+                    <small class="text-muted" id="subtituloHistoricoEstoque">Rastreabilidade completa de entradas, saídas, ajustes e estornos</small>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-2 mb-3">
+                    <div class="col-md-7">
+                        <input type="text" id="buscaHistoricoEstoque" class="form-control" placeholder="Buscar por produto, referência ou OS...">
+                    </div>
+                    <div class="col-md-5">
+                        <select id="filtroTipoMovimentacao" class="form-select">
+                            <option value="todos">Todos os Tipos de Movimentação</option>
+                            <option value="ENTRADA">🟢 Entradas (Compras / Inicial)</option>
+                            <option value="SAIDA">🔴 Saídas (Baixa Automática por OS)</option>
+                            <option value="AJUSTE">🟡 Ajustes Manuais</option>
+                            <option value="ESTORNO">🔵 Estornos</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-responsive" style="max-height: 420px; overflow-y: auto;">
+                    <table class="table table-custom table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th>Data / Hora</th>
+                                <th>Tipo</th>
+                                <th>Produto</th>
+                                <th class="text-center">Qtd</th>
+                                <th class="text-center">Saldo</th>
+                                <th>Referência / OS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaHistoricoEstoque">
+                            <tr><td colspan="6" class="text-center py-4 text-muted">Carregando histórico...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary btn-premium" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module">
@@ -921,7 +1013,7 @@
     const ADMIN_EMAIL = "maa.koto@hotmail.com"; 
 
     let userId = null, userEmail = null;
-    let clientes = [], estoque = [], orcamentos = [], usuariosAdmin = [];
+    let clientes = [], estoque = [], orcamentos = [], usuariosAdmin = [], movimentacoes = [];
     let perfil = { empresa: '', cnpj: '', tel: '', margem: 0, logo: '', cor: '#1e293b' };
     let itensTemp = [], clienteAtualId = null, dataCalendario = new Date();
     
@@ -1563,7 +1655,8 @@
                         perfil: (perfSnap && perfSnap.exists && perfSnap.exists()) ? perfSnap.data() : null,
                         clientes: (cliSnap && cliSnap.docs) ? cliSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : [],
                         estoque: (estSnap && estSnap.docs) ? estSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : [],
-                        orcamentos: (orcSnap && orcSnap.docs) ? orcSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : []
+                        orcamentos: (orcSnap && orcSnap.docs) ? orcSnap.docs.map(d => ({ id_backup: d.id, ...d.data() })) : [],
+                        movimentacoes: (await getDocs(collection(db, "usuarios", uid, "movimentacoes"))).docs.map(d => ({ id_backup: d.id, ...d.data() }))
                     };
                 }
 
@@ -1856,6 +1949,7 @@
     function carregarDados() {
         onSnapshot(collection(db, "usuarios", userId, "clientes"), snap => { clientes = snap.docs.map(d => ({id_firebase: d.id, ...d.data()})); renderizarClientes(); atualizarDashboard(); });
         onSnapshot(collection(db, "usuarios", userId, "estoque"), snap => { estoque = snap.docs.map(d => ({id_firebase: d.id, ...d.data()})); renderizarEstoque(); });
+        onSnapshot(collection(db, "usuarios", userId, "movimentacoes"), snap => { movimentacoes = snap.docs.map(d => ({id_firebase: d.id, ...d.data()})); renderizarHistoricoEstoque(); renderizarEstoque(); });
         onSnapshot(collection(db, "usuarios", userId, "orcamentos"), snap => { orcamentos = snap.docs.map(d => ({id_firebase: d.id, ...d.data()})); renderizarOrcamentos(); renderizarCalendario(); atualizarDashboard(); });
         onSnapshot(doc(db, "usuarios", userId, "config", "perfil"), d => { 
             if(d.exists()){ 
@@ -2022,32 +2116,98 @@
         new bootstrap.Modal(document.getElementById('modalCliente')).show(); 
     };
 
-    // --- ESTOQUE ---
+    // --- ESTOQUE PROFISSIONAL (FASE 4: HISTÓRICO, RASTREABILIDADE & ESTOQUE MÍNIMO) ---
     document.getElementById('buscaEstoque').addEventListener('input', (e) => { txtBuscaEstoque = e.target.value.toLowerCase(); renderizarEstoque(); });
     document.getElementById('ordemEstoque').addEventListener('change', (e) => { ordemFiltroEstoque = e.target.value; renderizarEstoque(); });
 
     document.getElementById('btnNovoEstoque').addEventListener('click', () => { 
         document.getElementById('formEstoque').reset(); 
         document.getElementById('editEstoqueSku').value = ''; 
+        const minEl = document.getElementById('iEstoqueMinimo');
+        if (minEl) minEl.value = '0';
         new bootstrap.Modal(document.getElementById('modalEstoque')).show(); 
     });
 
     document.getElementById('formEstoque').addEventListener('submit', async e => { 
         e.preventDefault(); 
         const idF = document.getElementById('editEstoqueSku').value; 
-        const q = parseFloat(document.getElementById('iQtd').value); 
-        const d = { nome: document.getElementById('iNome').value.toUpperCase(), quantidade: q, custoMedio: limpaDinheiro(document.getElementById('iPreco').value) / q, apagado: false }; 
+        const q = parseFloat(document.getElementById('iQtd').value) || 0; 
+        const minQtd = parseFloat(document.getElementById('iEstoqueMinimo')?.value) || 0;
+        const precoCompra = limpaDinheiro(document.getElementById('iPreco').value);
+        const custoMedioCalc = q > 0 ? precoCompra / q : 0;
+        const nomeProd = document.getElementById('iNome').value.toUpperCase().trim();
+
         try {
-            if(idF) {
-                await updateDoc(doc(db, "usuarios", userId, "estoque", idF), d); 
+            const batch = writeBatch(db);
+            if (idF) {
+                const itemAnterior = estoque.find(x => x.id_firebase === idF);
+                const qtdAnterior = itemAnterior ? (Number(itemAnterior.quantidade) || 0) : 0;
+                const difQtd = q - qtdAnterior;
+
+                batch.update(doc(db, "usuarios", userId, "estoque", idF), {
+                    nome: nomeProd,
+                    quantidade: q,
+                    estoqueMinimo: minQtd,
+                    custoMedio: custoMedioCalc,
+                    updatedAt: new Date().toISOString()
+                });
+
+                // Se houver alteração manual de saldo, registrar movimentação do tipo AJUSTE
+                if (difQtd !== 0) {
+                    const refMov = doc(collection(db, "usuarios", userId, "movimentacoes"));
+                    batch.set(refMov, {
+                        produtoId: idF,
+                        produtoNome: nomeProd,
+                        quantidade: difQtd,
+                        quantidadeAnterior: qtdAnterior,
+                        quantidadeNova: q,
+                        tipo: 'AJUSTE',
+                        data: new Date().toISOString(),
+                        referencia: 'Ajuste Manual de Inventário',
+                        osId: null,
+                        usuarioId: userId
+                    });
+                }
+
+                await batch.commit();
                 Toast.fire({ icon: 'success', title: 'Item atualizado no estoque!' });
             } else { 
-                d.numId = gerarNumId(estoque); 
-                await addDoc(collection(db, "usuarios", userId, "estoque"), d); 
+                const novoDocRef = doc(collection(db, "usuarios", userId, "estoque"));
+                const numId = gerarNumId(estoque);
+                batch.set(novoDocRef, {
+                    numId,
+                    nome: nomeProd,
+                    quantidade: q,
+                    estoqueMinimo: minQtd,
+                    custoMedio: custoMedioCalc,
+                    apagado: false,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                });
+
+                // Registrar movimentação inicial do tipo ENTRADA se quantidade > 0
+                if (q > 0) {
+                    const refMov = doc(collection(db, "usuarios", userId, "movimentacoes"));
+                    batch.set(refMov, {
+                        produtoId: novoDocRef.id,
+                        produtoNome: nomeProd,
+                        quantidade: q,
+                        quantidadeAnterior: 0,
+                        quantidadeNova: q,
+                        tipo: 'ENTRADA',
+                        data: new Date().toISOString(),
+                        referencia: 'Entrada Inicial de Estoque',
+                        osId: null,
+                        usuarioId: userId
+                    });
+                }
+
+                await batch.commit();
                 Toast.fire({ icon: 'success', title: 'Item adicionado ao estoque!' });
             } 
             bootstrap.Modal.getInstance(document.getElementById('modalEstoque')).hide(); 
         } catch (err) {
+            console.error('Erro ao salvar no estoque:', err);
             Toast.fire({ icon: 'error', title: 'Erro ao salvar no estoque.' });
         }
     });
@@ -2055,31 +2215,151 @@
     function renderizarEstoque() { 
         let filtrados = estoque.filter(e => !e.apagado);
         if(txtBuscaEstoque) filtrados = filtrados.filter(e => e.nome.toLowerCase().includes(txtBuscaEstoque));
-        if(ordemFiltroEstoque === 'az') filtrados.sort((a,b) => a.nome.localeCompare(b.nome)); else if(ordemFiltroEstoque === 'qtd') filtrados.sort((a,b) => b.quantidade - a.quantidade); else if(ordemFiltroEstoque === 'valor') filtrados.sort((a,b) => (b.quantidade * b.custoMedio) - (a.quantidade * a.custoMedio)); else filtrados.sort((a,b) => b.numId - a.numId);
+        if(ordemFiltroEstoque === 'az') filtrados.sort((a,b) => a.nome.localeCompare(b.nome)); 
+        else if(ordemFiltroEstoque === 'qtd') filtrados.sort((a,b) => b.quantidade - a.quantidade); 
+        else if(ordemFiltroEstoque === 'valor') filtrados.sort((a,b) => (b.quantidade * b.custoMedio) - (a.quantidade * a.custoMedio)); 
+        else filtrados.sort((a,b) => b.numId - a.numId);
 
         document.getElementById('listaEstoque').innerHTML = filtrados.map(i => {
-            const corQtd = i.quantidade < 0 ? 'text-danger fw-bold' : 'fw-bold';
-            const aviso = i.quantidade < 0 ? ' <i class="bi bi-exclamation-circle-fill text-danger" title="Estoque Negativo"></i>' : '';
+            const qtd = Number(i.quantidade) || 0;
+            const min = Number(i.estoqueMinimo) || 0;
+
+            let badgeStatus = '<span class="badge bg-success">🟢 Normal</span>';
+            let corQtd = 'fw-bold';
+            if (qtd <= 0) {
+                badgeStatus = '<span class="badge bg-danger">🔴 Zerado</span>';
+                corQtd = 'text-danger fw-bold';
+            } else if (min > 0 && qtd <= min) {
+                badgeStatus = `<span class="badge bg-warning text-dark">⚠️ Reposição (Mín: ${min})</span>`;
+                corQtd = 'text-warning-emphasis fw-bold';
+            }
+
             return `<tr>
                 <td class="fw-bold text-muted ps-4">#${i.numId||'?'}</td>
                 <td class="fw-bold">${i.nome}</td>
-                <td class="${corQtd}">${i.quantidade}${aviso}</td>
+                <td class="${corQtd}">${qtd}</td>
+                <td class="text-muted">${min}</td>
                 <td>${formatDinheiro(i.custoMedio)}</td>
+                <td>${badgeStatus}</td>
                 <td class="text-end pe-4">
-                    <button class="btn-action btn-action-edit" onclick="window.editarEstoque('${i.id_firebase}')"><i class="bi bi-pencil"></i></button>
-                    <button class="btn-action btn-action-del" onclick="window.excluirDoc('estoque','${i.id_firebase}')"><i class="bi bi-trash"></i></button>
+                    <button class="btn-action btn-action-view" onclick="window.verHistoricoProduto('${i.id_firebase}')" title="Ver Histórico de Movimentações"><i class="bi bi-clock-history"></i></button>
+                    <button class="btn-action btn-action-edit" onclick="window.editarEstoque('${i.id_firebase}')" title="Editar Material"><i class="bi bi-pencil"></i></button>
+                    <button class="btn-action btn-action-del" onclick="window.excluirDoc('estoque','${i.id_firebase}')" title="Excluir"><i class="bi bi-trash"></i></button>
                 </td>
             </tr>`;
         }).join(''); 
     }
+
     window.editarEstoque = (idF) => { 
         const i = estoque.find(x => x.id_firebase === idF); 
+        if (!i) return;
         document.getElementById('editEstoqueSku').value = i.id_firebase; 
         document.getElementById('iNome').value = i.nome; 
         document.getElementById('iQtd').value = i.quantidade; 
+        const estMinEl = document.getElementById('iEstoqueMinimo');
+        if (estMinEl) estMinEl.value = i.estoqueMinimo !== undefined ? i.estoqueMinimo : 0;
         document.getElementById('iPreco').value = formatDinheiro(i.quantidade * i.custoMedio); 
         new bootstrap.Modal(document.getElementById('modalEstoque')).show(); 
     };
+
+    // --- CONTROLE DE HISTÓRICO DE MOVIMENTAÇÕES ---
+    let filtroHistProdutoId = null;
+    let txtBuscaHist = '';
+    let filtroTipoHist = 'todos';
+
+    window.verHistoricoProduto = (produtoId) => {
+        filtroHistProdutoId = produtoId;
+        const prod = estoque.find(x => x.id_firebase === produtoId);
+        const sub = document.getElementById('subtituloHistoricoEstoque');
+        if (sub) sub.innerText = prod ? `Movimentações de: ${prod.nome}` : 'Rastreabilidade de movimentações';
+        const buscaEl = document.getElementById('buscaHistoricoEstoque');
+        if (buscaEl) buscaEl.value = '';
+        txtBuscaHist = '';
+        renderizarHistoricoEstoque();
+        new bootstrap.Modal(document.getElementById('modalHistoricoEstoque')).show();
+    };
+
+    window.abrirHistoricoGlobal = () => {
+        filtroHistProdutoId = null;
+        const sub = document.getElementById('subtituloHistoricoEstoque');
+        if (sub) sub.innerText = 'Rastreabilidade completa de entradas, saídas, ajustes e estornos';
+        const buscaEl = document.getElementById('buscaHistoricoEstoque');
+        if (buscaEl) buscaEl.value = '';
+        txtBuscaHist = '';
+        renderizarHistoricoEstoque();
+        new bootstrap.Modal(document.getElementById('modalHistoricoEstoque')).show();
+    };
+
+    function renderizarHistoricoEstoque() {
+        const tbody = document.getElementById('listaHistoricoEstoque');
+        if (!tbody) return;
+
+        let lista = [...movimentacoes];
+        if (filtroHistProdutoId) {
+            lista = lista.filter(m => m.produtoId === filtroHistProdutoId);
+        }
+        if (filtroTipoHist && filtroTipoHist !== 'todos') {
+            lista = lista.filter(m => m.tipo === filtroTipoHist);
+        }
+        if (txtBuscaHist) {
+            lista = lista.filter(m => 
+                (m.produtoNome && m.produtoNome.toLowerCase().includes(txtBuscaHist)) ||
+                (m.referencia && m.referencia.toLowerCase().includes(txtBuscaHist))
+            );
+        }
+
+        // Ordenar por data decrescente (mais recentes primeiro)
+        lista.sort((a,b) => new Date(b.data || 0) - new Date(a.data || 0));
+
+        if (lista.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Nenhuma movimentação registrada até o momento.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = lista.map(m => {
+            let badgeTipo = '';
+            let corQtd = 'text-dark';
+            let sinalQtd = m.quantidade > 0 ? '+' : '';
+
+            if (m.tipo === 'ENTRADA') {
+                badgeTipo = '<span class="badge bg-success">🟢 Entrada</span>';
+                corQtd = 'text-success fw-bold';
+            } else if (m.tipo === 'SAIDA') {
+                badgeTipo = '<span class="badge bg-danger">🔴 Saída (OS)</span>';
+                corQtd = 'text-danger fw-bold';
+            } else if (m.tipo === 'AJUSTE') {
+                badgeTipo = '<span class="badge bg-warning text-dark">🟡 Ajuste</span>';
+                corQtd = m.quantidade >= 0 ? 'text-primary fw-bold' : 'text-danger fw-bold';
+            } else if (m.tipo === 'ESTORNO') {
+                badgeTipo = '<span class="badge bg-info text-dark">🔵 Estorno</span>';
+                corQtd = 'text-info-emphasis fw-bold';
+            } else {
+                badgeTipo = `<span class="badge bg-secondary">${m.tipo || 'N/A'}</span>`;
+            }
+
+            const dataFormatada = m.data ? new Date(m.data).toLocaleString('pt-BR') : '--/--/----';
+            const saldoNovo = m.quantidadeNova !== undefined ? m.quantidadeNova : '--';
+
+            return `<tr>
+                <td class="small text-muted">${dataFormatada}</td>
+                <td>${badgeTipo}</td>
+                <td class="fw-bold">${m.produtoNome || 'Produto'}</td>
+                <td class="text-center ${corQtd}">${sinalQtd}${m.quantidade}</td>
+                <td class="text-center fw-bold">${saldoNovo}</td>
+                <td class="small text-muted">${m.referencia || '--'}</td>
+            </tr>`;
+        }).join('');
+    }
+
+    document.getElementById('btnHistoricoEstoqueGlobal')?.addEventListener('click', window.abrirHistoricoGlobal);
+    document.getElementById('buscaHistoricoEstoque')?.addEventListener('input', (e) => {
+        txtBuscaHist = e.target.value.toLowerCase();
+        renderizarHistoricoEstoque();
+    });
+    document.getElementById('filtroTipoMovimentacao')?.addEventListener('change', (e) => {
+        filtroTipoHist = e.target.value;
+        renderizarHistoricoEstoque();
+    });
 
     // --- ORÇAMENTOS E ORDENS DE SERVIÇO ---
     document.getElementById('buscaOrcamento').addEventListener('input', (e) => { txtBuscaOrc = e.target.value.toLowerCase(); renderizarOrcamentos(); });
@@ -2370,6 +2650,7 @@
             }
 
             const podeFinalizar = (stOS === 'EM_EXECUCAO' || o.status === 'OS ABERTA') && !o.estoqueBaixado;
+            const podeReabrir = stOS === 'CONCLUIDA' || o.status === 'FINALIZADA';
 
             return `<div class="card-custom p-0 border-start border-4 border-${corOS}">
                 <div class="card-header-custom border-0 p-3">
@@ -2381,6 +2662,7 @@
                         <div>
                             <button class="btn-action btn-action-success" style="background-color:#dcfce7; color:#16a34a;" onclick="window.enviarWhatsOrc('${o.id_firebase}')" title="Enviar Orçamento pelo WhatsApp"><i class="bi bi-whatsapp"></i></button>
                             ${podeFinalizar ? `<button class="btn-action btn-action-success" onclick="window.finalizarOS('${o.id_firebase}')" title="Concluir e dar baixa no estoque"><i class="bi bi-check-all"></i></button>` : ''}
+                            ${podeReabrir ? `<button class="btn-action btn-action-warning" style="background-color:#fef3c7; color:#d97706;" onclick="window.reabrirOS('${o.id_firebase}')" title="Reabrir OS"><i class="bi bi-arrow-counterclockwise"></i></button>` : ''}
                             <button class="btn-action btn-action-view" onclick="window.visualizarOrc('${o.id_firebase}')" title="Visualizar documento"><i class="bi bi-eye"></i></button>
                             <button class="btn-action btn-action-edit" onclick="window.editarOrc('${o.id_firebase}')" title="Editar"><i class="bi bi-pencil"></i></button>
                             <button class="btn-action btn-action-del" onclick="window.excluirDoc('orcamentos','${o.id_firebase}')" title="Excluir"><i class="bi bi-trash"></i></button>
@@ -2394,41 +2676,147 @@
     window.finalizarOS = async (idF) => { 
         const o = orcamentos.find(x => x.id_firebase === idF); 
         if (!o) return;
+        
+        // IDEMPOTÊNCIA MANDATÓRIA (REGRA DE NEGÓCIO FASE 4):
+        // Se a OS já teve o estoque baixado, NUNCA baixa novamente
         if (o.estoqueBaixado) {
-            Toast.fire({ icon: 'info', title: 'Esta OS já teve seu estoque baixado e está concluída.' });
+            Toast.fire({ icon: 'info', title: 'Esta OS já teve seu estoque baixado anteriormente.' });
             return;
         }
-        const confirmou = await confirmarAcao(`Concluir OS #${o.numId}?`, 'O sistema dará baixa no estoque dos materiais utilizados de forma atômica e segura.');
+
+        const confirmou = await confirmarAcao(`Concluir OS #${o.numId}?`, 'O sistema dará baixa automática no estoque dos materiais utilizados e registrará no histórico.');
         if(!confirmou) return; 
+
         try {
             const batch = writeBatch(db);
-            // 1. Dar baixa no estoque atomicamente
+            const agora = new Date().toISOString();
+
+            // 1. Dar baixa no estoque atomicamente e registrar movimentações SAIDA
             for (let it of (o.itens || [])) { 
                 if (it.tipo === 'PROD' && it.idRef) { 
                     const est = estoque.find(e => e.id_firebase === it.idRef); 
                     if (est) { 
-                        const novoEstoque = Math.max(0, (Number(est.quantidade) || 0) - (Number(it.qtd) || 0));
+                        const qtdDeducao = Number(it.qtd) || 0;
+                        const qtdAnterior = Number(est.quantidade) || 0;
+                        const novoEstoque = Math.max(0, qtdAnterior - qtdDeducao);
+                        
                         batch.update(doc(db, "usuarios", userId, "estoque", est.id_firebase), { 
                             quantidade: novoEstoque,
-                            updatedAt: new Date().toISOString()
-                        }); 
+                            updatedAt: agora
+                        });
+
+                        const refMov = doc(collection(db, "usuarios", userId, "movimentacoes"));
+                        batch.set(refMov, {
+                            produtoId: est.id_firebase,
+                            produtoNome: est.nome,
+                            quantidade: -qtdDeducao,
+                            quantidadeAnterior: qtdAnterior,
+                            quantidadeNova: novoEstoque,
+                            tipo: 'SAIDA',
+                            data: agora,
+                            referencia: `Baixa OS #${o.numId || '?'}`,
+                            osId: idF,
+                            usuarioId: userId
+                        });
                     } 
                 } 
             } 
-            // 2. Atualizar OS com status finalizado e flag de idempotência
+
+            // 2. Atualizar OS com status finalizado e flag permanente de idempotência
             batch.update(doc(db, "usuarios", userId, "orcamentos", idF), { 
                 status: 'FINALIZADA',
                 statusOS: 'CONCLUIDA',
                 estoqueBaixado: true,
-                dataFinalizacao: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
+                dataFinalizacao: agora,
+                updatedAt: agora
             });
 
             await batch.commit();
-            Toast.fire({ icon: 'success', title: 'OS Concluída com sucesso! Estoque atualizado atomicamente.' });
+            Toast.fire({ icon: 'success', title: 'OS Concluída! Baixa no estoque registrada com sucesso.' });
         } catch (erro) { 
             console.error('Erro ao finalizar OS:', erro);
             Toast.fire({ icon: 'error', title: 'Erro ao processar baixa de estoque.' }); 
+        }
+    };
+
+    window.reabrirOS = async (idF) => {
+        const o = orcamentos.find(x => x.id_firebase === idF);
+        if (!o) return;
+
+        const res = await Swal.fire({
+            title: `Reabrir OS #${o.numId}?`,
+            text: o.estoqueBaixado ? 'Esta OS já teve os materiais baixados do estoque. Como deseja proceder?' : 'Deseja reabrir esta OS para execução?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#2563eb',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Reabrir (Manter Baixa)',
+            showDenyButton: o.estoqueBaixado ? true : false,
+            denyButtonColor: '#059669',
+            denyButtonText: 'Reabrir e Estornar Materiais',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (res.isDismissed) return;
+
+        try {
+            const batch = writeBatch(db);
+            const agora = new Date().toISOString();
+
+            if (res.isDenied) {
+                // Estornar materiais de volta ao estoque
+                for (let it of (o.itens || [])) {
+                    if (it.tipo === 'PROD' && it.idRef) {
+                        const est = estoque.find(e => e.id_firebase === it.idRef);
+                        if (est) {
+                            const qtdEstorno = Number(it.qtd) || 0;
+                            const qtdAnterior = Number(est.quantidade) || 0;
+                            const novoEstoque = qtdAnterior + qtdEstorno;
+
+                            batch.update(doc(db, "usuarios", userId, "estoque", est.id_firebase), {
+                                quantidade: novoEstoque,
+                                updatedAt: agora
+                            });
+
+                            const refMov = doc(collection(db, "usuarios", userId, "movimentacoes"));
+                            batch.set(refMov, {
+                                produtoId: est.id_firebase,
+                                produtoNome: est.nome,
+                                quantidade: qtdEstorno,
+                                quantidadeAnterior: qtdAnterior,
+                                quantidadeNova: novoEstoque,
+                                tipo: 'ESTORNO',
+                                data: agora,
+                                referencia: `Estorno Reabertura OS #${o.numId || '?'}`,
+                                osId: idF,
+                                usuarioId: userId
+                            });
+                        }
+                    }
+                }
+
+                batch.update(doc(db, "usuarios", userId, "orcamentos", idF), {
+                    status: 'OS ABERTA',
+                    statusOS: 'EM_EXECUCAO',
+                    estoqueBaixado: false,
+                    updatedAt: agora
+                });
+                await batch.commit();
+                Toast.fire({ icon: 'success', title: 'OS Reaberta e materiais estornados com sucesso!' });
+            } else if (res.isConfirmed) {
+                // Reabrir mantendo a baixa (estoqueBaixado continua true, garantindo IDEMPOTÊNCIA na nova finalização)
+                batch.update(doc(db, "usuarios", userId, "orcamentos", idF), {
+                    status: 'OS ABERTA',
+                    statusOS: 'EM_EXECUCAO',
+                    estoqueBaixado: o.estoqueBaixado === true,
+                    updatedAt: agora
+                });
+                await batch.commit();
+                Toast.fire({ icon: 'success', title: 'OS Reaberta em execução. Baixa de estoque mantida.' });
+            }
+        } catch (erro) {
+            console.error('Erro ao reabrir OS:', erro);
+            Toast.fire({ icon: 'error', title: 'Erro ao reabrir OS.' });
         }
     };
 
