@@ -2,6 +2,16 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [2.11.0] - 2026-09-09
+### Adicionado (Fase 5 - Orçamento e Ordem de Serviço)
+- **Máquina de Estados e Ciclo de Vida Profissional:** Implementação do fluxo formal de documentos: `ORÇAMENTO` → `APROVADO` → `OS ABERTA` → `EM EXECUÇÃO` → `CONCLUÍDA`, além do estado `CANCELADA`.
+- **Rastreabilidade com `orcamentoOrigemId`:** Geração de Ordem de Serviço a partir de orçamento aprovado com preservação permanente de `orcamentoOrigemId` e `numOrcamentoOrigem`, com ponte reversa `osGeradaId` no orçamento original.
+- **Bloqueio de Estados Inválidos:** Orçamentos e propostas preliminares são estritamente impedidos de realizar baixa de estoque. Apenas Ordens de Serviço concluídas realizam dedução de estoque, de forma única e idempotente.
+- **Campo de Observações & Termos:** Novo campo `obs` para garantia, termos de serviço e condições especiais, integrado aos formulários, visualização executiva, geração de PDF e compartilhamento por WhatsApp.
+- **Filtro Expandido por Status:** Novo seletor na aba Orçamentos permitindo filtrar por Orçamentos, Aprovados, OS Abertas, Em Execução, Concluídas e Canceladas.
+- **Cancelamento com Estorno Automático:** Cancelamento de ordens concluídas realiza estorno atômico de materiais de volta ao estoque com log de movimentação `ESTORNO`.
+- **Ações Contextuais no Grid:** Botões inteligentes de avanço de fluxo adaptados para o estado exato de cada documento.
+
 ## [2.10.0] - 2026-09-09
 ### Adicionado (Fase 4 - Estoque Profissional)
 - **Histórico Completo de Movimentações:** Criação da subcoleção `/usuarios/{userId}/movimentacoes` rastreando `ENTRADA`, `SAIDA`, `AJUSTE` e `ESTORNO` com `produtoId`, `quantidade`, `quantidadeAnterior`, `quantidadeNova`, `data`, `referencia`, `osId` e `usuarioId`.
