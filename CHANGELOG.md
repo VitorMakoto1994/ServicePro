@@ -2,6 +2,25 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [2.12.0] - 2026-09-09
+### Adicionado (Fase 6 - Auditoria e Rastreabilidade)
+- **Sistema Corporativo de Auditoria:** Implementação da coleção global `/auditoria/{logId}` registrando de forma append-only e inviolável as operações críticas do sistema.
+- **Catálogo das 13 Operações Críticas:**
+  - `LOGIN`: Acesso autenticado com deduplicação por sessão.
+  - `CRIACAO_CLIENTE` e `ALTERACAO_CLIENTE`: Cadastro e atualizações cadastrais.
+  - `EXCLUSAO_CLIENTE`: Exclusão lógica com rastreio de nome e ID.
+  - `CRIACAO_ORCAMENTO` e `ALTERACAO_ORCAMENTO`: Emissão e modificações de propostas.
+  - `CRIACAO_OS`: Geração de OS direta ou convertida de orçamento.
+  - `FINALIZACAO_OS`: Conclusão técnica e entrega de serviço.
+  - `BAIXA_ESTOQUE`: Dedução de insumos e peças com lista de materiais.
+  - `PAGAMENTO`: Registros e quitações financeiras (sinal/total).
+  - `RESTAURACAO_BACKUP`: Restaurações do Banco Master ou Pessoal.
+  - `ALTERACAO_ASSINATURA` e `ALTERACAO_PLANO`: Alterações administrativas pelo Master.
+- **Segurança e Imutabilidade no Firestore:** Regras estritas de segurança em `firestore.rules`: criação permitida ao próprio usuário autenticado (`usuarioId == auth.uid`), leitura para Master ou dono, e proibição total de atualização ou deleção (`allow update, delete: if false;`).
+- **Sanitização Universal de Dados Sensíveis:** Função `sanitizarDadosAuditoria` exclui automaticamente chaves confidenciais (`senha`, `password`, `token`, `cartao`, `cvv`, etc.).
+- **Painel Administrativo de Auditoria (Master):** Novo card em `#aba-admin` com busca textual, filtro pelas 13 ações críticas, tabela em tempo real e modal para inspeção técnica de metadados JSON (`#modalDetalhesAuditoria`).
+- **Resiliência e Continuidade Operacional:** Gravações de auditoria encapsuladas para que nenhuma falha de telemetria impeça o fluxo de trabalho do prestador.
+
 ## [2.11.0] - 2026-09-09
 ### Adicionado (Fase 5 - Orçamento e Ordem de Serviço)
 - **Máquina de Estados e Ciclo de Vida Profissional:** Implementação do fluxo formal de documentos: `ORÇAMENTO` → `APROVADO` → `OS ABERTA` → `EM EXECUÇÃO` → `CONCLUÍDA`, além do estado `CANCELADA`.
