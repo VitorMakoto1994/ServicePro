@@ -2,6 +2,15 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [2.8.0] - 2026-09-09
+### Adicionado (Fase 2 - Assinaturas e Planos)
+- **Estrutura de Planos SaaS:** Catálogo estruturado com suporte a `TRIAL`, `STARTER`, `PRO` e `BUSINESS`.
+- **Máquina de Estados de Assinatura:** Ciclo de vida completo com estados `TRIAL`, `ATIVO`, `EXPIRADO`, `CANCELADO` e `BLOQUEADO`.
+- **Painel Master Avançado:** Gestão de usuários enriquecida com seletores rápidos de Plano e Status, filtros por plano e status, e prorrogação de validade.
+- **Transparência na Interface:** Badges modernos na aba Empresa/Perfil exibindo o Plano contratado, Status atual e data de vencimento.
+- **Bloqueio no Servidor (Defense-in-Depth):** Função `isUserBlocked(userId)` no Cloud Firestore impede leitura e gravação de contas canceladas ou bloqueadas.
+- **Retrocompatibilidade Garantida:** Tratamento de fallbacks transparentes para usuários legados, preservando 100% dos dados históricos.
+
 ## [2.7.0] - 2026-09-09
 ### Segurança (Fase 1 - Segurança & Autorização)
 - **Isolamento Absoluto Multi-Tenant:** Regras do Cloud Firestore (`firestore.rules`) garantem que o Usuário A jamais possa ler ou gravar dados do Usuário B (`isVerifiedOwner(userId)`).
