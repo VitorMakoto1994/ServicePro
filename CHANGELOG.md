@@ -2,6 +2,18 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [2.14.2] - 2026-09-10
+### Corrigido (Painel Admin & Carregamento de Contas)
+- **Correção da Listagem de Contas e Assinaturas no Painel Admin:**
+  - Corrigido `ReferenceError: planoFiltroAdmin is not defined` provocado por atribuição a variável não declarada em escopo de módulo JavaScript (`"use strict"`).
+  - O erro impedia o término do ciclo de vida de autenticação, travando a listagem de contas permanentemente em *"Carregando contas..."* e bloqueando a execução da rotina `carregarDados()`.
+  - Com a declaração explícita de `planoFiltroAdmin` e elevação da função `renderizarPainelAdmin`, a subscrição em tempo real da coleção `/assinaturas` é ativada imediatamente e todas as contas cadastradas (incluindo conta Master e usuários cadastrados) são listadas com seus respectivos planos e status.
+- **Proteção de Renderização de Clientes e Estoque:**
+  - Adicionadas verificações defensivas para valores nulos ou incompletos (`c.nome`, `c.tel`, `e.nome`), prevenindo que registros com campos vazios causem falhas na listagem de clientes e estoque.
+  - Adicionado tratamento visual explícito na tabela administrativa caso ocorra erro de conexão ou permissão na leitura de `/assinaturas`.
+- **Service Worker:**
+  - Cache renovado para `servicepro-cache-v15` em `sw.js` para propagação instantânea da correção.
+
 ## [2.14.1] - 2026-09-10
 ### Corrigido (Navegação & UX Mobile)
 - **Desbloqueio de Navegação entre Abas:**
