@@ -3,7 +3,7 @@
 > Documento oficial de governança, arquitetura de segurança, isolamento multi-tenant e controle de acesso (RBAC).
 
 **Data de Vigência:** 09/09/2026  
-**Versão:** 1.0 (ServicePRO v2.7.0)  
+**Versão:** 1.1 (ServicePRO v2.8.0 — Fase 2: Planos & Assinaturas)  
 **Status:** ATIVO E HOMOLOGADO EM PRODUÇÃO  
 **Responsável:** Antigravity AI Agent (Especialista em Segurança Firebase)
 
@@ -35,9 +35,25 @@ O banco de dados Cloud Firestore é particionado em silos individuais identifica
     └── /config/perfil                      <-- Dados corporativos e preferências
 ```
 
-### Garantias de Isolamento:
+### Modelo de Documento em `/assinaturas/{userId}`:
+```json
+{
+  "email": "usuario@empresa.com",
+  "plano": "TRIAL | STARTER | PRO | BUSINESS",
+  "status": "TRIAL | ATIVO | EXPIRADO | CANCELADO | BLOQUEADO",
+  "trial": true,
+  "inicioAssinatura": "2026-09-09T22:00:00.000Z",
+  "validade": "2026-09-16T22:00:00.000Z",
+  "validadeTimestamp": "Timestamp",
+  "createdAt": "2026-09-09T22:00:00.000Z",
+  "updatedAt": "2026-09-09T22:00:00.000Z"
+}
+```
+
+### Garantias de Isolamento e Bloqueio:
 * O caminho `/usuarios/{userId}/*` vincula todos os documentos ao UID autenticado (`request.auth.uid`).
 * Tentativas de acesso cruzado (ex: Usuário A tentando consultar `/usuarios/uid_B/clientes`) são rejeitadas pelo Firestore com código `PERMISSION_DENIED`.
+* Contas com status `BLOQUEADO` ou `CANCELADO` têm o acesso negado no servidor pela função `isUserBlocked(userId)`.
 * Consultas do tipo Collection Group (`collectionGroup`) não conseguem vazar documentos de outros usuários porque as regras de segurança atuam como barreiras absolutas de autorização.
 
 ---
@@ -102,13 +118,26 @@ service cloud.firestore {
       return isOwner(userId) && request.auth.token.email_verified == true;
     }
     
+    // Verifica se a conta do usuário foi administrativamente bloqueada ou cancelada
+    function isUserBlocked(userId) {
+      let ass = get(/databases/$(database)/documents/assinaturas/$(userId)).data;
+      return ass != null && (
+        ('status' in ass && (ass.status == 'BLOQUEADO' || ass.status == 'CANCELADO'))
+      );
+    }
+    
     // Coleção /assinaturas/{userId}
+    // - Leitura: Dono da conta ou Master
+    // - Criação: Master livremente, ou o próprio usuário no signup com teto de 7/8 dias
+    // - Alteração e Exclusão: Estritamente exclusivo do Master (impede privilege escalation e auto-extensão)
     match /assinaturas/{userId} {
       allow read: if isOwner(userId) || isMaster();
       
       allow create: if isMaster() || (
         isOwner(userId) 
         && request.resource.data.email == request.auth.token.email
+        && (!('plano' in request.resource.data) || request.resource.data.plano in ['TRIAL', 'STARTER', 'PRO', 'BUSINESS'])
+        && (!('status' in request.resource.data) || request.resource.data.status in ['TRIAL', 'ATIVO', 'EXPIRADO', 'CANCELADO', 'BLOQUEADO'])
         && (!('validadeTimestamp' in request.resource.data) || (
           request.resource.data.validadeTimestamp is timestamp 
           && request.resource.data.validadeTimestamp <= request.time + duration.value(8, 'd')
@@ -119,11 +148,15 @@ service cloud.firestore {
     }
     
     // Coleção /usuarios/{userId}/{document=**}
+    // Contém subcoleções: clientes, estoque, orcamentos, config
+    // - Isolamento absoluto: Usuário A JAMAIS lê ou escreve dados do Usuário B
+    // - Acesso a dados de negócio requer e-mail verificado e conta não-bloqueada
+    // - Master possui acesso irrestrito para suporte, auditoria e backup global
     match /usuarios/{userId}/{document=**} {
-      allow read, write: if isVerifiedOwner(userId) || isMaster();
+      allow read, write: if (isVerifiedOwner(userId) && !isUserBlocked(userId)) || isMaster();
     }
     
-    // Bloqueio explícito por padrão
+    // Bloqueio explícito por padrão de qualquer outra coleção não declarada
     match /{document=**} {
       allow read, write: if false;
     }
