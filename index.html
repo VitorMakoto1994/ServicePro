@@ -669,7 +669,15 @@
                 <div class="secao-header"><h3>Orçamentos e OS</h3></div>
                 <div class="filtro-container row g-2 mb-4">
                     <div class="col-md-6"><input type="text" id="buscaOrcamento" class="form-control" placeholder="Buscar por nome do cliente..."></div>
-                    <div class="col-md-3"><select id="filtroStatusOrc" class="form-select"><option value="todos">Todos os Status</option><option value="ORÇAMENTO">Apenas Orçamentos</option><option value="OS ABERTA">OS Abertas</option><option value="FINALIZADA">Finalizadas</option></select></div>
+                    <div class="col-md-3"><select id="filtroStatusOrc" class="form-select">
+                        <option value="todos">Todos os Documentos</option>
+                        <option value="ORCAMENTO">Apenas Orçamentos</option>
+                        <option value="APROVADO">Orçamentos Aprovados</option>
+                        <option value="OS ABERTA">OS Abertas (Aguardando)</option>
+                        <option value="EM_EXECUCAO">OS em Execução</option>
+                        <option value="CONCLUIDA">OS Concluídas</option>
+                        <option value="CANCELADA">Canceladas</option>
+                    </select></div>
                     <div class="col-md-3"><select id="ordemOrc" class="form-select"><option value="recentes">Mais Recentes</option><option value="maior">Maior Valor</option></select></div>
                 </div>
                 <div id="listaOrcamentos"></div>
@@ -800,6 +808,11 @@
                         </div>
                     </div>
 
+                    <div id="boxObsDoc" class="p-3 bg-light rounded-2 border mx-4 mb-3" style="display:none;">
+                        <label class="small fw-bold text-muted d-block text-uppercase" style="font-size:0.7rem; letter-spacing:0.04em;">Observações & Garantia</label>
+                        <div id="obsDocVisual" class="small text-muted" style="white-space: pre-wrap;">--</div>
+                    </div>
+
                     <div class="validade-texto">Válido por 10 dias. Este documento é uma aprovação preliminar de serviço.</div>
                 </div>
     
@@ -855,6 +868,10 @@
                             <span class="small text-muted fw-bold">Saldo Devedor a Receber: </span>
                             <strong id="txtRestanteCalculado" class="text-danger fs-6">R$ 0,00</strong>
                         </div>
+                    </div>
+                    <div class="mb-2 border-top pt-3">
+                        <label class="form-label-premium">Observações & Termos do Serviço</label>
+                        <textarea id="obsDocInput" class="form-control" rows="2" placeholder="Garantia (ex: 90 dias), condições do local, instruções de pagamento..."></textarea>
                     </div>
 
                     
@@ -1093,12 +1110,14 @@
     const limpaDinheiro = (s) => s ? parseFloat(s.toString().replace(/[R$\s.]/g, '').replace(',', '.')) : 0;
 
     const normalizarStatusOS = (s) => {
-        if (!s) return 'ABERTA';
+        if (!s) return 'ORCAMENTO';
         const up = s.toString().toUpperCase().trim();
         if (up === 'FINALIZADA' || up === 'CONCLUIDA' || up === 'CONCLUÍDA') return 'CONCLUIDA';
-        if (up === 'EM_EXECUCAO' || up === 'EM EXECUÇÃO' || up === 'EM EXECUCAO' || up === 'OS ABERTA') return 'EM_EXECUCAO';
-        if (up === 'CANCELADA') return 'CANCELADA';
-        return 'ABERTA';
+        if (up === 'EM_EXECUCAO' || up === 'EM EXECUÇÃO' || up === 'EM EXECUCAO') return 'EM_EXECUCAO';
+        if (up === 'OS ABERTA' || up === 'ABERTA') return 'OS ABERTA';
+        if (up === 'APROVADO' || up === 'APROVADA') return 'APROVADO';
+        if (up === 'CANCELADA' || up === 'CANCELADO') return 'CANCELADA';
+        return 'ORCAMENTO';
     };
 
     const normalizarStatusFinanceiro = (s, saldoCentavos = 0, totalCentavos = 0) => {
@@ -2533,14 +2552,28 @@
         });
         const lucroCentavos = Math.max(0, totalCentavos - custoCentavos);
 
-        // 3. Desacoplamento de Status da OS vs Status Financeiro
-        let statusOS = 'ABERTA';
-        if (tipoAcao === 'OS ABERTA') statusOS = 'EM_EXECUCAO';
-        else if (tipoAcao === 'ORÇAMENTO') statusOS = 'ABERTA';
-        else statusOS = normalizarStatusOS(tipoAcao);
+        // 3. Resolução de Tipo e Ciclo de Vida do Documento
+        const oAtual = idF ? orcamentos.find(x => x.id_firebase === idF) : null;
+        let statusOS = 'ORCAMENTO';
+        let tipoDoc = 'ORCAMENTO';
 
-        // Mapeamento legado para telas que ainda leem status e statusPagamento antigos
-        const statusLegado = statusOS === 'CONCLUIDA' ? 'FINALIZADA' : (statusOS === 'EM_EXECUCAO' ? 'OS ABERTA' : 'ORÇAMENTO');
+        if (tipoAcao === 'OS ABERTA') {
+            statusOS = 'OS ABERTA';
+            tipoDoc = 'OS';
+        } else if (tipoAcao === 'ORÇAMENTO') {
+            statusOS = oAtual && oAtual.statusOS ? oAtual.statusOS : 'ORCAMENTO';
+            tipoDoc = 'ORCAMENTO';
+        } else {
+            statusOS = normalizarStatusOS(tipoAcao);
+            tipoDoc = (statusOS === 'ORCAMENTO' || statusOS === 'APROVADO') ? 'ORCAMENTO' : 'OS';
+        }
+
+        // Mapeamento legado para compatibilidade com relatórios e telas existentes
+        let statusLegado = 'ORÇAMENTO';
+        if (statusOS === 'CONCLUIDA') statusLegado = 'FINALIZADA';
+        else if (statusOS === 'EM_EXECUCAO' || statusOS === 'OS ABERTA') statusLegado = 'OS ABERTA';
+        else if (statusOS === 'CANCELADA') statusLegado = 'CANCELADA';
+
         const statusPagLegado = statusFinanceiro === 'PAGO' ? 'QUITADO' : (statusFinanceiro === 'PARCIAL' ? 'SINAL' : 'PENDENTE');
 
         // Registro de múltiplos pagamentos
@@ -2554,8 +2587,11 @@
             });
         }
 
+        const obsTexto = document.getElementById('obsDocInput')?.value.trim() || '';
+
         const d = { 
             clienteId: clienteAtualId, 
+            tipoDoc,
             statusOS,
             statusFinanceiro,
             metodoPagamento: metodoPag,
@@ -2567,6 +2603,10 @@
             custoCentavos,
             lucroCentavos,
             pagamentos,
+            obs: obsTexto,
+            estoqueBaixado: oAtual ? (oAtual.estoqueBaixado || false) : false,
+            orcamentoOrigemId: oAtual ? (oAtual.orcamentoOrigemId || null) : null,
+            numOrcamentoOrigem: oAtual ? (oAtual.numOrcamentoOrigem || null) : null,
             // Campos legados mantidos para retrocompatibilidade absoluta
             status: statusLegado, 
             statusPagamento: statusPagLegado,
@@ -2606,10 +2646,13 @@
         if(statusFiltroOrc !== "todos") {
             filtrados = filtrados.filter(o => {
                 const st = normalizarStatusOS(o.statusOS || o.status);
-                if (statusFiltroOrc === 'FINALIZADA') return st === 'CONCLUIDA';
-                if (statusFiltroOrc === 'OS ABERTA') return st === 'EM_EXECUCAO';
-                if (statusFiltroOrc === 'ORÇAMENTO') return st === 'ABERTA';
-                return o.status === statusFiltroOrc;
+                if (statusFiltroOrc === 'FINALIZADA' || statusFiltroOrc === 'CONCLUIDA') return st === 'CONCLUIDA';
+                if (statusFiltroOrc === 'EM_EXECUCAO') return st === 'EM_EXECUCAO';
+                if (statusFiltroOrc === 'OS ABERTA') return st === 'OS ABERTA';
+                if (statusFiltroOrc === 'APROVADO') return st === 'APROVADO';
+                if (statusFiltroOrc === 'ORÇAMENTO' || statusFiltroOrc === 'ORCAMENTO') return st === 'ORCAMENTO';
+                if (statusFiltroOrc === 'CANCELADA') return st === 'CANCELADA';
+                return (o.statusOS || o.status) === statusFiltroOrc;
             });
         }
         if(txtBuscaOrc) filtrados = filtrados.filter(o => { const c = clientes.find(x => x.id_firebase === o.clienteId); return c && c.nome.toLowerCase().includes(txtBuscaOrc); });
@@ -2630,12 +2673,22 @@
             const totCent = o.totalCentavos !== undefined ? o.totalCentavos : realParaCentavos(o.totalNumerico || o.total);
             const saldoCent = o.saldoCentavos !== undefined ? o.saldoCentavos : (o.valorRestante !== undefined ? realParaCentavos(o.valorRestante) : totCent);
 
-            // Cores e labels de Status da OS
-            let corOS = 'primary';
+            // Cores, labels e ícones do fluxo profissional
+            let corOS = 'info';
             let labelOS = 'Orçamento';
-            if (stOS === 'CONCLUIDA') { corOS = 'success'; labelOS = 'Concluída'; }
-            else if (stOS === 'EM_EXECUCAO') { corOS = 'warning'; labelOS = 'Em Execução'; }
-            else if (stOS === 'CANCELADA') { corOS = 'secondary'; labelOS = 'Cancelada'; }
+            let iconeOS = 'bi-file-earmark-text';
+
+            if (stOS === 'APROVADO') { 
+                corOS = 'primary'; labelOS = 'Aprovado'; iconeOS = 'bi-check-circle'; 
+            } else if (stOS === 'OS ABERTA') { 
+                corOS = 'primary'; labelOS = 'OS Aberta'; iconeOS = 'bi-tools'; 
+            } else if (stOS === 'EM_EXECUCAO') { 
+                corOS = 'warning'; labelOS = 'Em Execução'; iconeOS = 'bi-gear-wide-connected'; 
+            } else if (stOS === 'CONCLUIDA') { 
+                corOS = 'success'; labelOS = 'Concluída'; iconeOS = 'bi-check2-all'; 
+            } else if (stOS === 'CANCELADA') { 
+                corOS = 'secondary'; labelOS = 'Cancelada'; iconeOS = 'bi-x-circle'; 
+            }
             
             // Badges do Status Financeiro
             let badgePag = '';
@@ -2649,20 +2702,45 @@
                 badgePag = '<span class="badge bg-danger ms-1"><i class="bi bi-clock-history me-1"></i>A Receber</span>';
             }
 
-            const podeFinalizar = (stOS === 'EM_EXECUCAO' || o.status === 'OS ABERTA') && !o.estoqueBaixado;
-            const podeReabrir = stOS === 'CONCLUIDA' || o.status === 'FINALIZADA';
+            // Rastreabilidade de origem e destino
+            let badgeOrigem = '';
+            if (o.orcamentoOrigemId) {
+                badgeOrigem = `<span class="badge bg-light text-dark border ms-1" title="Gerado a partir do Orçamento #${o.numOrcamentoOrigem||''}"><i class="bi bi-link-45deg me-1"></i>Origem: Orçamento #${o.numOrcamentoOrigem||'?'}</span>`;
+            }
+            if (o.osGeradaId) {
+                badgeOrigem += `<span class="badge bg-light text-primary border ms-1" title="Orçamento já convertido em OS"><i class="bi bi-arrow-right-circle me-1"></i>OS Gerada</span>`;
+            }
+
+            // Ações contextuais por estado do fluxo
+            let btnAcaoFluxo = '';
+            if (stOS === 'ORCAMENTO') {
+                btnAcaoFluxo = `<button class="btn-action btn-action-success" style="background-color:#dcfce7; color:#16a34a;" onclick="window.aprovarOrcamento('${o.id_firebase}')" title="Aprovar Orçamento"><i class="bi bi-hand-thumbs-up"></i></button>
+                                <button class="btn-action btn-action-del" onclick="window.cancelarDoc('${o.id_firebase}')" title="Cancelar Orçamento"><i class="bi bi-slash-circle"></i></button>`;
+            } else if (stOS === 'APROVADO') {
+                btnAcaoFluxo = `<button class="btn-action btn-action-view" style="background-color:#dbeafe; color:#2563eb;" onclick="window.gerarOSdeOrcamento('${o.id_firebase}')" title="Gerar Ordem de Serviço"><i class="bi bi-tools"></i></button>
+                                <button class="btn-action btn-action-del" onclick="window.cancelarDoc('${o.id_firebase}')" title="Cancelar Proposta"><i class="bi bi-slash-circle"></i></button>`;
+            } else if (stOS === 'OS ABERTA') {
+                btnAcaoFluxo = `<button class="btn-action btn-action-warning" style="background-color:#fef3c7; color:#d97706;" onclick="window.iniciarExecucaoOS('${o.id_firebase}')" title="Iniciar Execução da OS"><i class="bi bi-play-fill"></i></button>
+                                <button class="btn-action btn-action-del" onclick="window.cancelarDoc('${o.id_firebase}')" title="Cancelar OS"><i class="bi bi-slash-circle"></i></button>`;
+            } else if (stOS === 'EM_EXECUCAO') {
+                btnAcaoFluxo = `<button class="btn-action btn-action-success" style="background-color:#dcfce7; color:#16a34a;" onclick="window.finalizarOS('${o.id_firebase}')" title="Concluir OS e Baixar Estoque"><i class="bi bi-check-all"></i></button>
+                                <button class="btn-action btn-action-del" onclick="window.cancelarDoc('${o.id_firebase}')" title="Cancelar OS"><i class="bi bi-slash-circle"></i></button>`;
+            } else if (stOS === 'CONCLUIDA') {
+                btnAcaoFluxo = `<button class="btn-action btn-action-warning" style="background-color:#fef3c7; color:#d97706;" onclick="window.reabrirOS('${o.id_firebase}')" title="Reabrir OS"><i class="bi bi-arrow-counterclockwise"></i></button>`;
+            } else if (stOS === 'CANCELADA') {
+                btnAcaoFluxo = `<button class="btn-action btn-action-view" onclick="window.reativarDoc('${o.id_firebase}')" title="Reativar Documento"><i class="bi bi-arrow-clockwise"></i></button>`;
+            }
 
             return `<div class="card-custom p-0 border-start border-4 border-${corOS}">
                 <div class="card-header-custom border-0 p-3">
                     <div class="d-flex justify-content-between align-items-center w-100 flex-wrap gap-2">
                         <div>
                             <strong class="fs-6">#${o.numId||'?'} - ${c?c.nome:'N/A'}</strong><br>
-                            <span class="badge bg-${corOS} mt-1">${labelOS}</span> ${badgePag} <span class="fw-bold ms-2">${centavosParaReal(totCent)}</span>
+                            <span class="badge bg-${corOS} mt-1"><i class="bi ${iconeOS} me-1"></i>${labelOS}</span> ${badgeOrigem} ${badgePag} <span class="fw-bold ms-2">${centavosParaReal(totCent)}</span>
                         </div>
                         <div>
-                            <button class="btn-action btn-action-success" style="background-color:#dcfce7; color:#16a34a;" onclick="window.enviarWhatsOrc('${o.id_firebase}')" title="Enviar Orçamento pelo WhatsApp"><i class="bi bi-whatsapp"></i></button>
-                            ${podeFinalizar ? `<button class="btn-action btn-action-success" onclick="window.finalizarOS('${o.id_firebase}')" title="Concluir e dar baixa no estoque"><i class="bi bi-check-all"></i></button>` : ''}
-                            ${podeReabrir ? `<button class="btn-action btn-action-warning" style="background-color:#fef3c7; color:#d97706;" onclick="window.reabrirOS('${o.id_firebase}')" title="Reabrir OS"><i class="bi bi-arrow-counterclockwise"></i></button>` : ''}
+                            <button class="btn-action btn-action-success" style="background-color:#dcfce7; color:#16a34a;" onclick="window.enviarWhatsOrc('${o.id_firebase}')" title="Enviar pelo WhatsApp"><i class="bi bi-whatsapp"></i></button>
+                            ${btnAcaoFluxo}
                             <button class="btn-action btn-action-view" onclick="window.visualizarOrc('${o.id_firebase}')" title="Visualizar documento"><i class="bi bi-eye"></i></button>
                             <button class="btn-action btn-action-edit" onclick="window.editarOrc('${o.id_firebase}')" title="Editar"><i class="bi bi-pencil"></i></button>
                             <button class="btn-action btn-action-del" onclick="window.excluirDoc('orcamentos','${o.id_firebase}')" title="Excluir"><i class="bi bi-trash"></i></button>
@@ -2673,11 +2751,223 @@
         }).join(''); 
     }
 
+    // --- MÁQUINA DE ESTADOS E TRANSIÇÕES DO FLUXO (FASE 5) ---
+    window.aprovarOrcamento = async (idF) => {
+        const o = orcamentos.find(x => x.id_firebase === idF);
+        if (!o) return;
+
+        const confirmou = await confirmarAcao(`Aprovar Orçamento #${o.numId}?`, 'O documento será marcado como Aprovado pelo cliente.');
+        if (!confirmou) return;
+
+        try {
+            await updateDoc(doc(db, "usuarios", userId, "orcamentos", idF), {
+                statusOS: 'APROVADO',
+                status: 'ORÇAMENTO',
+                dataAprovacao: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            });
+
+            const res = await Swal.fire({
+                title: 'Orçamento Aprovado com Sucesso!',
+                text: 'Deseja gerar a Ordem de Serviço agora para iniciar o agendamento?',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonColor: '#2563eb',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Sim, Gerar OS',
+                cancelButtonText: 'Mais Tarde'
+            });
+
+            if (res.isConfirmed) {
+                await window.gerarOSdeOrcamento(idF);
+            }
+        } catch (err) {
+            console.error('Erro ao aprovar orçamento:', err);
+            Toast.fire({ icon: 'error', title: 'Erro ao aprovar orçamento.' });
+        }
+    };
+
+    window.gerarOSdeOrcamento = async (idF) => {
+        const o = orcamentos.find(x => x.id_firebase === idF);
+        if (!o) return;
+
+        if (o.osGeradaId) {
+            const jaGerada = orcamentos.find(x => x.id_firebase === o.osGeradaId);
+            if (jaGerada) {
+                return Toast.fire({ icon: 'info', title: `Este orçamento já gerou a OS #${jaGerada.numId}.` });
+            }
+        }
+
+        const confirmou = await confirmarAcao(`Gerar OS do Orçamento #${o.numId}?`, 'Uma nova Ordem de Serviço será gerada mantendo a rastreabilidade com o orçamento original.');
+        if (!confirmou) return;
+
+        try {
+            const batch = writeBatch(db);
+            const agora = new Date().toISOString();
+            const novaOSRef = doc(collection(db, "usuarios", userId, "orcamentos"));
+            const novoNumId = gerarNumId(orcamentos);
+
+            const novaOS = {
+                numId: novoNumId,
+                tipoDoc: 'OS',
+                statusOS: 'OS ABERTA',
+                status: 'OS ABERTA',
+                orcamentoOrigemId: idF,
+                numOrcamentoOrigem: o.numId,
+                clienteId: o.clienteId,
+                itens: o.itens ? [...o.itens] : [],
+                obs: o.obs || '',
+                dataCriacao: agora.split('T')[0],
+                dataIni: o.dataIni || '',
+                dataFim: o.dataFim || '',
+                subtotalCentavos: o.subtotalCentavos !== undefined ? o.subtotalCentavos : realParaCentavos(o.total || 0),
+                descontoCentavos: o.descontoCentavos || 0,
+                totalCentavos: o.totalCentavos !== undefined ? o.totalCentavos : realParaCentavos(o.total || 0),
+                valorPagoCentavos: o.valorPagoCentavos || 0,
+                saldoCentavos: o.saldoCentavos !== undefined ? o.saldoCentavos : realParaCentavos(o.total || 0),
+                custoCentavos: o.custoCentavos || 0,
+                lucroCentavos: o.lucroCentavos || 0,
+                totalNumerico: (o.totalCentavos || realParaCentavos(o.total || 0)) / 100,
+                total: centavosParaReal(o.totalCentavos !== undefined ? o.totalCentavos : realParaCentavos(o.total || 0)),
+                valorSinal: (o.valorPagoCentavos || 0) / 100,
+                valorRestante: (o.saldoCentavos || 0) / 100,
+                statusFinanceiro: o.statusFinanceiro || 'NAO_PAGO',
+                statusPagamento: o.statusPagamento || 'PENDENTE',
+                metodoPagamento: o.metodoPagamento || 'PIX',
+                pagamentos: o.pagamentos ? [...o.pagamentos] : [],
+                estoqueBaixado: false,
+                apagado: false,
+                createdAt: agora,
+                updatedAt: agora
+            };
+
+            batch.set(novaOSRef, novaOS);
+
+            // Atualiza orçamento original para APROVADO com ponte para a OS gerada
+            batch.update(doc(db, "usuarios", userId, "orcamentos", idF), {
+                statusOS: 'APROVADO',
+                osGeradaId: novaOSRef.id,
+                updatedAt: agora
+            });
+
+            await batch.commit();
+            Toast.fire({ icon: 'success', title: `OS #${novoNumId} gerada com sucesso a partir do Orçamento #${o.numId}!` });
+        } catch (err) {
+            console.error('Erro ao gerar OS:', err);
+            Toast.fire({ icon: 'error', title: 'Erro ao gerar Ordem de Serviço.' });
+        }
+    };
+
+    window.iniciarExecucaoOS = async (idF) => {
+        const o = orcamentos.find(x => x.id_firebase === idF);
+        if (!o) return;
+
+        try {
+            await updateDoc(doc(db, "usuarios", userId, "orcamentos", idF), {
+                statusOS: 'EM_EXECUCAO',
+                status: 'OS ABERTA',
+                dataInicioExecucao: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            });
+            Toast.fire({ icon: 'success', title: `OS #${o.numId} iniciada! Técnico em execução.` });
+        } catch (err) {
+            console.error('Erro ao iniciar execução:', err);
+            Toast.fire({ icon: 'error', title: 'Erro ao iniciar execução da OS.' });
+        }
+    };
+
+    window.cancelarDoc = async (idF) => {
+        const o = orcamentos.find(x => x.id_firebase === idF);
+        if (!o) return;
+
+        const confirmou = await confirmarAcao(`Cancelar Documento #${o.numId}?`, 'O documento será marcado como Cancelado.');
+        if (!confirmou) return;
+
+        try {
+            const batch = writeBatch(db);
+            const agora = new Date().toISOString();
+
+            // Se for OS concluída que já havia baixado estoque, estornar materiais atomicamente
+            if (o.estoqueBaixado) {
+                for (let it of (o.itens || [])) {
+                    if (it.tipo === 'PROD' && it.idRef) {
+                        const est = estoque.find(e => e.id_firebase === it.idRef);
+                        if (est) {
+                            const qtdDevolvida = Number(it.qtd) || 0;
+                            const novoEstoque = (Number(est.quantidade) || 0) + qtdDevolvida;
+                            batch.update(doc(db, "usuarios", userId, "estoque", est.id_firebase), {
+                                quantidade: novoEstoque,
+                                updatedAt: agora
+                            });
+
+                            const refMov = doc(collection(db, "usuarios", userId, "movimentacoes"));
+                            batch.set(refMov, {
+                                produtoId: est.id_firebase,
+                                produtoNome: est.nome,
+                                quantidade: qtdDevolvida,
+                                quantidadeAnterior: Number(est.quantidade) || 0,
+                                quantidadeNova: novoEstoque,
+                                tipo: 'ESTORNO',
+                                data: agora,
+                                referencia: `Estorno Cancelamento OS #${o.numId || '?'}`,
+                                osId: idF,
+                                usuarioId: userId
+                            });
+                        }
+                    }
+                }
+            }
+
+            batch.update(doc(db, "usuarios", userId, "orcamentos", idF), {
+                statusOS: 'CANCELADA',
+                status: 'CANCELADA',
+                estoqueBaixado: false,
+                dataCancelamento: agora,
+                updatedAt: agora
+            });
+
+            await batch.commit();
+            Toast.fire({ icon: 'success', title: `Documento #${o.numId} cancelado com sucesso.` });
+        } catch (err) {
+            console.error('Erro ao cancelar documento:', err);
+            Toast.fire({ icon: 'error', title: 'Erro ao cancelar documento.' });
+        }
+    };
+
+    window.reativarDoc = async (idF) => {
+        const o = orcamentos.find(x => x.id_firebase === idF);
+        if (!o) return;
+
+        const novoStatus = (o.tipoDoc === 'OS' || o.status === 'OS ABERTA') ? 'OS ABERTA' : 'ORCAMENTO';
+        try {
+            await updateDoc(doc(db, "usuarios", userId, "orcamentos", idF), {
+                statusOS: novoStatus,
+                status: novoStatus === 'OS ABERTA' ? 'OS ABERTA' : 'ORÇAMENTO',
+                dataCancelamento: null,
+                updatedAt: new Date().toISOString()
+            });
+            Toast.fire({ icon: 'success', title: `Documento #${o.numId} reativado como ${novoStatus}.` });
+        } catch (err) {
+            console.error('Erro ao reativar documento:', err);
+            Toast.fire({ icon: 'error', title: 'Erro ao reativar documento.' });
+        }
+    };
+
     window.finalizarOS = async (idF) => { 
         const o = orcamentos.find(x => x.id_firebase === idF); 
         if (!o) return;
+
+        const stOS = normalizarStatusOS(o.statusOS || o.status);
+        if (stOS === 'ORCAMENTO' || stOS === 'APROVADO') {
+            Toast.fire({ icon: 'error', title: 'Orçamentos não podem gerar baixa de estoque. Apenas Ordens de Serviço podem ser concluídas.' });
+            return;
+        }
+        if (stOS === 'CANCELADA') {
+            Toast.fire({ icon: 'error', title: 'Documentos cancelados não podem ser concluídos.' });
+            return;
+        }
         
-        // IDEMPOTÊNCIA MANDATÓRIA (REGRA DE NEGÓCIO FASE 4):
+        // IDEMPOTÊNCIA MANDATÓRIA (REGRA DE NEGÓCIO FASE 4/5):
         // Se a OS já teve o estoque baixado, NUNCA baixa novamente
         if (o.estoqueBaixado) {
             Toast.fire({ icon: 'info', title: 'Esta OS já teve seu estoque baixado anteriormente.' });
@@ -2849,6 +3139,21 @@
         const valSinal = document.getElementById('valSinalInput');
         const pagoCent = o.valorPagoCentavos !== undefined ? o.valorPagoCentavos : realParaCentavos(o.valorSinal || 0);
         if (valSinal) valSinal.value = pagoCent > 0 ? centavosParaReal(pagoCent) : '';
+
+        // Observações
+        const obsInput = document.getElementById('obsDocInput');
+        if (obsInput) obsInput.value = o.obs || '';
+        const obsVis = document.getElementById('obsDocVisual');
+        const boxObs = document.getElementById('boxObsDoc');
+        if (obsVis && boxObs) {
+            if (o.obs && o.obs.trim()) {
+                obsVis.innerText = o.obs;
+                boxObs.style.display = 'block';
+            } else {
+                obsVis.innerText = '--';
+                boxObs.style.display = 'none';
+            }
+        }
 
         document.getElementById('dataIni').style.display = 'block'; 
         document.getElementById('dataFim').style.display = 'block'; 
