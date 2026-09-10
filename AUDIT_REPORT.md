@@ -221,23 +221,25 @@ Avaliação detalhada:
 # 13. ORÇAMENTOS
 
 ### Resultado
-[ APROVADO ]
+[ APROVADO — RESOLVIDO NA FASE 5: FLUXO DE PROPOSTA E APROVAÇÃO ]
 
-* Adição dinâmica de itens livres e materiais cadastrados.
-* Mão de obra e materiais calculados e exibidos em seções distintas.
-* Numeração sequencial automática.
-* Edição e visualização com bloqueio de controles em modo somente leitura.
+* **Fluxo Formal de Estados:** Implementação da máquina de estados controlada: `ORÇAMENTO` → `APROVADO` → geração de `OS ABERTA`, com possibilidade de transição para `CANCELADA`.
+* **Rastreabilidade e Não-Duplicação (`orcamentoOrigemId`):** Ao aprovar um orçamento, o usuário pode gerar uma nova Ordem de Serviço com 1 clique. A nova OS armazena `orcamentoOrigemId` e `numOrcamentoOrigem`, enquanto o orçamento original registra `osGeradaId`.
+* **Garantia de Dados:** Numeração segura e independente (`numId`), herança fiel de itens, produtos de estoque (`idRef`), serviços, margem de lucro, cliente, datas e novo campo de **Observações e Garantia** (`obs`).
+* **Bloqueio de Baixa de Estoque em Orçamentos:** Documentos com status `ORÇAMENTO` ou `APROVADO` são estritamente impedidos de acionar baixa de materiais no estoque.
 
 ---
 
 # 14. ORDENS DE SERVIÇO
 
 ### Resultado
-[ APROVADO ]
+[ APROVADO — RESOLVIDO NA FASE 5: EXECUÇÃO, CONCLUSÃO E IDEMPOTÊNCIA ]
 
-* Conversão com 1 clique de `ORÇAMENTO` para `OS ABERTA` via botão "Aprovar OS".
-* Filtragem eficiente por status no topo da aba.
-* Ações de WhatsApp, edição, visualização e exclusão direta no card.
+* **Ciclo de Execução da OS:** Transição estruturada: `OS ABERTA` (agendada) → `EM_EXECUCAO` (técnico em campo) → `CONCLUIDA` (finalizada).
+* **Baixa Automática Atômica:** Apenas na transição para `CONCLUIDA` os materiais são deduzidos do estoque via `writeBatch` atômico, com registros individuais de movimentação `SAIDA`.
+* **Idempotência Homologada:** A flag `estoqueBaixado: true` impede qualquer dedução duplicada mesmo se a OS for reaberta ou refinalizada.
+* **Cancelamento Seguro com Estorno:** Documentos cancelados que já haviam baixado estoque realizam estorno automático atômico com log de movimentação `ESTORNO`.
+* **Ações Contextuais e Mobile Ergonomia:** Botões contextuais nos cards adaptados ao estado atual da OS, respeitando a diretriz de toques confortáveis (44px x 44px).
 
 ---
 
