@@ -763,12 +763,16 @@
                         <div class="row justify-content-end">
                             <div class="col-12 col-sm-8 col-md-6">
                                 <div class="d-flex justify-content-between py-1 text-muted small">
-                                    <span>Mão de Obra / Serviços:</span>
+                                    <span>Subtotal Serviços:</span>
                                     <strong id="totalMaoObra" class="text-dark">R$ 0,00</strong>
                                 </div>
                                 <div class="d-flex justify-content-between py-1 text-muted small">
-                                    <span>Materiais / Produtos:</span>
+                                    <span>Subtotal Materiais:</span>
                                     <strong id="totalMaterial" class="text-dark">R$ 0,00</strong>
+                                </div>
+                                <div class="d-flex justify-content-between py-1 text-danger small" id="linhaDescontoDoc" style="display:none;">
+                                    <span>Desconto Concedido:</span>
+                                    <strong id="totalDescontoDoc">- R$ 0,00</strong>
                                 </div>
                                 <div class="d-flex justify-content-between py-2 mt-2 border-top border-2 border-dark align-items-center">
                                     <span class="fw-bold fs-6 text-uppercase" style="letter-spacing:0.04em;">Total Geral</span>
@@ -780,12 +784,13 @@
 
                     <div id="boxStatusPagamentoDoc" class="p-3 bg-light rounded-2 border mx-4 mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <div>
-                            <label class="small fw-bold text-muted d-block text-uppercase" style="font-size:0.7rem; letter-spacing:0.04em;">Condição de Pagamento</label>
-                            <span id="statusPagDoc" class="badge bg-danger fs-6 px-3 py-1">🔴 Pagamento Pendente</span>
+                            <label class="small fw-bold text-muted d-block text-uppercase" style="font-size:0.7rem; letter-spacing:0.04em;">Condição & Status Financeiro</label>
+                            <span id="statusPagDoc" class="badge bg-danger fs-6 px-3 py-1">🔴 Não Pago</span>
+                            <span id="metodoPagDoc" class="badge bg-secondary fs-6 px-2 py-1 ms-1">PIX</span>
                         </div>
                         <div id="boxSinalDoc" class="text-end" style="display:none;">
-                            <span class="text-success small fw-bold d-block">Sinal / Entrada: <strong id="sinalDocVal">R$ 0,00</strong></span>
-                            <span class="text-danger fw-bold d-block">Saldo a Receber: <strong id="restanteDocVal">R$ 0,00</strong></span>
+                            <span class="text-success small fw-bold d-block">Valor Pago / Entrada: <strong id="sinalDocVal">R$ 0,00</strong></span>
+                            <span class="text-danger fw-bold d-block">Saldo Devedor: <strong id="restanteDocVal">R$ 0,00</strong></span>
                         </div>
                     </div>
 
@@ -808,21 +813,40 @@
                         <div class="col-8 col-md-4"><input type="text" id="pServ" class="form-control mask-money h-100" placeholder="Preço Cobrado"></div>
                         <div class="col-4 col-md-1"><button class="btn w-100 fw-bold fs-5 d-flex align-items-center justify-content-center" style="background-color: var(--theme-main); color: white; border-radius: 12px; height: 100%; min-height:48px;" id="btnAddServ">+</button></div>
                     </div>
-                    <!-- CONDIÇÕES DE PAGAMENTO NA OS (ITEM B) -->
-                    <label class="form-label-premium border-top pt-3">Condições de Pagamento</label>
+                    <!-- CONDIÇÕES DE PAGAMENTO & DESCONTO (FASE 3) -->
+                    <label class="form-label-premium border-top pt-3">Condições Financeiras & Pagamento</label>
                     <div class="row g-2 mb-2 align-items-center">
-                        <div class="col-12 col-md-5">
+                        <div class="col-12 col-md-3">
+                            <label class="small text-muted fw-bold d-block mb-1">STATUS FINANCEIRO</label>
                             <select id="selStatusPagamento" class="form-select">
-                                <option value="PENDENTE">🔴 Pagamento Pendente (100% a Receber)</option>
-                                <option value="SINAL">🟡 Sinal Pago (Entrada Recebida)</option>
-                                <option value="QUITADO">🟢 Quitado (100% Pago)</option>
+                                <option value="NAO_PAGO">🔴 Não Pago (A Receber)</option>
+                                <option value="PARCIAL">🟡 Pago Parcial (Sinal)</option>
+                                <option value="PAGO">🟢 Quitado (100% Pago)</option>
+                                <option value="ATRASADO">⚠️ Pagamento Atrasado</option>
                             </select>
                         </div>
-                        <div class="col-6 col-md-4" id="colInputSinal" style="display:none;">
-                            <input type="text" id="valSinalInput" class="form-control mask-money" placeholder="Valor da Entrada (R$)">
+                        <div class="col-12 col-md-3">
+                            <label class="small text-muted fw-bold d-block mb-1">MÉTODO DE PAGTO</label>
+                            <select id="selMetodoPagamento" class="form-select">
+                                <option value="PIX">⚡ PIX</option>
+                                <option value="DINHEIRO">💵 Dinheiro</option>
+                                <option value="CARTAO">💳 Cartão</option>
+                                <option value="TRANSFERENCIA">🏦 Transferência</option>
+                                <option value="OUTRO">📄 Outro</option>
+                            </select>
                         </div>
-                        <div class="col-6 col-md-3" id="colInfoRestante" style="display:none;">
-                            <span class="small text-muted d-block">Saldo a Receber:</span>
+                        <div class="col-6 col-md-3">
+                            <label class="small text-muted fw-bold d-block mb-1">DESCONTO (R$)</label>
+                            <input type="text" id="valDescontoInput" class="form-control mask-money" placeholder="R$ 0,00">
+                        </div>
+                        <div class="col-6 col-md-3" id="colInputSinal" style="display:none;">
+                            <label class="small text-muted fw-bold d-block mb-1">VALOR PAGO / SINAL</label>
+                            <input type="text" id="valSinalInput" class="form-control mask-money" placeholder="R$ 0,00">
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-2" id="colInfoRestante" style="display:none;">
+                        <div class="col-12 text-end">
+                            <span class="small text-muted fw-bold">Saldo Devedor a Receber: </span>
                             <strong id="txtRestanteCalculado" class="text-danger fs-6">R$ 0,00</strong>
                         </div>
                     </div>
@@ -955,9 +979,49 @@
         return res.isConfirmed;
     };
 
-    // --- FUNÇÕES AUXILIARES ---
-    const formatDinheiro = (v) => (v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    // --- MOTOR FINANCEIRO (FASE 3 - ARITMÉTICA EM CENTAVOS INTEIROS) ---
+    const realParaCentavos = (v) => {
+        if (v === null || v === undefined || v === '') return 0;
+        if (typeof v === 'number') return Math.round(v * 100);
+        const clean = v.toString().replace(/[^\d,-]/g, '').replace(',', '.');
+        const num = parseFloat(clean);
+        return isNaN(num) ? 0 : Math.round(num * 100);
+    };
+
+    const centavosParaReal = (c) => {
+        const num = (parseInt(c) || 0) / 100;
+        return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    };
+
+    // Aliases legados retrocompatíveis
+    const formatDinheiro = (v) => {
+        if (typeof v === 'number' && Number.isInteger(v) && Math.abs(v) > 10000000) return centavosParaReal(v);
+        return (v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    };
     const limpaDinheiro = (s) => s ? parseFloat(s.toString().replace(/[R$\s.]/g, '').replace(',', '.')) : 0;
+
+    const normalizarStatusOS = (s) => {
+        if (!s) return 'ABERTA';
+        const up = s.toString().toUpperCase().trim();
+        if (up === 'FINALIZADA' || up === 'CONCLUIDA' || up === 'CONCLUÍDA') return 'CONCLUIDA';
+        if (up === 'EM_EXECUCAO' || up === 'EM EXECUÇÃO' || up === 'EM EXECUCAO' || up === 'OS ABERTA') return 'EM_EXECUCAO';
+        if (up === 'CANCELADA') return 'CANCELADA';
+        return 'ABERTA';
+    };
+
+    const normalizarStatusFinanceiro = (s, saldoCentavos = 0, totalCentavos = 0) => {
+        if (!s) {
+            if (totalCentavos > 0 && saldoCentavos === 0) return 'PAGO';
+            if (saldoCentavos > 0 && saldoCentavos < totalCentavos) return 'PARCIAL';
+            return 'NAO_PAGO';
+        }
+        const up = s.toString().toUpperCase().trim();
+        if (up === 'QUITADO' || up === 'PAGO') return 'PAGO';
+        if (up === 'SINAL' || up === 'PARCIAL') return 'PARCIAL';
+        if (up === 'ATRASADO') return 'ATRASADO';
+        return 'NAO_PAGO';
+    };
+
     const formatData = (d) => { if(!d) return '--/--/----'; const p = d.split('-'); return `${p[2]}/${p[1]}/${p[0]}`; };
     const gerarNumId = (lista) => lista.length === 0 ? 1 : Math.max(...lista.map(i => parseInt(i.numId) || 0)) + 1;
 
@@ -979,57 +1043,110 @@
     }
     document.querySelectorAll('.modal').forEach(m => m.addEventListener('shown.bs.modal', iniciarMascaras));
 
-    // --- CONTROLE DE PAGAMENTO NA OS (SINAL / QUITADO / PENDENTE) ---
+    // --- CONTROLE DE PAGAMENTO NA OS (MOTOR FINANCEIRO - FASE 3) ---
     function atualizarVisualPagamento() {
         const selEl = document.getElementById('selStatusPagamento');
         if (!selEl) return;
-        const st = selEl.value;
+        const st = normalizarStatusFinanceiro(selEl.value);
         const colSinal = document.getElementById('colInputSinal');
         const colRest = document.getElementById('colInfoRestante');
         const boxSinal = document.getElementById('boxSinalDoc');
         const statusBadge = document.getElementById('statusPagDoc');
-        const total = limpaDinheiro(document.getElementById('totalGeral').innerText);
+        const metodoBadge = document.getElementById('metodoPagDoc');
+        const linhaDescDoc = document.getElementById('linhaDescontoDoc');
+        const totalDescDoc = document.getElementById('totalDescontoDoc');
 
-        if (st === 'SINAL') {
+        // Calcular subtotal e desconto em centavos inteiros
+        const moCent = realParaCentavos(document.getElementById('totalMaoObra')?.innerText || 0);
+        const matCent = realParaCentavos(document.getElementById('totalMaterial')?.innerText || 0);
+        const subtotalCent = moCent + matCent;
+        
+        const descInput = document.getElementById('valDescontoInput');
+        const descCent = descInput ? realParaCentavos(descInput.value) : 0;
+        const totalCent = Math.max(0, subtotalCent - descCent);
+
+        // Atualizar display de total e desconto no documento
+        const elTotalGeral = document.getElementById('totalGeral');
+        if (elTotalGeral) elTotalGeral.innerText = centavosParaReal(totalCent);
+
+        if (linhaDescDoc && totalDescDoc) {
+            if (descCent > 0) {
+                linhaDescDoc.style.display = 'flex';
+                totalDescDoc.innerText = '- ' + centavosParaReal(descCent);
+            } else {
+                linhaDescDoc.style.display = 'none';
+            }
+        }
+
+        const selMetodo = document.getElementById('selMetodoPagamento');
+        const metodo = selMetodo ? selMetodo.value : 'PIX';
+        if (metodoBadge) metodoBadge.innerText = metodo;
+
+        let valorPagoCent = 0;
+        let saldoCent = totalCent;
+
+        if (st === 'PARCIAL') {
             if (colSinal) colSinal.style.display = 'block';
             if (colRest) colRest.style.display = 'block';
             if (boxSinal) boxSinal.style.display = 'block';
-            const sinal = limpaDinheiro(document.getElementById('valSinalInput').value);
-            const restante = Math.max(0, total - sinal);
+
+            const inputSinal = document.getElementById('valSinalInput');
+            valorPagoCent = inputSinal ? realParaCentavos(inputSinal.value) : 0;
+            if (valorPagoCent > totalCent) valorPagoCent = totalCent;
+            saldoCent = Math.max(0, totalCent - valorPagoCent);
+
             const txtRest = document.getElementById('txtRestanteCalculado');
-            if (txtRest) txtRest.innerText = formatDinheiro(restante);
+            if (txtRest) txtRest.innerText = centavosParaReal(saldoCent);
             const sinalDoc = document.getElementById('sinalDocVal');
-            if (sinalDoc) sinalDoc.innerText = formatDinheiro(sinal);
+            if (sinalDoc) sinalDoc.innerText = centavosParaReal(valorPagoCent);
             const restDoc = document.getElementById('restanteDocVal');
-            if (restDoc) restDoc.innerText = formatDinheiro(restante);
+            if (restDoc) restDoc.innerText = centavosParaReal(saldoCent);
             if (statusBadge) {
                 statusBadge.className = "badge bg-warning text-dark fs-6 px-3 py-2";
-                statusBadge.innerHTML = '🟡 Sinal Recebido';
+                statusBadge.innerHTML = '🟡 Pago Parcial (Sinal)';
             }
-        } else if (st === 'QUITADO') {
+        } else if (st === 'PAGO') {
             if (colSinal) colSinal.style.display = 'none';
             if (colRest) colRest.style.display = 'none';
             if (boxSinal) boxSinal.style.display = 'none';
+            valorPagoCent = totalCent;
+            saldoCent = 0;
             if (statusBadge) {
                 statusBadge.className = "badge bg-success fs-6 px-3 py-2";
                 statusBadge.innerHTML = '🟢 Quitado (100% Pago)';
             }
-        } else {
-            // PENDENTE
+        } else if (st === 'ATRASADO') {
             if (colSinal) colSinal.style.display = 'none';
             if (colRest) colRest.style.display = 'none';
             if (boxSinal) boxSinal.style.display = 'none';
+            valorPagoCent = 0;
+            saldoCent = totalCent;
             if (statusBadge) {
                 statusBadge.className = "badge bg-danger fs-6 px-3 py-2";
-                statusBadge.innerHTML = '🔴 Pagamento Pendente';
+                statusBadge.innerHTML = '⚠️ Pagamento Atrasado';
+            }
+        } else {
+            // NAO_PAGO
+            if (colSinal) colSinal.style.display = 'none';
+            if (colRest) colRest.style.display = 'none';
+            if (boxSinal) boxSinal.style.display = 'none';
+            valorPagoCent = 0;
+            saldoCent = totalCent;
+            if (statusBadge) {
+                statusBadge.className = "badge bg-danger fs-6 px-3 py-2";
+                statusBadge.innerHTML = '🔴 Não Pago (A Receber)';
             }
         }
     }
 
     const selStatusPag = document.getElementById('selStatusPagamento');
     if (selStatusPag) selStatusPag.addEventListener('change', atualizarVisualPagamento);
+    const selMetodoPag = document.getElementById('selMetodoPagamento');
+    if (selMetodoPag) selMetodoPag.addEventListener('change', atualizarVisualPagamento);
     const valSinalEl = document.getElementById('valSinalInput');
     if (valSinalEl) valSinalEl.addEventListener('input', atualizarVisualPagamento);
+    const valDescEl = document.getElementById('valDescontoInput');
+    if (valDescEl) valDescEl.addEventListener('input', atualizarVisualPagamento);
 
     // --- VIACEP: BUSCA AUTOMÁTICA DE ENDEREÇO ---
     async function buscarCep(cep) {
@@ -1664,47 +1781,72 @@
         const clientesAtivos = clientes.filter(c => !c.apagado);
         const orcamentosAtivos = orcamentos.filter(o => !o.apagado);
         document.getElementById('dashClientes').innerText = clientesAtivos.length;
-        document.getElementById('dashOSAbertas').innerText = orcamentosAtivos.filter(o => o.status === 'OS ABERTA').length;
-        const faturamento = orcamentosAtivos.filter(o => o.status === 'FINALIZADA').reduce((acc, curr) => { const val = curr.totalNumerico !== undefined ? curr.totalNumerico : limpaDinheiro(curr.total); return acc + (val || 0); }, 0);
-        document.getElementById('dashFaturamento').innerText = formatDinheiro(faturamento);
+        document.getElementById('dashOSAbertas').innerText = orcamentosAtivos.filter(o => {
+            const stOS = normalizarStatusOS(o.statusOS || o.status);
+            return stOS === 'ABERTA' || stOS === 'EM_EXECUCAO';
+        }).length;
 
-        // Cálculo de Valores a Receber (Item B)
-        let totalAReceber = 0;
+        // Faturamento em centavos inteiros (OS Concluídas / Finalizadas)
+        let faturamentoCentavos = 0;
+        orcamentosAtivos.filter(o => {
+            const stOS = normalizarStatusOS(o.statusOS || o.status);
+            return stOS === 'CONCLUIDA';
+        }).forEach(o => {
+            const totCent = o.totalCentavos !== undefined ? o.totalCentavos : realParaCentavos(o.totalNumerico || o.total);
+            faturamentoCentavos += totCent;
+        });
+        document.getElementById('dashFaturamento').innerText = centavosParaReal(faturamentoCentavos);
+
+        // Saldo a receber em centavos inteiros
+        let totalAReceberCentavos = 0;
         orcamentosAtivos.forEach(o => {
-            if (o.statusPagamento === 'QUITADO') {
-                // Nada a receber
-            } else if (o.statusPagamento === 'SINAL') {
-                totalAReceber += (o.valorRestante !== undefined ? o.valorRestante : Math.max(0, limpaDinheiro(o.total) - (o.valorSinal || 0)));
+            const stFin = normalizarStatusFinanceiro(o.statusFinanceiro || o.statusPagamento);
+            if (stFin === 'PAGO') {
+                // Quitado, nada a receber
+            } else if (stFin === 'PARCIAL') {
+                if (o.saldoCentavos !== undefined) {
+                    totalAReceberCentavos += o.saldoCentavos;
+                } else {
+                    const tot = realParaCentavos(o.total);
+                    const sin = realParaCentavos(o.valorSinal || 0);
+                    totalAReceberCentavos += Math.max(0, tot - sin);
+                }
             } else {
-                // PENDENTE
-                totalAReceber += limpaDinheiro(o.total);
+                // NAO_PAGO ou ATRASADO
+                const totCent = o.totalCentavos !== undefined ? o.totalCentavos : realParaCentavos(o.totalNumerico || o.total);
+                totalAReceberCentavos += totCent;
             }
         });
         const elAReceber = document.getElementById('dashAReceber');
-        if (elAReceber) elAReceber.innerText = formatDinheiro(totalAReceber);
+        if (elAReceber) elAReceber.innerText = centavosParaReal(totalAReceberCentavos);
 
-        let lucroTotal = 0;
-        orcamentosAtivos.filter(o => o.status === 'FINALIZADA').forEach(o => {
-            if(o.itens) {
+        // Lucro operacional calculado em centavos inteiros
+        let lucroTotalCentavos = 0;
+        orcamentosAtivos.filter(o => normalizarStatusOS(o.statusOS || o.status) === 'CONCLUIDA').forEach(o => {
+            if (o.lucroCentavos !== undefined) {
+                lucroTotalCentavos += o.lucroCentavos;
+            } else if (o.itens) {
                 o.itens.forEach(it => {
-                    if(it.tipo === 'SERV') {
-                        lucroTotal += it.valor * it.qtd;
+                    const valItemCent = realParaCentavos(it.valor);
+                    const qtd = Number(it.qtd) || 1;
+                    if (it.tipo === 'SERV') {
+                        lucroTotalCentavos += valItemCent * qtd;
                     } else {
                         const est = estoque.find(e => e.id_firebase === it.idRef);
-                        const custo = est ? est.custoMedio : it.valor * 0.5;
-                        lucroTotal += (it.valor - custo) * it.qtd;
+                        const custoUnitCent = est && est.custoMedio !== undefined ? realParaCentavos(est.custoMedio) : Math.round(valItemCent * 0.5);
+                        lucroTotalCentavos += Math.max(0, valItemCent - custoUnitCent) * qtd;
                     }
                 });
             }
         });
-        document.getElementById('dashLucro').innerText = formatDinheiro(lucroTotal);
+        document.getElementById('dashLucro').innerText = centavosParaReal(lucroTotalCentavos);
 
-        if(chartFat) { chartFat.data.datasets[0].data = [faturamento]; chartFat.update(); }
+        if(chartFat) { chartFat.data.datasets[0].data = [faturamentoCentavos / 100]; chartFat.update(); }
         if(chartSt) { 
             chartSt.data.datasets[0].data = [
-                orcamentosAtivos.filter(o => o.status === 'ORÇAMENTO').length,
-                orcamentosAtivos.filter(o => o.status === 'OS ABERTA').length,
-                orcamentosAtivos.filter(o => o.status === 'FINALIZADA').length
+                orcamentosAtivos.filter(o => (o.statusOS || o.status) === 'ORÇAMENTO' || (o.statusOS || o.status) === 'ABERTA').length,
+                orcamentosAtivos.filter(o => (o.statusOS || o.status) === 'OS ABERTA' || (o.statusOS || o.status) === 'EM_EXECUCAO').length,
+                orcamentosAtivos.filter(o => normalizarStatusOS(o.statusOS || o.status) === 'CONCLUIDA').length
             ];
             chartSt.update();
         }
@@ -2048,52 +2190,131 @@
     });
     
     window.renderItensOrc = () => { 
-        let mo = 0, mat = 0; 
+        let moCent = 0, matCent = 0; 
         const editando = document.getElementById('controles-adicao').style.display === 'block'; 
         document.getElementById('corpo-orc').innerHTML = itensTemp.map((it, idx) => { 
-            const sub = it.qtd * it.valor; 
-            it.tipo === 'SERV' ? mo += sub : mat += sub; 
+            const valItemCent = realParaCentavos(it.valor);
+            const subCent = valItemCent * (Number(it.qtd) || 1); 
+            it.tipo === 'SERV' ? moCent += subCent : matCent += subCent; 
             const delBtn = editando ? `<td class="text-center col-x"><i class="bi bi-x-circle text-danger fs-5" onclick="window.removerItem(${idx})" style="cursor:pointer"></i></td>` : ''; 
-            return `<tr><td class="fw-bold text-muted">${it.desc}</td><td class="text-center fw-bold">${it.qtd}</td><td class="text-end">${formatDinheiro(it.valor)}</td><td class="text-end fw-bold text-main">${formatDinheiro(sub)}</td>${delBtn}</tr>`; 
+            return `<tr><td class="fw-bold text-muted">${it.desc}</td><td class="text-center fw-bold">${it.qtd}</td><td class="text-end">${centavosParaReal(valItemCent)}</td><td class="text-end fw-bold text-main">${centavosParaReal(subCent)}</td>${delBtn}</tr>`; 
         }).join(''); 
-        document.getElementById('totalMaoObra').innerText = formatDinheiro(mo); 
-        document.getElementById('totalMaterial').innerText = formatDinheiro(mat); 
-        document.getElementById('totalGeral').innerText = formatDinheiro(mo + mat); 
+        document.getElementById('totalMaoObra').innerText = centavosParaReal(moCent); 
+        document.getElementById('totalMaterial').innerText = centavosParaReal(matCent); 
+        
+        // Atualizar visual financeiro com desconto e saldo
         atualizarVisualPagamento();
     };
     window.removerItem = (idx) => { itensTemp.splice(idx, 1); window.renderItensOrc(); };
 
-    const salvarDocNuvem = async (status) => { 
+    const salvarDocNuvem = async (tipoAcao) => { 
         const idF = document.getElementById('editOrcId').value; 
-        const statusPag = document.getElementById('selStatusPagamento').value;
-        const totGeral = limpaDinheiro(document.getElementById('totalGeral').innerText);
-        const valSinal = statusPag === 'SINAL' ? limpaDinheiro(document.getElementById('valSinalInput').value) : (statusPag === 'QUITADO' ? totGeral : 0);
-        const valRestante = statusPag === 'QUITADO' ? 0 : Math.max(0, totGeral - valSinal);
+        const rawStatusPag = document.getElementById('selStatusPagamento').value;
+        const metodoPag = document.getElementById('selMetodoPagamento')?.value || 'PIX';
+
+        // 1. Cálculos de Centavos Inteiros
+        const moCent = realParaCentavos(document.getElementById('totalMaoObra')?.innerText || 0);
+        const matCent = realParaCentavos(document.getElementById('totalMaterial')?.innerText || 0);
+        const subtotalCentavos = moCent + matCent;
+
+        const descInput = document.getElementById('valDescontoInput');
+        const descontoCentavos = descInput ? realParaCentavos(descInput.value) : 0;
+        const totalCentavos = Math.max(0, subtotalCentavos - descontoCentavos);
+
+        const statusFinanceiro = normalizarStatusFinanceiro(rawStatusPag);
+        let valorPagoCentavos = 0;
+        let saldoCentavos = totalCentavos;
+
+        if (statusFinanceiro === 'PAGO') {
+            valorPagoCentavos = totalCentavos;
+            saldoCentavos = 0;
+        } else if (statusFinanceiro === 'PARCIAL') {
+            const inputSinal = document.getElementById('valSinalInput');
+            valorPagoCentavos = inputSinal ? realParaCentavos(inputSinal.value) : 0;
+            if (valorPagoCentavos > totalCentavos) valorPagoCentavos = totalCentavos;
+            saldoCentavos = Math.max(0, totalCentavos - valorPagoCentavos);
+        } else {
+            // NAO_PAGO ou ATRASADO
+            valorPagoCentavos = 0;
+            saldoCentavos = totalCentavos;
+        }
+
+        // 2. Cálculo de Custo e Lucro Centesimal
+        let custoCentavos = 0;
+        (itensTemp || []).forEach(it => {
+            const qtd = Number(it.qtd) || 1;
+            if (it.tipo === 'SERV') {
+                custoCentavos += 0; // Mão de obra própria não tem custo de estoque direto
+            } else {
+                const est = estoque.find(e => e.id_firebase === it.idRef);
+                const custoUnitCent = est && est.custoMedio !== undefined ? realParaCentavos(est.custoMedio) : Math.round(realParaCentavos(it.valor) * 0.5);
+                custoCentavos += custoUnitCent * qtd;
+            }
+        });
+        const lucroCentavos = Math.max(0, totalCentavos - custoCentavos);
+
+        // 3. Desacoplamento de Status da OS vs Status Financeiro
+        let statusOS = 'ABERTA';
+        if (tipoAcao === 'OS ABERTA') statusOS = 'EM_EXECUCAO';
+        else if (tipoAcao === 'ORÇAMENTO') statusOS = 'ABERTA';
+        else statusOS = normalizarStatusOS(tipoAcao);
+
+        // Mapeamento legado para telas que ainda leem status e statusPagamento antigos
+        const statusLegado = statusOS === 'CONCLUIDA' ? 'FINALIZADA' : (statusOS === 'EM_EXECUCAO' ? 'OS ABERTA' : 'ORÇAMENTO');
+        const statusPagLegado = statusFinanceiro === 'PAGO' ? 'QUITADO' : (statusFinanceiro === 'PARCIAL' ? 'SINAL' : 'PENDENTE');
+
+        // Registro de múltiplos pagamentos
+        const pagamentos = [];
+        if (valorPagoCentavos > 0) {
+            pagamentos.push({
+                id: 1,
+                valorCentavos: valorPagoCentavos,
+                metodo: metodoPag,
+                data: new Date().toISOString()
+            });
+        }
 
         const d = { 
             clienteId: clienteAtualId, 
-            status, 
-            statusPagamento: statusPag,
-            valorSinal: valSinal,
-            valorRestante: valRestante,
+            statusOS,
+            statusFinanceiro,
+            metodoPagamento: metodoPag,
+            subtotalCentavos,
+            descontoCentavos,
+            totalCentavos,
+            valorPagoCentavos,
+            saldoCentavos,
+            custoCentavos,
+            lucroCentavos,
+            pagamentos,
+            // Campos legados mantidos para retrocompatibilidade absoluta
+            status: statusLegado, 
+            statusPagamento: statusPagLegado,
+            valorSinal: valorPagoCentavos / 100,
+            valorRestante: saldoCentavos / 100,
+            totalNumerico: totalCentavos / 100,
+            total: centavosParaReal(totalCentavos), 
             dataCriacao: document.getElementById('dataCriacaoDoc').innerText, 
             dataIni: document.getElementById('dataIni').value, 
             dataFim: document.getElementById('dataFim').value, 
-            total: document.getElementById('totalGeral').innerText, 
             apagado: false, 
-            itens: [...itensTemp] 
+            itens: [...itensTemp],
+            updatedAt: new Date().toISOString()
         }; 
+
         try {
             if(idF) {
                 await updateDoc(doc(db, "usuarios", userId, "orcamentos", idF), d); 
-                Toast.fire({ icon: 'success', title: `${status} atualizado com sucesso!` });
+                Toast.fire({ icon: 'success', title: `${statusLegado} atualizado com sucesso!` });
             } else { 
                 d.numId = document.getElementById('numDoc').innerText; 
+                d.createdAt = new Date().toISOString();
                 await addDoc(collection(db, "usuarios", userId, "orcamentos"), d); 
-                Toast.fire({ icon: 'success', title: `${status} salvo com sucesso!` });
+                Toast.fire({ icon: 'success', title: `${statusLegado} salvo com sucesso!` });
             } 
             bootstrap.Modal.getInstance(document.getElementById('modalOrcamento')).hide(); 
         } catch (err) {
+            console.error('Erro ao salvar documento:', err);
             Toast.fire({ icon: 'error', title: 'Erro ao salvar documento.' });
         }
     };
@@ -2102,33 +2323,64 @@
     
     function renderizarOrcamentos() { 
         let filtrados = orcamentos.filter(o => !o.apagado);
-        if(statusFiltroOrc !== "todos") filtrados = filtrados.filter(o => o.status === statusFiltroOrc);
+        if(statusFiltroOrc !== "todos") {
+            filtrados = filtrados.filter(o => {
+                const st = normalizarStatusOS(o.statusOS || o.status);
+                if (statusFiltroOrc === 'FINALIZADA') return st === 'CONCLUIDA';
+                if (statusFiltroOrc === 'OS ABERTA') return st === 'EM_EXECUCAO';
+                if (statusFiltroOrc === 'ORÇAMENTO') return st === 'ABERTA';
+                return o.status === statusFiltroOrc;
+            });
+        }
         if(txtBuscaOrc) filtrados = filtrados.filter(o => { const c = clientes.find(x => x.id_firebase === o.clienteId); return c && c.nome.toLowerCase().includes(txtBuscaOrc); });
-        if(ordemFiltroOrc === "maior") filtrados.sort((a,b) => limpaDinheiro(b.total) - limpaDinheiro(a.total)); else filtrados.sort((a,b) => b.numId - a.numId);
+        if(ordemFiltroOrc === "maior") {
+            filtrados.sort((a,b) => {
+                const totB = b.totalCentavos !== undefined ? b.totalCentavos : realParaCentavos(b.totalNumerico || b.total);
+                const totA = a.totalCentavos !== undefined ? a.totalCentavos : realParaCentavos(a.totalNumerico || a.total);
+                return totB - totA;
+            });
+        } else {
+            filtrados.sort((a,b) => (parseInt(b.numId) || 0) - (parseInt(a.numId) || 0));
+        }
 
         document.getElementById('listaOrcamentos').innerHTML = filtrados.map(o => { 
             const c = clientes.find(x => x.id_firebase === o.clienteId); 
-            const cor = o.status === 'FINALIZADA' ? 'success' : o.status === 'OS ABERTA' ? 'warning' : 'primary'; 
+            const stOS = normalizarStatusOS(o.statusOS || o.status);
+            const stFin = normalizarStatusFinanceiro(o.statusFinanceiro || o.statusPagamento, o.saldoCentavos, o.totalCentavos);
+            const totCent = o.totalCentavos !== undefined ? o.totalCentavos : realParaCentavos(o.totalNumerico || o.total);
+            const saldoCent = o.saldoCentavos !== undefined ? o.saldoCentavos : (o.valorRestante !== undefined ? realParaCentavos(o.valorRestante) : totCent);
+
+            // Cores e labels de Status da OS
+            let corOS = 'primary';
+            let labelOS = 'Orçamento';
+            if (stOS === 'CONCLUIDA') { corOS = 'success'; labelOS = 'Concluída'; }
+            else if (stOS === 'EM_EXECUCAO') { corOS = 'warning'; labelOS = 'Em Execução'; }
+            else if (stOS === 'CANCELADA') { corOS = 'secondary'; labelOS = 'Cancelada'; }
             
+            // Badges do Status Financeiro
             let badgePag = '';
-            if (o.statusPagamento === 'QUITADO') {
+            if (stFin === 'PAGO') {
                 badgePag = '<span class="badge bg-success ms-1"><i class="bi bi-check-circle me-1"></i>Quitado</span>';
-            } else if (o.statusPagamento === 'SINAL') {
-                badgePag = `<span class="badge bg-warning text-dark ms-1"><i class="bi bi-hourglass-split me-1"></i>Sinal (Resta: ${formatDinheiro(o.valorRestante || 0)})</span>`;
+            } else if (stFin === 'PARCIAL') {
+                badgePag = `<span class="badge bg-warning text-dark ms-1"><i class="bi bi-hourglass-split me-1"></i>Sinal (Resta: ${centavosParaReal(saldoCent)})</span>`;
+            } else if (stFin === 'ATRASADO') {
+                badgePag = '<span class="badge bg-danger ms-1"><i class="bi bi-exclamation-triangle me-1"></i>Atrasado</span>';
             } else {
                 badgePag = '<span class="badge bg-danger ms-1"><i class="bi bi-clock-history me-1"></i>A Receber</span>';
             }
 
-            return `<div class="card-custom p-0 border-start border-4 border-${cor}">
+            const podeFinalizar = (stOS === 'EM_EXECUCAO' || o.status === 'OS ABERTA') && !o.estoqueBaixado;
+
+            return `<div class="card-custom p-0 border-start border-4 border-${corOS}">
                 <div class="card-header-custom border-0 p-3">
                     <div class="d-flex justify-content-between align-items-center w-100 flex-wrap gap-2">
                         <div>
                             <strong class="fs-6">#${o.numId||'?'} - ${c?c.nome:'N/A'}</strong><br>
-                            <span class="badge bg-${cor} mt-1">${o.status}</span> ${badgePag} <span class="fw-bold ms-2">${o.total}</span>
+                            <span class="badge bg-${corOS} mt-1">${labelOS}</span> ${badgePag} <span class="fw-bold ms-2">${centavosParaReal(totCent)}</span>
                         </div>
                         <div>
                             <button class="btn-action btn-action-success" style="background-color:#dcfce7; color:#16a34a;" onclick="window.enviarWhatsOrc('${o.id_firebase}')" title="Enviar Orçamento pelo WhatsApp"><i class="bi bi-whatsapp"></i></button>
-                            ${o.status === 'OS ABERTA' ? `<button class="btn-action btn-action-success" onclick="window.finalizarOS('${o.id_firebase}')" title="Concluir e dar baixa no estoque"><i class="bi bi-check-all"></i></button>` : ''}
+                            ${podeFinalizar ? `<button class="btn-action btn-action-success" onclick="window.finalizarOS('${o.id_firebase}')" title="Concluir e dar baixa no estoque"><i class="bi bi-check-all"></i></button>` : ''}
                             <button class="btn-action btn-action-view" onclick="window.visualizarOrc('${o.id_firebase}')" title="Visualizar documento"><i class="bi bi-eye"></i></button>
                             <button class="btn-action btn-action-edit" onclick="window.editarOrc('${o.id_firebase}')" title="Editar"><i class="bi bi-pencil"></i></button>
                             <button class="btn-action btn-action-del" onclick="window.excluirDoc('orcamentos','${o.id_firebase}')" title="Excluir"><i class="bi bi-trash"></i></button>
@@ -2142,20 +2394,40 @@
     window.finalizarOS = async (idF) => { 
         const o = orcamentos.find(x => x.id_firebase === idF); 
         if (!o) return;
-        const confirmou = await confirmarAcao(`Concluir OS #${o.numId}?`, 'O sistema dará baixa no estoque dos materiais utilizados.');
+        if (o.estoqueBaixado) {
+            Toast.fire({ icon: 'info', title: 'Esta OS já teve seu estoque baixado e está concluída.' });
+            return;
+        }
+        const confirmou = await confirmarAcao(`Concluir OS #${o.numId}?`, 'O sistema dará baixa no estoque dos materiais utilizados de forma atômica e segura.');
         if(!confirmou) return; 
         try {
-            for(let it of (o.itens || [])) { 
-                if(it.tipo === 'PROD' && it.idRef) { 
+            const batch = writeBatch(db);
+            // 1. Dar baixa no estoque atomicamente
+            for (let it of (o.itens || [])) { 
+                if (it.tipo === 'PROD' && it.idRef) { 
                     const est = estoque.find(e => e.id_firebase === it.idRef); 
-                    if(est) { 
-                        await updateDoc(doc(db, "usuarios", userId, "estoque", est.id_firebase), { quantidade: est.quantidade - it.qtd }); 
+                    if (est) { 
+                        const novoEstoque = Math.max(0, (Number(est.quantidade) || 0) - (Number(it.qtd) || 0));
+                        batch.update(doc(db, "usuarios", userId, "estoque", est.id_firebase), { 
+                            quantidade: novoEstoque,
+                            updatedAt: new Date().toISOString()
+                        }); 
                     } 
                 } 
             } 
-            await updateDoc(doc(db, "usuarios", userId, "orcamentos", idF), { status: 'FINALIZADA', dataFinalizacao: new Date().toISOString() }); 
-            Toast.fire({ icon: 'success', title: 'OS Finalizada com sucesso! Estoque atualizado.' });
+            // 2. Atualizar OS com status finalizado e flag de idempotência
+            batch.update(doc(db, "usuarios", userId, "orcamentos", idF), { 
+                status: 'FINALIZADA',
+                statusOS: 'CONCLUIDA',
+                estoqueBaixado: true,
+                dataFinalizacao: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            });
+
+            await batch.commit();
+            Toast.fire({ icon: 'success', title: 'OS Concluída com sucesso! Estoque atualizado atomicamente.' });
         } catch (erro) { 
+            console.error('Erro ao finalizar OS:', erro);
             Toast.fire({ icon: 'error', title: 'Erro ao processar baixa de estoque.' }); 
         }
     };
@@ -2174,11 +2446,21 @@
         document.getElementById('empresaDoc').innerHTML = `<strong>${perfil.empresa||''}</strong><br>${perfil.cnpj||''}<br>${perfil.tel||''}`; 
         document.getElementById('clienteDoc').innerHTML = `<strong>CLIENTE:</strong> ${c?c.nome:'N/A'}<br><strong>END:</strong> ${c?c.end:'N/A'}${c && c.bairro ? ', ' + c.bairro : ''} | <strong>CIDADE:</strong> ${c?c.cidade:''}-${c?c.estado:''} | <strong>CEP:</strong> ${c?c.cep:'--'} | <strong>CPF/CNPJ:</strong> ${c?c.cpf:'N/A'}`; 
         
-        // Carregar status financeiro
+        // Carregar status financeiro e método
         const selPag = document.getElementById('selStatusPagamento');
-        if (selPag) selPag.value = o.statusPagamento || 'PENDENTE';
+        const stFin = normalizarStatusFinanceiro(o.statusFinanceiro || o.statusPagamento, o.saldoCentavos, o.totalCentavos);
+        if (selPag) selPag.value = stFin;
+
+        const selMet = document.getElementById('selMetodoPagamento');
+        if (selMet) selMet.value = o.metodoPagamento || 'PIX';
+
+        const valDesc = document.getElementById('valDescontoInput');
+        const descCent = o.descontoCentavos !== undefined ? o.descontoCentavos : 0;
+        if (valDesc) valDesc.value = descCent > 0 ? centavosParaReal(descCent) : '';
+
         const valSinal = document.getElementById('valSinalInput');
-        if (valSinal) valSinal.value = o.valorSinal ? formatDinheiro(o.valorSinal) : '';
+        const pagoCent = o.valorPagoCentavos !== undefined ? o.valorPagoCentavos : realParaCentavos(o.valorSinal || 0);
+        if (valSinal) valSinal.value = pagoCent > 0 ? centavosParaReal(pagoCent) : '';
 
         document.getElementById('dataIni').style.display = 'block'; 
         document.getElementById('dataFim').style.display = 'block'; 
