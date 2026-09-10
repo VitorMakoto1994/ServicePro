@@ -146,3 +146,33 @@ RÁPIDO.
 ESCALÁVEL.
 
 PROFISSIONAL.
+
+---
+
+# COMPORTAMENTO GLOBAL DAS SKILLS
+
+Antes de qualquer implementação importante:
+
+1. identificar quais Skills são relevantes;
+2. consultar as Skills;
+3. analisar o código;
+4. criar plano;
+5. implementar;
+6. testar;
+7. revisar;
+8. documentar.
+
+Nunca considerar uma tarefa concluída apenas porque o código compila.
+
+A tarefa só está concluída quando:
+
+* funciona;
+* é segura;
+* não quebra funcionalidades existentes;
+* funciona no mobile;
+* funciona no desktop;
+* possui tratamento de erro;
+* possui estado de loading;
+* possui estado vazio;
+* possui validação;
+* possui documentação quando necessária.
