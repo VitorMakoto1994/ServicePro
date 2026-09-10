@@ -420,6 +420,88 @@
             .dash-card { padding: 16px; }
             .secao-header h3 { font-size: 1.3rem; }
         }
+
+        /* FASE 7 & 8 — CSS RESPONSIVO UNIVERSAL & ESTILOS EXECUTIVOS */
+        /* Alvos de toque touch mínimos de 44px */
+        .btn-action { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-premium { min-height: 44px; }
+        .form-control, .form-select { min-height: 44px; }
+        
+        /* Dashboard Executivo - Filtros em Pills Horizontais */
+        .dash-pills-scroll-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 4px 2px 8px 2px;
+            scrollbar-width: none;
+        }
+        .dash-pills-scroll-wrapper::-webkit-scrollbar { display: none; }
+        .btn-dash-pill {
+            white-space: nowrap;
+            font-size: 0.815rem;
+            font-weight: 600;
+            padding: 7px 15px;
+            border-radius: 9999px;
+            border: 1px solid var(--border-color, #cbd5e1);
+            background-color: #ffffff;
+            color: var(--text-muted, #475569);
+            transition: all 0.15s ease-in-out;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 42px;
+            user-select: none;
+        }
+        .btn-dash-pill:hover { background-color: #f8fafc; color: var(--text-main, #0f172a); border-color: #94a3b8; }
+        .btn-dash-pill.active {
+            background-color: var(--app-accent, #2563eb);
+            color: #ffffff !important;
+            border-color: var(--app-accent, #2563eb);
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.28);
+        }
+        .dash-custom-range {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-color, #e2e8f0);
+        }
+        .dash-custom-range.show { display: flex; }
+
+        /* Empty States */
+        .empty-state-card {
+            text-align: center;
+            padding: 40px 20px;
+            background: #ffffff;
+            border-radius: var(--radius-md, 12px);
+            border: 1px dashed var(--border-color, #cbd5e1);
+            margin: 10px 0;
+        }
+        .empty-state-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px auto;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        /* Responsividade para telas ultra compactas (320px) */
+        @media (max-width: 359.98px) {
+            .mobile-topbar-brand { font-size: 0.95rem !important; }
+            .dash-card h2 { font-size: 1.3rem !important; }
+            .card-header-custom { padding: 10px !important; }
+            .secao-header h3 { font-size: 1.25rem !important; }
+        }
     </style>
 </head>
 <body>
@@ -466,7 +548,12 @@
             <div class="mobile-topbar-brand">
                 <i class="bi bi-layers-half me-2 text-primary"></i>ServicePRO
             </div>
-            <div class="mobile-topbar-avatar" id="avatarPerfilMobile" title="Perfil / Menu">U</div>
+            <div class="d-flex align-items-center gap-2">
+                <button id="btnNovoAtendimentoMobile" class="btn btn-warning btn-sm fw-bold rounded-pill px-2 py-1 shadow-sm d-inline-flex align-items-center gap-1 text-dark" onclick="window.abrirNovoAtendimento()" style="font-size: 0.78rem; min-height: 38px;" title="Novo Atendimento Express">
+                    <i class="bi bi-lightning-charge-fill text-dark"></i> + Atendimento
+                </button>
+                <div class="mobile-topbar-avatar" id="avatarPerfilMobile" title="Perfil / Menu">U</div>
+            </div>
         </header>
 
         <nav id="sidebar" class="sidebar">
@@ -504,12 +591,57 @@
         <div class="main-content">
             
             <div id="aba-home" class="secao ativa">
-                <div class="secao-header">
-                    <h3 id="boasVindasTxt">Bem-vindo(a) ao Painel</h3>
-                    <button class="btn btn-primary btn-premium shadow-sm" onclick="window.navegar('clientes')"><i class="bi bi-plus-lg me-1"></i> Novo Orçamento</button>
+                <!-- CABEÇALHO DO DASHBOARD EXECUTIVO -->
+                <div class="secao-header d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                    <div>
+                        <h3 id="boasVindasTxt" class="mb-0">Bem-vindo(a) ao Painel</h3>
+                        <small class="text-muted" id="dashPeriodoDescricao">Visão Executiva • Últimos 30 dias</small>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-warning btn-premium shadow-sm text-dark fw-bold d-inline-flex align-items-center gap-1" id="btnNovoAtendimentoDash" onclick="window.abrirNovoAtendimento()" title="Novo Atendimento Rápido">
+                            <i class="bi bi-lightning-charge-fill text-dark"></i> Novo Atendimento
+                        </button>
+                        <button class="btn btn-primary btn-premium shadow-sm" onclick="window.navegar('clientes')">
+                            <i class="bi bi-plus-lg me-1"></i> Novo Orçamento
+                        </button>
+                    </div>
                 </div>
-                <div class="row g-3 mb-4">
-                    <div class="col-12 col-sm-6 col-xl">
+
+                <!-- FILTRO DINÂMICO DE PERÍODO (PILLS HORIZONTAIS) -->
+                <div class="card-custom p-3 mb-4 bg-white shadow-sm border">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                        <span class="small fw-bold text-muted text-uppercase" style="letter-spacing:0.04em;"><i class="bi bi-calendar3 me-1 text-primary"></i> Período de Análise</span>
+                    </div>
+                    <div class="dash-pills-scroll-wrapper">
+                        <button type="button" class="btn-dash-pill" data-periodo="hoje" onclick="window.setPeriodoDashboard('hoje')"><i class="bi bi-clock"></i> Hoje</button>
+                        <button type="button" class="btn-dash-pill" data-periodo="7d" onclick="window.setPeriodoDashboard('7d')"><i class="bi bi-calendar-week"></i> 7 dias</button>
+                        <button type="button" class="btn-dash-pill active" data-periodo="30d" onclick="window.setPeriodoDashboard('30d')"><i class="bi bi-calendar-month"></i> 30 dias</button>
+                        <button type="button" class="btn-dash-pill" data-periodo="mes_atual" onclick="window.setPeriodoDashboard('mes_atual')"><i class="bi bi-calendar-check"></i> Este mês</button>
+                        <button type="button" class="btn-dash-pill" data-periodo="mes_anterior" onclick="window.setPeriodoDashboard('mes_anterior')"><i class="bi bi-calendar-x"></i> Mês anterior</button>
+                        <button type="button" class="btn-dash-pill" data-periodo="custom" onclick="window.setPeriodoDashboard('custom')"><i class="bi bi-sliders"></i> Personalizado</button>
+                    </div>
+                    <div id="dashCustomRangeBox" class="dash-custom-range">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <div>
+                                <label class="small text-muted d-block" for="dashDataIni">De:</label>
+                                <input type="date" id="dashDataIni" class="form-control form-control-sm" style="min-height:38px;">
+                            </div>
+                            <div>
+                                <label class="small text-muted d-block" for="dashDataFim">Até:</label>
+                                <input type="date" id="dashDataFim" class="form-control form-control-sm" style="min-height:38px;">
+                            </div>
+                            <div class="align-self-end">
+                                <button type="button" id="btnAplicarFiltroData" class="btn btn-primary btn-sm px-3" style="min-height:38px;" onclick="window.aplicarFiltroPersonalizadoDash()">
+                                    <i class="bi bi-check-lg me-1"></i> Aplicar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LINHA 1: KPIS OPERACIONAIS (4 CARDS) -->
+                <div class="row g-3 mb-3">
+                    <div class="col-12 col-sm-6 col-xl-3">
                         <div class="dash-card">
                             <div class="dash-card-header">
                                 <p>Clientes Ativos</p>
@@ -518,15 +650,37 @@
                             <h2 id="dashClientes">0</h2>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-6 col-xl">
+                    <div class="col-12 col-sm-6 col-xl-3">
                         <div class="dash-card">
                             <div class="dash-card-header">
-                                <p>OS Abertas</p>
+                                <p>OS Abertas (Fila)</p>
                                 <div class="dash-card-icon" style="background:#fffbeb; color:#d97706;"><i class="bi bi-hourglass-split"></i></div>
                             </div>
                             <h2 id="dashOSAbertas">0</h2>
                         </div>
                     </div>
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="dash-card">
+                            <div class="dash-card-header">
+                                <p>OS Concluídas</p>
+                                <div class="dash-card-icon" style="background:#ecfdf5; color:#059669;"><i class="bi bi-check2-circle"></i></div>
+                            </div>
+                            <h2 id="dashOSConcluidas" class="text-success">0</h2>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="dash-card">
+                            <div class="dash-card-header">
+                                <p>Ticket Médio (OS)</p>
+                                <div class="dash-card-icon" style="background:#f0fdfa; color:#0d9488;"><i class="bi bi-receipt"></i></div>
+                            </div>
+                            <h2 id="dashTicketMedio" style="color:#0d9488;">R$ 0,00</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LINHA 2: KPIS FINANCEIROS E RENTABILIDADE (5 CARDS) -->
+                <div class="row g-3 mb-4">
                     <div class="col-12 col-sm-6 col-xl">
                         <div class="dash-card">
                             <div class="dash-card-header">
@@ -548,24 +702,60 @@
                     <div class="col-12 col-sm-6 col-xl">
                         <div class="dash-card">
                             <div class="dash-card-header">
-                                <p>Lucro Est. (Bruto)</p>
+                                <p>Custos de Materiais</p>
+                                <div class="dash-card-icon" style="background:#fff7ed; color:#ea580c;"><i class="bi bi-cart-dash"></i></div>
+                            </div>
+                            <h2 id="dashCustos" style="color:#ea580c;">R$ 0,00</h2>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl">
+                        <div class="dash-card">
+                            <div class="dash-card-header">
+                                <p>Lucro Operacional</p>
                                 <div class="dash-card-icon" style="background:#f5f3ff; color:#7c3aed;"><i class="bi bi-graph-up-arrow"></i></div>
                             </div>
                             <h2 id="dashLucro" style="color: #2563eb;">R$ 0,00</h2>
                         </div>
                     </div>
-                </div>
-                <div class="row g-4">
-                    <div class="col-md-8">
-                        <div class="card-custom p-4">
-                            <h6 class="fw-bold mb-4">Faturamento Mensal (Finalizadas)</h6>
-                            <div class="chart-container"><canvas id="chartFaturamento"></canvas></div>
+                    <div class="col-12 col-sm-6 col-xl">
+                        <div class="dash-card">
+                            <div class="dash-card-header">
+                                <p>Margem de Lucro</p>
+                                <div class="dash-card-icon" style="background:#eef2ff; color:#4f46e5;"><i class="bi bi-percent"></i></div>
+                            </div>
+                            <h2 id="dashMargem" style="color: #4f46e5;">0,0%</h2>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                </div>
+
+                <!-- LINHA 3: 4 GRÁFICOS EXECUTIVOS (GRID 2x2) -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12 col-lg-6">
                         <div class="card-custom p-4">
-                            <h6 class="fw-bold mb-4">Distribuição de Status</h6>
-                            <div class="chart-container"><canvas id="chartStatus"></canvas></div>
+                            <h6 class="fw-bold mb-1"><i class="bi bi-graph-up me-2 text-primary"></i>Evolução de Faturamento & Lucro</h6>
+                            <p class="small text-muted mb-3">Receita realizada versus lucro apurado no período</p>
+                            <div class="chart-container" style="position: relative; height: 260px;"><canvas id="chartFaturamento"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <div class="card-custom p-4">
+                            <h6 class="fw-bold mb-1"><i class="bi bi-pie-chart me-2 text-warning"></i>Distribuição por Status</h6>
+                            <p class="small text-muted mb-3">Proporção dos documentos por etapa do fluxo</p>
+                            <div class="chart-container" style="position: relative; height: 260px;"><canvas id="chartStatus"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <div class="card-custom p-4">
+                            <h6 class="fw-bold mb-1"><i class="bi bi-cash-coin me-2 text-success"></i>Fluxo de Recebimentos</h6>
+                            <p class="small text-muted mb-3">Valores quitados versus saldos a receber</p>
+                            <div class="chart-container" style="position: relative; height: 260px;"><canvas id="chartRecebimentos"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <div class="card-custom p-4">
+                            <h6 class="fw-bold mb-1"><i class="bi bi-bar-chart-steps me-2 text-info"></i>Composição Financeira</h6>
+                            <p class="small text-muted mb-3">Comparativo Faturamento x Custos de Peças x Lucro</p>
+                            <div class="chart-container" style="position: relative; height: 260px;"><canvas id="chartLucro"></canvas></div>
                         </div>
                     </div>
                 </div>
@@ -947,6 +1137,107 @@
     </div>
 </div>
 
+    <!-- MODAL NOVO ATENDIMENTO EXPRESS (FASE 8) -->
+    <div class="modal fade" id="modalNovoAtendimento" tabindex="-1" aria-labelledby="modalNovoAtendimentoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-bottom pb-3" style="background: #ffffff; border-radius: 20px 20px 0 0;">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle" style="width: 42px; height: 42px; background: #eff6ff; color: #2563eb;">
+                            <i class="bi bi-lightning-charge-fill fs-5 text-warning"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold text-dark m-0" id="modalNovoAtendimentoLabel">Novo Atendimento Express</h5>
+                            <small class="text-muted" style="font-size: 0.8rem;">Abertura rápida de OS com foco em campo (&lt; 30s)</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar" style="min-width: 44px; min-height: 44px;"></button>
+                </div>
+                
+                <form id="formNovoAtendimentoExpress" onsubmit="event.preventDefault(); window.salvarAtendimentoExpress();">
+                    <div class="modal-body p-3 p-md-4">
+                        <!-- 1. SELEÇÃO / CADASTRO DE CLIENTE -->
+                        <div class="mb-3">
+                            <label class="form-label-premium d-flex justify-content-between align-items-center mb-2">
+                                <span><i class="bi bi-person me-1 text-primary"></i> CLIENTE</span>
+                                <span class="small text-muted fw-normal">Selecione ou crie na hora</span>
+                            </label>
+                            
+                            <div class="btn-group w-100 mb-3" role="group">
+                                <input type="radio" class="btn-check" name="expressTipoCliente" id="expressTipoExistente" value="existente" checked onchange="window.toggleExpressClienteTipo('existente')">
+                                <label class="btn btn-outline-primary d-flex align-items-center justify-content-center py-2 fw-bold" for="expressTipoExistente" style="min-height: 44px; font-size: 0.88rem;">
+                                    <i class="bi bi-person-check me-2 fs-5"></i> Cadastrado
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="expressTipoCliente" id="expressTipoNovo" value="novo" onchange="window.toggleExpressClienteTipo('novo')">
+                                <label class="btn btn-outline-primary d-flex align-items-center justify-content-center py-2 fw-bold" for="expressTipoNovo" style="min-height: 44px; font-size: 0.88rem;">
+                                    <i class="bi bi-person-plus me-2 fs-5"></i> Novo Cliente
+                                </label>
+                            </div>
+                            
+                            <div id="boxExpressCliExistente">
+                                <select id="expressSelectCliente" class="form-select form-select-lg" style="min-height: 48px; font-size: 0.95rem;">
+                                    <option value="">Selecione um cliente...</option>
+                                </select>
+                            </div>
+                            
+                            <div id="boxExpressCliNovo" style="display: none;">
+                                <div class="row g-2">
+                                    <div class="col-12 col-sm-6">
+                                        <label class="form-label-premium" for="expressNovoClienteNome">NOME DO CLIENTE *</label>
+                                        <input type="text" id="expressNovoClienteNome" class="form-control form-control-lg" placeholder="Nome do cliente" style="min-height: 48px; font-size: 0.95rem;">
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <label class="form-label-premium" for="expressNovoClienteTel">WHATSAPP *</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white text-success border-end-0"><i class="bi bi-whatsapp"></i></span>
+                                            <input type="tel" id="expressNovoClienteTel" class="form-control form-control-lg mask-tel border-start-0" placeholder="(00) 00000-0000" style="min-height: 48px; font-size: 0.95rem;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 2. SERVIÇO / DESCRIÇÃO -->
+                        <div class="mb-3">
+                            <label class="form-label-premium" for="expressServicoDesc">
+                                <i class="bi bi-tools me-1 text-primary"></i> SERVIÇO / DESCRIÇÃO DO ATENDIMENTO *
+                            </label>
+                            <textarea id="expressServicoDesc" class="form-control" rows="2" placeholder="Ex: Manutenção preventiva e reparo no sistema..." style="min-height: 64px; font-size: 0.95rem;" required></textarea>
+                        </div>
+                        
+                        <!-- 3. VALOR & DATA -->
+                        <div class="row g-2 mb-3">
+                            <div class="col-7">
+                                <label class="form-label-premium" for="expressValor">
+                                    <i class="bi bi-cash-coin me-1 text-success"></i> VALOR TOTAL (R$) *
+                                </label>
+                                <input type="text" id="expressValor" class="form-control form-control-lg mask-money fw-bold text-success" placeholder="R$ 0,00" style="min-height: 48px; font-size: 1.25rem;" required>
+                            </div>
+                            <div class="col-5">
+                                <label class="form-label-premium" for="expressData">
+                                    <i class="bi bi-calendar-event me-1 text-primary"></i> DATA *
+                                </label>
+                                <input type="date" id="expressData" class="form-control form-control-lg" style="min-height: 48px; font-size: 0.9rem;" required>
+                            </div>
+                        </div>
+                        
+                        <div class="p-2 px-3 rounded-3 bg-light border d-flex justify-content-between align-items-center flex-wrap gap-2 text-muted small">
+                            <span><i class="bi bi-check-circle-fill text-success me-1"></i> Criação direta como <strong>OS Aberta</strong></span>
+                            <span><i class="bi bi-whatsapp text-success me-1"></i> Notificação WhatsApp</span>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer border-top p-3" style="background: #f8fafc; border-radius: 0 0 20px 20px;">
+                        <button type="submit" id="btnSalvarExpress" class="btn btn-primary btn-premium w-100 py-3 fw-bold fs-6 shadow d-flex align-items-center justify-content-center gap-2" style="min-height: 48px;">
+                            <i class="bi bi-lightning-charge-fill text-warning"></i> Salvar e Abrir OS
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DETALHES DA AUDITORIA (FASE 6) -->
     <div class="modal fade" id="modalDetalhesAuditoria" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -1127,7 +1418,8 @@
     let perfil = { empresa: '', cnpj: '', tel: '', margem: 0, logo: '', cor: '#1e293b' };
     let itensTemp = [], clienteAtualId = null, dataCalendario = new Date();
     
-    let chartFat = null, chartSt = null; 
+    let chartFat = null, chartSt = null, chartRec = null, chartLuc = null;
+    let periodoDashboard = '30d'; 
 
     let txtBuscaCliente = "", ordemFiltroCliente = "recentes";
 
@@ -1551,12 +1843,197 @@
         });
     }
 
+    // --- FUNÇÕES AUXILIARES DO DASHBOARD EXECUTIVO (FASE 7) ---
+    function obterIntervaloDatas(tipo, customIni = null, customFim = null) {
+        const agora = new Date();
+        const ano = agora.getFullYear();
+        const mes = agora.getMonth();
+        const dia = agora.getDate();
+        let inicio, fim, descricao;
+
+        switch(tipo) {
+            case 'hoje':
+                inicio = new Date(ano, mes, dia, 0, 0, 0, 0);
+                fim = new Date(ano, mes, dia, 23, 59, 59, 999);
+                descricao = 'Visão Executiva • Hoje (' + inicio.toLocaleDateString('pt-BR') + ')';
+                break;
+            case '7d':
+                inicio = new Date(ano, mes, dia - 6, 0, 0, 0, 0);
+                fim = new Date(ano, mes, dia, 23, 59, 59, 999);
+                descricao = 'Visão Executiva • Últimos 7 dias';
+                break;
+            case 'mes_atual':
+                inicio = new Date(ano, mes, 1, 0, 0, 0, 0);
+                fim = new Date(ano, mes, dia, 23, 59, 59, 999);
+                descricao = 'Visão Executiva • Mês Atual (' + inicio.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) + ')';
+                break;
+            case 'mes_anterior':
+                inicio = new Date(ano, mes - 1, 1, 0, 0, 0, 0);
+                fim = new Date(ano, mes, 0, 23, 59, 59, 999);
+                descricao = 'Visão Executiva • Mês Anterior (' + inicio.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) + ')';
+                break;
+            case 'custom':
+                if (customIni) {
+                    const pIni = customIni.split('-');
+                    inicio = new Date(parseInt(pIni[0], 10), parseInt(pIni[1], 10) - 1, parseInt(pIni[2], 10), 0, 0, 0, 0);
+                } else {
+                    inicio = new Date(ano, mes, dia - 29, 0, 0, 0, 0);
+                }
+                if (customFim) {
+                    const pFim = customFim.split('-');
+                    fim = new Date(parseInt(pFim[0], 10), parseInt(pFim[1], 10) - 1, parseInt(pFim[2], 10), 23, 59, 59, 999);
+                } else {
+                    fim = new Date(ano, mes, dia, 23, 59, 59, 999);
+                }
+                descricao = 'Visão Executiva • ' + inicio.toLocaleDateString('pt-BR') + ' a ' + fim.toLocaleDateString('pt-BR');
+                break;
+            case '30d':
+            default:
+                inicio = new Date(ano, mes, dia - 29, 0, 0, 0, 0);
+                fim = new Date(ano, mes, dia, 23, 59, 59, 999);
+                descricao = 'Visão Executiva • Últimos 30 dias';
+                break;
+        }
+        return { inicio, fim, descricao };
+    }
+
+    function normalizarDataParaObj(val) {
+        if (!val) return null;
+        if (val instanceof Date) return isNaN(val.getTime()) ? null : val;
+        if (typeof val === 'string') {
+            const s = val.trim();
+            if (/^\d{2}\/\d{2}\/\d{4}/.test(s)) {
+                const partes = s.split(' ')[0].split('/');
+                const d = new Date(parseInt(partes[2], 10), parseInt(partes[1], 10) - 1, parseInt(partes[0], 10), 12, 0, 0);
+                return isNaN(d.getTime()) ? null : d;
+            }
+            if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+                const p = s.split('-');
+                const d = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10), 12, 0, 0);
+                return isNaN(d.getTime()) ? null : d;
+            }
+            const d = new Date(s);
+            return isNaN(d.getTime()) ? null : d;
+        }
+        return null;
+    }
+
+    function docNoPeriodo(o, inicio, fim) {
+        const stOS = normalizarStatusOS(o.statusOS || o.status);
+        const tInicio = inicio.getTime();
+        const tFim = fim.getTime();
+
+        const dtRef = (stOS === 'CONCLUIDA')
+            ? (normalizarDataParaObj(o.dataFinalizacao) || normalizarDataParaObj(o.dataFim) || normalizarDataParaObj(o.createdAt) || normalizarDataParaObj(o.dataCriacao))
+            : (normalizarDataParaObj(o.dataIni) || normalizarDataParaObj(o.createdAt) || normalizarDataParaObj(o.dataCriacao) || normalizarDataParaObj(o.dataFim) || normalizarDataParaObj(o.updatedAt));
+
+        if (!dtRef) return false;
+        const t = dtRef.getTime();
+        return t >= tInicio && t <= tFim;
+    }
+
+    function obterCustoOSCentavos(o, listaEstoque = []) {
+        if (o.custoCentavos !== undefined && o.custoCentavos !== null && !isNaN(o.custoCentavos)) {
+            return parseInt(o.custoCentavos, 10) || 0;
+        }
+        let totalCusto = 0;
+        if (Array.isArray(o.itens)) {
+            o.itens.forEach(it => {
+                if (it.tipo === 'SERV') return;
+                const est = listaEstoque.find(e => e.id_firebase === it.idRef);
+                const custoUnit = est && est.custoMedio !== undefined 
+                    ? realParaCentavos(est.custoMedio) 
+                    : Math.round(realParaCentavos(it.valor || 0) * 0.5);
+                totalCusto += custoUnit * (Number(it.qtd) || 1);
+            });
+        }
+        return totalCusto;
+    }
+
+    function calcularMetricasDashboard(inicio, fim) {
+        const clientesLista = (typeof clientes !== 'undefined' && Array.isArray(clientes)) ? clientes : [];
+        const orcamentosLista = (typeof orcamentos !== 'undefined' && Array.isArray(orcamentos)) ? orcamentos : [];
+        const estoqueLista = (typeof estoque !== 'undefined' && Array.isArray(estoque)) ? estoque : [];
+
+        const totalClientesAtivos = clientesLista.filter(c => !c.apagado).length;
+        const orcamentosAtivos = orcamentosLista.filter(o => !o.apagado);
+        const orcamentosNoPeriodo = orcamentosAtivos.filter(o => docNoPeriodo(o, inicio, fim));
+
+        const osAbertasLista = orcamentosNoPeriodo.filter(o => {
+            const st = normalizarStatusOS(o.statusOS || o.status);
+            return st === 'OS ABERTA' || st === 'EM_EXECUCAO';
+        });
+        const qtdOSAbertas = osAbertasLista.length;
+
+        const osConcluidasLista = orcamentosNoPeriodo.filter(o => normalizarStatusOS(o.statusOS || o.status) === 'CONCLUIDA');
+        const qtdOSConcluidas = osConcluidasLista.length;
+
+        let faturamentoCentavos = 0;
+        osConcluidasLista.forEach(o => {
+            const totCent = o.totalCentavos !== undefined ? (parseInt(o.totalCentavos, 10) || 0) : realParaCentavos(o.totalNumerico || o.total);
+            faturamentoCentavos += totCent;
+        });
+
+        const ticketMedioCentavos = qtdOSConcluidas > 0 ? Math.round(faturamentoCentavos / qtdOSConcluidas) : 0;
+
+        let custosCentavos = 0;
+        osConcluidasLista.forEach(o => {
+            custosCentavos += obterCustoOSCentavos(o, estoqueLista);
+        });
+
+        const lucroCentavos = Math.max(0, faturamentoCentavos - custosCentavos);
+        const margemLucro = faturamentoCentavos > 0 ? ((lucroCentavos / faturamentoCentavos) * 100) : 0;
+
+        let aReceberCentavos = 0;
+        let recebidoCentavos = 0;
+
+        orcamentosNoPeriodo.forEach(o => {
+            const stOS = normalizarStatusOS(o.statusOS || o.status);
+            if (stOS === 'CANCELADA') return;
+
+            const totCent = o.totalCentavos !== undefined ? (parseInt(o.totalCentavos, 10) || 0) : realParaCentavos(o.totalNumerico || o.total);
+            const stFin = normalizarStatusFinanceiro(o.statusFinanceiro || o.statusPagamento, o.saldoCentavos, o.totalCentavos);
+
+            if (stFin === 'PAGO') {
+                recebidoCentavos += totCent;
+            } else if (stFin === 'PARCIAL') {
+                const pagoCent = o.valorPagoCentavos !== undefined ? (parseInt(o.valorPagoCentavos, 10) || 0) : realParaCentavos(o.valorSinal || 0);
+                const saldoCent = o.saldoCentavos !== undefined ? (parseInt(o.saldoCentavos, 10) || 0) : Math.max(0, totCent - pagoCent);
+                recebidoCentavos += Math.min(totCent, pagoCent);
+                aReceberCentavos += Math.max(0, saldoCent);
+            } else {
+                aReceberCentavos += totCent;
+            }
+        });
+
+        return {
+            clientesAtivos: totalClientesAtivos,
+            osAbertas: qtdOSAbertas,
+            osConcluidas: qtdOSConcluidas,
+            ticketMedioCentavos,
+            faturamentoCentavos,
+            aReceberCentavos,
+            custosCentavos,
+            lucroCentavos,
+            margemLucro,
+            recebidoCentavos,
+            orcamentosNoPeriodo,
+            osConcluidasLista
+        };
+    }
+
     function inicializarGraficos() {
         const ctxF = document.getElementById('chartFaturamento');
         if (ctxF && !chartFat) {
             chartFat = new Chart(ctxF.getContext('2d'), {
-                type: 'bar',
-                data: { labels: ['Faturamento'], datasets: [{ label: 'Vendas (R$)', backgroundColor: '#4ade80', data: [0] }] },
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        { label: 'Faturamento (R$)', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.12)', fill: true, tension: 0.35, borderWidth: 2 },
+                        { label: 'Lucro Líquido (R$)', data: [], borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.08)', fill: true, tension: 0.35, borderWidth: 2 }
+                    ]
+                },
                 options: { responsive: true, maintainAspectRatio: false }
             });
         }
@@ -1564,11 +2041,214 @@
         if (ctxS && !chartSt) {
             chartSt = new Chart(ctxS.getContext('2d'), {
                 type: 'doughnut',
-                data: { labels: ['Orçamento', 'OS Aberta', 'Finalizada'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#3b82f6', '#f59e0b', '#10b981'] }] },
+                data: {
+                    labels: ['Orçamento', 'OS Aberta', 'Em Execução', 'Concluída', 'Cancelada'],
+                    datasets: [{ data: [0, 0, 0, 0, 0], backgroundColor: ['#3b82f6', '#f59e0b', '#8b5cf6', '#10b981', '#ef4444'] }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+        const ctxR = document.getElementById('chartRecebimentos');
+        if (ctxR && !chartRec) {
+            chartRec = new Chart(ctxR.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Recebido (Quitado)', 'A Receber (Pendente)'],
+                    datasets: [{ data: [0, 0], backgroundColor: ['#10b981', '#f43f5e'] }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+        const ctxL = document.getElementById('chartLucro');
+        if (ctxL && !chartLuc) {
+            chartLuc = new Chart(ctxL.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Faturamento', 'Custos Peças', 'Lucro Líquido'],
+                    datasets: [{ label: 'Valores (R$)', data: [0, 0, 0], backgroundColor: ['#10b981', '#ea580c', '#2563eb'] }]
+                },
                 options: { responsive: true, maintainAspectRatio: false }
             });
         }
     }
+
+    window.setPeriodoDashboard = (p) => {
+        periodoDashboard = p;
+        document.querySelectorAll('.btn-dash-pill').forEach(b => {
+            if (b.getAttribute('data-periodo') === p) b.classList.add('active');
+            else b.classList.remove('active');
+        });
+
+        const boxCustom = document.getElementById('dashCustomRangeBox');
+        if (p === 'custom') {
+            boxCustom?.classList.add('show');
+        } else {
+            boxCustom?.classList.remove('show');
+            atualizarDashboard();
+        }
+    };
+
+    window.aplicarFiltroPersonalizadoDash = () => {
+        const dIni = document.getElementById('dashDataIni')?.value;
+        const dFim = document.getElementById('dashDataFim')?.value;
+        if (!dIni || !dFim) {
+            return Toast.fire({ icon: 'warning', title: 'Preencha a data inicial e final.' });
+        }
+        atualizarDashboard();
+    };
+
+    // --- COMPONENTE UTILITÁRIO DE EMPTY STATE (FASE 8) ---
+    function renderizarEmptyState(icone, titulo, mensagem, btnTexto = null, btnAcao = null) {
+        return `<div class="empty-state-card">
+            <div class="empty-state-icon"><i class="bi ${icone}"></i></div>
+            <h5 class="fw-bold mb-1 text-dark">${titulo}</h5>
+            <p class="text-muted small mb-3">${mensagem}</p>
+            ${btnTexto && btnAcao ? `<button type="button" class="btn btn-primary btn-premium btn-sm px-3 shadow-sm" onclick="${btnAcao}">${btnTexto}</button>` : ''}
+        </div>`;
+    }
+
+    // --- FLUXO NOVO ATENDIMENTO EXPRESS (FASE 8) ---
+    window.abrirNovoAtendimento = () => {
+        const modalEl = document.getElementById('modalNovoAtendimento');
+        if (!modalEl) return;
+
+        const sel = document.getElementById('expressSelectCliente');
+        if (sel) {
+            const clientesAtivos = clientes.filter(c => !c.apagado).sort((a,b) => a.nome.localeCompare(b.nome));
+            sel.innerHTML = '<option value="">Selecione um cliente cadastrado...</option>' + 
+                clientesAtivos.map(c => `<option value="${c.id_firebase}">${c.nome} ${c.tel ? '(' + c.tel + ')' : ''}</option>`).join('');
+        }
+
+        document.getElementById('formNovoAtendimentoExpress')?.reset();
+        window.toggleExpressClienteTipo('existente');
+
+        const campoData = document.getElementById('expressData');
+        if (campoData) campoData.value = new Date().toISOString().split('T')[0];
+
+        new bootstrap.Modal(modalEl).show();
+    };
+
+    window.toggleExpressClienteTipo = (tipo) => {
+        const boxExistente = document.getElementById('boxExpressCliExistente');
+        const boxNovo = document.getElementById('boxExpressCliNovo');
+        if (tipo === 'novo') {
+            if (boxExistente) boxExistente.style.display = 'none';
+            if (boxNovo) boxNovo.style.display = 'block';
+        } else {
+            if (boxExistente) boxExistente.style.display = 'block';
+            if (boxNovo) boxNovo.style.display = 'none';
+        }
+    };
+
+    window.salvarAtendimentoExpress = async () => {
+        const tipoCliente = document.querySelector('input[name="expressTipoCliente"]:checked')?.value || 'existente';
+        let idClienteFinal = null;
+        let nomeClienteFinal = '';
+        let telClienteFinal = '';
+
+        if (tipoCliente === 'novo') {
+            nomeClienteFinal = document.getElementById('expressNovoClienteNome')?.value.trim();
+            telClienteFinal = document.getElementById('expressNovoClienteTel')?.value.trim();
+            if (!nomeClienteFinal) return Toast.fire({ icon: 'warning', title: 'Informe o nome do novo cliente.' });
+
+            try {
+                const novoNumId = gerarNumId(clientes);
+                const refNovoCli = await addDoc(collection(db, "usuarios", userId, "clientes"), {
+                    nome: nomeClienteFinal,
+                    tel: telClienteFinal,
+                    cpf: '', end: '', bairro: '', cidade: '', estado: '', cep: '', obs: 'Cadastrado via Atendimento Express',
+                    numId: novoNumId,
+                    apagado: false,
+                    createdAt: new Date().toISOString()
+                });
+                idClienteFinal = refNovoCli.id;
+                window.registrarAuditoria('CRIACAO_CLIENTE', `Cliente Express #${novoNumId}: ${nomeClienteFinal}`, { clienteId: idClienteFinal, nome: nomeClienteFinal, tel: telClienteFinal });
+            } catch (err) {
+                console.error(err);
+                return Toast.fire({ icon: 'error', title: 'Erro ao cadastrar cliente.' });
+            }
+        } else {
+            idClienteFinal = document.getElementById('expressSelectCliente')?.value;
+            if (!idClienteFinal) return Toast.fire({ icon: 'warning', title: 'Selecione um cliente.' });
+            const cExist = clientes.find(x => x.id_firebase === idClienteFinal);
+            nomeClienteFinal = cExist ? cExist.nome : '';
+            telClienteFinal = cExist ? cExist.tel : '';
+        }
+
+        const servicoDesc = document.getElementById('expressServicoDesc')?.value.trim();
+        if (!servicoDesc) return Toast.fire({ icon: 'warning', title: 'Descreva o serviço a realizar.' });
+
+        const rawValor = document.getElementById('expressValor')?.value;
+        const totalCentavos = realParaCentavos(rawValor);
+        if (totalCentavos <= 0) return Toast.fire({ icon: 'warning', title: 'Informe um valor válido para o atendimento.' });
+
+        const dataAtendimento = document.getElementById('expressData')?.value || new Date().toISOString().split('T')[0];
+        const novoNumOS = gerarNumId(orcamentos);
+        const agora = new Date().toISOString();
+
+        const novaOS = {
+            numId: novoNumOS,
+            tipoDoc: 'OS',
+            statusOS: 'OS ABERTA',
+            status: 'OS ABERTA',
+            clienteId: idClienteFinal,
+            itens: [{ tipo: 'SERV', desc: servicoDesc, qtd: 1, valor: totalCentavos / 100 }],
+            obs: 'Atendimento Express',
+            dataCriacao: dataAtendimento,
+            dataIni: dataAtendimento,
+            dataFim: '',
+            subtotalCentavos: totalCentavos,
+            descontoCentavos: 0,
+            totalCentavos: totalCentavos,
+            valorPagoCentavos: 0,
+            saldoCentavos: totalCentavos,
+            custoCentavos: 0,
+            lucroCentavos: totalCentavos,
+            totalNumerico: totalCentavos / 100,
+            total: centavosParaReal(totalCentavos),
+            valorSinal: 0,
+            valorRestante: totalCentavos / 100,
+            statusFinanceiro: 'NAO_PAGO',
+            statusPagamento: 'PENDENTE',
+            metodoPagamento: 'PIX',
+            pagamentos: [],
+            estoqueBaixado: false,
+            apagado: false,
+            createdAt: agora,
+            updatedAt: agora
+        };
+
+        try {
+            const refOS = await addDoc(collection(db, "usuarios", userId, "orcamentos"), novaOS);
+            window.registrarAuditoria('CRIACAO_OS', `Atendimento Express OS #${novoNumOS} para ${nomeClienteFinal}`, { docId: refOS.id, numId: novoNumOS, totalCentavos });
+
+            bootstrap.Modal.getInstance(document.getElementById('modalNovoAtendimento'))?.hide();
+            Toast.fire({ icon: 'success', title: `OS #${novoNumOS} aberta com sucesso!` });
+
+            if (telClienteFinal) {
+                const resWhats = await Swal.fire({
+                    title: 'Atendimento Aberto!',
+                    text: `Deseja avisar ${nomeClienteFinal} no WhatsApp sobre a OS #${novoNumOS}?`,
+                    icon: 'success',
+                    showCancelButton: true,
+                    confirmButtonColor: '#16a34a',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: '<i class="bi bi-whatsapp me-1"></i> Notificar no WhatsApp',
+                    cancelButtonText: 'Mais tarde'
+                });
+
+                if (resWhats.isConfirmed) {
+                    const limpoTel = telClienteFinal.replace(/\D/g, '');
+                    const ddi = limpoTel.length <= 11 ? '55' + limpoTel : limpoTel;
+                    const msg = encodeURIComponent(`Olá, ${nomeClienteFinal}! Sua Ordem de Serviço #${novoNumOS} foi registrada no sistema.\n\n*Serviço:* ${servicoDesc}\n*Valor:* ${centavosParaReal(totalCentavos)}\n*Data:* ${dataAtendimento.split('-').reverse().join('/')}\n\nQualquer dúvida, estamos à disposição!`);
+                    window.open(`https://api.whatsapp.com/send?phone=${ddi}&text=${msg}`, '_blank');
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            Toast.fire({ icon: 'error', title: 'Erro ao salvar Ordem de Serviço.' });
+        }
+    };
 
     // --- IMPORTAR CONTATOS DO CELULAR ---
     document.getElementById('btnImportarContato').addEventListener('click', async () => {
@@ -2157,77 +2837,106 @@
 
     // --- DASHBOARD ATUALIZAÇÃO ---
     function atualizarDashboard() {
-        const clientesAtivos = clientes.filter(c => !c.apagado);
-        const orcamentosAtivos = orcamentos.filter(o => !o.apagado);
-        document.getElementById('dashClientes').innerText = clientesAtivos.length;
-        document.getElementById('dashOSAbertas').innerText = orcamentosAtivos.filter(o => {
-            const stOS = normalizarStatusOS(o.statusOS || o.status);
-            return stOS === 'ABERTA' || stOS === 'EM_EXECUCAO';
-        }).length;
+        const customIni = document.getElementById('dashDataIni')?.value || null;
+        const customFim = document.getElementById('dashDataFim')?.value || null;
+        const intervalo = obterIntervaloDatas(periodoDashboard, customIni, customFim);
 
-        // Faturamento em centavos inteiros (OS Concluídas / Finalizadas)
-        let faturamentoCentavos = 0;
-        orcamentosAtivos.filter(o => {
-            const stOS = normalizarStatusOS(o.statusOS || o.status);
-            return stOS === 'CONCLUIDA';
-        }).forEach(o => {
-            const totCent = o.totalCentavos !== undefined ? o.totalCentavos : realParaCentavos(o.totalNumerico || o.total);
-            faturamentoCentavos += totCent;
-        });
-        document.getElementById('dashFaturamento').innerText = centavosParaReal(faturamentoCentavos);
+        const lblPeriodo = document.getElementById('dashPeriodoDescricao');
+        if (lblPeriodo) lblPeriodo.innerText = intervalo.descricao;
 
-        // Saldo a receber em centavos inteiros
-        let totalAReceberCentavos = 0;
-        orcamentosAtivos.forEach(o => {
-            const stFin = normalizarStatusFinanceiro(o.statusFinanceiro || o.statusPagamento);
-            if (stFin === 'PAGO') {
-                // Quitado, nada a receber
-            } else if (stFin === 'PARCIAL') {
-                if (o.saldoCentavos !== undefined) {
-                    totalAReceberCentavos += o.saldoCentavos;
-                } else {
-                    const tot = realParaCentavos(o.total);
-                    const sin = realParaCentavos(o.valorSinal || 0);
-                    totalAReceberCentavos += Math.max(0, tot - sin);
+        const m = calcularMetricasDashboard(intervalo.inicio, intervalo.fim);
+
+        // 1. Atualizar 9 Cards KPIs
+        const elCli = document.getElementById('dashClientes');
+        if (elCli) elCli.innerText = m.clientesAtivos;
+
+        const elOSAbertas = document.getElementById('dashOSAbertas');
+        if (elOSAbertas) elOSAbertas.innerText = m.osAbertas;
+
+        const elOSConcl = document.getElementById('dashOSConcluidas');
+        if (elOSConcl) elOSConcl.innerText = m.osConcluidas;
+
+        const elTicket = document.getElementById('dashTicketMedio');
+        if (elTicket) elTicket.innerText = centavosParaReal(m.ticketMedioCentavos);
+
+        const elFat = document.getElementById('dashFaturamento');
+        if (elFat) elFat.innerText = centavosParaReal(m.faturamentoCentavos);
+
+        const elRec = document.getElementById('dashAReceber');
+        if (elRec) elRec.innerText = centavosParaReal(m.aReceberCentavos);
+
+        const elCustos = document.getElementById('dashCustos');
+        if (elCustos) elCustos.innerText = centavosParaReal(m.custosCentavos);
+
+        const elLucro = document.getElementById('dashLucro');
+        if (elLucro) elLucro.innerText = centavosParaReal(m.lucroCentavos);
+
+        const elMargem = document.getElementById('dashMargem');
+        if (elMargem) elMargem.innerText = m.margemLucro.toFixed(1).replace('.', ',') + '%';
+
+        // 2. Atualizar Gráfico 1: Evolução Faturamento & Lucro
+        if (chartFat) {
+            const labels = [];
+            const fatData = [];
+            const lucData = [];
+
+            // Agrupamento temporal inteligente
+            const diasDiff = Math.max(1, Math.round((intervalo.fim - intervalo.inicio) / (1000 * 60 * 60 * 24)));
+            if (diasDiff <= 31) {
+                // Diário
+                for (let d = new Date(intervalo.inicio); d <= intervalo.fim; d.setDate(d.getDate() + 1)) {
+                    const diaKey = d.toISOString().split('T')[0];
+                    const diaFmt = d.getDate() + '/' + (d.getMonth() + 1);
+                    labels.push(diaFmt);
+
+                    let fatDia = 0, lucDia = 0;
+                    m.osConcluidasLista.forEach(o => {
+                        const dtRef = normalizarDataParaObj(o.dataFinalizacao || o.dataFim || o.createdAt || o.dataCriacao);
+                        if (dtRef && dtRef.toISOString().split('T')[0] === diaKey) {
+                            const tot = o.totalCentavos !== undefined ? o.totalCentavos : realParaCentavos(o.totalNumerico || o.total);
+                            const cus = obterCustoOSCentavos(o, estoque);
+                            fatDia += tot;
+                            lucDia += Math.max(0, tot - cus);
+                        }
+                    });
+                    fatData.push(fatDia / 100);
+                    lucData.push(lucDia / 100);
                 }
             } else {
-                // NAO_PAGO ou ATRASADO
-                const totCent = o.totalCentavos !== undefined ? o.totalCentavos : realParaCentavos(o.totalNumerico || o.total);
-                totalAReceberCentavos += totCent;
+                labels.push('Total do Período');
+                fatData.push(m.faturamentoCentavos / 100);
+                lucData.push(m.lucroCentavos / 100);
             }
-        });
-        const elAReceber = document.getElementById('dashAReceber');
-        if (elAReceber) elAReceber.innerText = centavosParaReal(totalAReceberCentavos);
 
-        // Lucro operacional calculado em centavos inteiros
-        let lucroTotalCentavos = 0;
-        orcamentosAtivos.filter(o => normalizarStatusOS(o.statusOS || o.status) === 'CONCLUIDA').forEach(o => {
-            if (o.lucroCentavos !== undefined) {
-                lucroTotalCentavos += o.lucroCentavos;
-            } else if (o.itens) {
-                o.itens.forEach(it => {
-                    const valItemCent = realParaCentavos(it.valor);
-                    const qtd = Number(it.qtd) || 1;
-                    if (it.tipo === 'SERV') {
-                        lucroTotalCentavos += valItemCent * qtd;
-                    } else {
-                        const est = estoque.find(e => e.id_firebase === it.idRef);
-                        const custoUnitCent = est && est.custoMedio !== undefined ? realParaCentavos(est.custoMedio) : Math.round(valItemCent * 0.5);
-                        lucroTotalCentavos += Math.max(0, valItemCent - custoUnitCent) * qtd;
-                    }
-                });
-            }
-        });
-        document.getElementById('dashLucro').innerText = centavosParaReal(lucroTotalCentavos);
+            chartFat.data.labels = labels;
+            chartFat.data.datasets[0].data = fatData;
+            chartFat.data.datasets[1].data = lucData;
+            chartFat.update();
+        }
 
-        if(chartFat) { chartFat.data.datasets[0].data = [faturamentoCentavos / 100]; chartFat.update(); }
-        if(chartSt) { 
-            chartSt.data.datasets[0].data = [
-                orcamentosAtivos.filter(o => (o.statusOS || o.status) === 'ORÇAMENTO' || (o.statusOS || o.status) === 'ABERTA').length,
-                orcamentosAtivos.filter(o => (o.statusOS || o.status) === 'OS ABERTA' || (o.statusOS || o.status) === 'EM_EXECUCAO').length,
-                orcamentosAtivos.filter(o => normalizarStatusOS(o.statusOS || o.status) === 'CONCLUIDA').length
-            ];
+        // 3. Atualizar Gráfico 2: Distribuição de Status
+        if (chartSt) {
+            const orcs = m.orcamentosNoPeriodo;
+            const cOrc = orcs.filter(o => normalizarStatusOS(o.statusOS || o.status) === 'ORCAMENTO').length;
+            const cAberta = orcs.filter(o => normalizarStatusOS(o.statusOS || o.status) === 'OS ABERTA').length;
+            const cExec = orcs.filter(o => normalizarStatusOS(o.statusOS || o.status) === 'EM_EXECUCAO').length;
+            const cConcl = orcs.filter(o => normalizarStatusOS(o.statusOS || o.status) === 'CONCLUIDA').length;
+            const cCanc = orcs.filter(o => normalizarStatusOS(o.statusOS || o.status) === 'CANCELADA').length;
+
+            chartSt.data.datasets[0].data = [cOrc, cAberta, cExec, cConcl, cCanc];
             chartSt.update();
+        }
+
+        // 4. Atualizar Gráfico 3: Recebimentos (Pago vs A Receber)
+        if (chartRec) {
+            chartRec.data.datasets[0].data = [m.recebidoCentavos / 100, m.aReceberCentavos / 100];
+            chartRec.update();
+        }
+
+        // 5. Atualizar Gráfico 4: Composição Financeira (Faturamento x Custos x Lucro)
+        if (chartLuc) {
+            chartLuc.data.datasets[0].data = [m.faturamentoCentavos / 100, m.custosCentavos / 100, m.lucroCentavos / 100];
+            chartLuc.update();
         }
     }
 
@@ -2356,6 +3065,18 @@
         let filtrados = clientes.filter(c => !c.apagado);
         if(txtBuscaCliente) filtrados = filtrados.filter(c => c.nome.toLowerCase().includes(txtBuscaCliente));
         if(ordemFiltroCliente === 'az') filtrados.sort((a,b) => a.nome.localeCompare(b.nome)); else filtrados.sort((a,b) => b.numId - a.numId);
+
+        if (filtrados.length === 0) {
+            const isBusca = Boolean(txtBuscaCliente);
+            document.getElementById('listaClientes').innerHTML = renderizarEmptyState(
+                'bi-people',
+                isBusca ? 'Nenhum cliente encontrado' : 'Nenhum cliente cadastrado ainda',
+                isBusca ? 'Tente buscar por outro termo ou limpe a pesquisa.' : 'Cadastre seu primeiro cliente para começar a emitir propostas!',
+                isBusca ? 'Limpar Busca' : 'Novo Cliente',
+                isBusca ? "document.getElementById('buscaCliente').value = ''; txtBuscaCliente = ''; renderizarClientes();" : "document.getElementById('btnNovoCliente').click();"
+            );
+            return;
+        }
 
         document.getElementById('listaClientes').innerHTML = filtrados.map(c => {
             const endCompleto = `${c.end||''}${c.bairro ? ', ' + c.bairro : ''}, ${c.cidade||''} - ${c.estado||''}`;
@@ -2511,6 +3232,18 @@
         else if(ordemFiltroEstoque === 'qtd') filtrados.sort((a,b) => b.quantidade - a.quantidade); 
         else if(ordemFiltroEstoque === 'valor') filtrados.sort((a,b) => (b.quantidade * b.custoMedio) - (a.quantidade * a.custoMedio)); 
         else filtrados.sort((a,b) => b.numId - a.numId);
+
+        if (filtrados.length === 0) {
+            const isBusca = Boolean(txtBuscaEstoque);
+            document.getElementById('listaEstoque').innerHTML = `<tr><td colspan="7" class="p-0 border-0">${renderizarEmptyState(
+                'bi-box-seam',
+                isBusca ? 'Nenhum material encontrado' : 'Nenhum material no estoque',
+                isBusca ? 'Tente buscar por outro termo ou limpe a pesquisa.' : 'Cadastre peças e insumos para controlar seus custos operacionais!',
+                isBusca ? 'Limpar Busca' : 'Novo Produto',
+                isBusca ? "document.getElementById('buscaEstoque').value = ''; txtBuscaEstoque = ''; renderizarEstoque();" : "document.getElementById('btnNovoEstoque').click();"
+            )}</td></tr>`;
+            return;
+        }
 
         document.getElementById('listaEstoque').innerHTML = filtrados.map(i => {
             const qtd = Number(i.quantidade) || 0;
@@ -2953,6 +3686,18 @@
             });
         } else {
             filtrados.sort((a,b) => (parseInt(b.numId) || 0) - (parseInt(a.numId) || 0));
+        }
+
+        if (filtrados.length === 0) {
+            const isBusca = Boolean(txtBuscaOrc || statusFiltroOrc !== 'todos');
+            document.getElementById('listaOrcamentos').innerHTML = renderizarEmptyState(
+                'bi-file-earmark-text',
+                isBusca ? 'Nenhum documento encontrado' : 'Nenhum orçamento ou OS gerada ainda',
+                isBusca ? 'Tente ajustar os filtros ou o termo de busca.' : 'Crie um novo atendimento rápido ou proposta para começar!',
+                isBusca ? 'Limpar Filtros' : 'Novo Atendimento',
+                isBusca ? "document.getElementById('filtroStatusOrc').value = 'todos'; statusFiltroOrc = 'todos'; document.getElementById('buscaOrc').value = ''; txtBuscaOrc = ''; renderizarOrcamentos();" : "window.abrirNovoAtendimento();"
+            );
+            return;
         }
 
         document.getElementById('listaOrcamentos').innerHTML = filtrados.map(o => { 
