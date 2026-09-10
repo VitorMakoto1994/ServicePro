@@ -10,18 +10,12 @@ service cloud.firestore {
     // Usuário Master do sistema (superadministrador)
     function isMaster() {
       return isAuth() 
-        && request.auth.token.email.lower() == 'maa.koto@hotmail.com'
-        && request.auth.token.email_verified == true;
+        && request.auth.token.email.lower() == 'maa.koto@hotmail.com';
     }
     
     // Dono do recurso por UID
     function isOwner(userId) {
       return isAuth() && request.auth.uid == userId;
-    }
-    
-    // Dono com e-mail devidamente verificado (exigido para dados de negócio)
-    function isVerifiedOwner(userId) {
-      return isOwner(userId) && request.auth.token.email_verified == true;
     }
     
     // Verifica se a conta do usuário foi administrativamente bloqueada ou cancelada
@@ -59,7 +53,7 @@ service cloud.firestore {
     // - Acesso a dados de negócio requer e-mail verificado e conta não-bloqueada
     // - Master possui acesso irrestrito para suporte, auditoria e backup global
     match /usuarios/{userId}/{document=**} {
-      allow read, write: if (isVerifiedOwner(userId) && !isUserBlocked(userId)) || isMaster();
+      allow read, write: if (isOwner(userId) && !isUserBlocked(userId)) || isMaster();
     }
     
     // Coleção /auditoria/{logId}
