@@ -507,6 +507,8 @@ A base de código é sólida, rápida e livre de inchaço de dependências desne
 * **Fase 4 (Estoque Profissional):** CONCLUÍDA (v2.10.0) - Subcoleção de movimentações (ENTRADA, SAIDA, AJUSTE, ESTORNO) e baixa idempotente.
 * **Fase 5 (Orçamento e Ordem de Serviço):** CONCLUÍDA (v2.11.0) - Ciclo de vida formal de propostas, rastreabilidade por orcamentoOrigemId e bloqueio de estados inválidos.
 * **Fase 6 (Auditoria e Rastreabilidade):** CONCLUÍDA (v2.12.0) - Coleção imutável /auditoria/{logId}, 13 operações críticas instrumentadas, sanitização estrita e painel Master.
+* **Fase 7 (Dashboard Executivo):** CONCLUÍDA (v2.13.0) - 9 KPIs em centavos inteiros, filtros dinâmicos de período, 4 gráficos em Chart.js e zero leituras extras no Firestore.
+* **Fase 8 (UX Mobile + Desktop):** CONCLUÍDA (v2.13.0) - Fluxo Novo Atendimento Express (<30s), empty states universais, touch targets 44px e responsividade de 320px a desktop.
 
 ---
 FIM DO AUDIT REPORT.
