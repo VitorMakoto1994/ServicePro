@@ -200,12 +200,21 @@ Avaliação detalhada:
 # 12. ESTOQUE
 
 ### Resultado
-[ APROVADO — RESOLVIDO COM IDEMPOTÊNCIA ATÔMICA ]
+[ APROVADO — RESOLVIDO NA FASE 4: ESTOQUE PROFISSIONAL ]
 
-* **Custo Médio:** Calculado corretamente ponderando preço total dividido pela quantidade.
-* **Estoque Negativo:** Tratamento visual com ícone de exclamação vermelho e trava de piso zero (`Math.max(0, ...)`).
-* **Puxador em Orçamentos:** Aplica a margem de lucro padrão configurada na empresa.
-* **Baixa Atômica Idempotente (Resolvido na Fase 3):** Finalização de OS utiliza `writeBatch(db)` atômico agrupando a dedução de produtos e a marcação de `estoqueBaixado: true`. O sistema valida previamente se a baixa já ocorreu, bloqueando execuções duplicadas.
+* **Gestão Completa de Atributos:** Controle consolidado de `produto`, `quantidade`, `custoMedio` e `estoqueMinimo`.
+* **Histórico de Movimentações em Tempo Real:** Subcoleção multi-tenant `/usuarios/{userId}/movimentacoes` registrando com precisão milimétrica todas as movimentações dos tipos:
+  * `ENTRADA`: Aquisições e saldo inicial de materiais.
+  * `SAIDA`: Baixa automática realizada na conclusão de Ordens de Serviço.
+  * `AJUSTE`: Alterações manuais de inventário (com saldo anterior e resultante).
+  * `ESTORNO`: Restituição atômica de materiais em reabertura ou cancelamento de OS.
+* **Estrutura de Rastreabilidade:** Cada registro armazena `produtoId`, `produtoNome`, `quantidade`, `quantidadeAnterior`, `quantidadeNova`, `tipo`, `data`, `referencia`, `osId` e `usuarioId`.
+* **Baixa Automática e Idempotência Estrita (Teste Homologado):**
+  * Ao finalizar uma OS em execução: os produtos são deduzidos do estoque via `writeBatch(db)` atômico, movimentações do tipo `SAIDA` são registradas e a OS recebe `estoqueBaixado: true`.
+  * **Cenário de Reabertura e Refinalização:** Ao reabrir a OS mantendo a baixa e tentar finalizá-la novamente, a trava de idempotência bloqueia qualquer dedução repetida. **O estoque não é baixado novamente**.
+* **Opção de Estorno Transacional:** Ao reabrir uma OS concluída, o prestador pode optar por estornar os materiais com 1 clique, creditando os saldos e registrando movimentações de `ESTORNO`.
+* **Alertas Visuais de Reposição:** Indicadores de status no grid: 🟢 Normal, 🟡 Reposição Necessária (quando saldo <= estoque mínimo) e 🔴 Zerado / Crítico.
+* **Backup e Resiliência:** Subcoleção de movimentações integrada à exportação e restauração dos backups Master e Pessoal (.json).
 
 ---
 
