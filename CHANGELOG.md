@@ -2,6 +2,15 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [2.9.0] - 2026-09-09
+### Adicionado (Fase 3 - Motor Financeiro)
+- **Aritmética Centesimal Exata:** Reestruturação de todos os cálculos internos para inteiros de centavos (`subtotalCentavos`, `descontoCentavos`, `totalCentavos`, `valorPagoCentavos`, `saldoCentavos`, `custoCentavos`, `lucroCentavos`), eliminando strings monetárias como fonte matemática e desvios de ponto flutuante IEEE 754.
+- **Desacoplamento de Status da OS vs Financeiro:** Separação do status operacional (`ABERTA`, `EM_EXECUCAO`, `CONCLUIDA`, `CANCELADA`) do status financeiro (`NAO_PAGO`, `PARCIAL`, `PAGO`, `ATRASADO`).
+- **Múltiplos Pagamentos e Métodos:** Suporte a registro de transações com métodos padronizados (`DINHEIRO`, `PIX`, `CARTAO`, `TRANSFERENCIA`, `OUTRO`).
+- **Desconto e Lucro Operacional:** Novo campo de desconto com dedução imediata e apuração de lucro líquido confrontando receita versus custo médio ponderado do estoque.
+- **Idempotência Atômica na Baixa de Estoque:** Finalização de ordens de serviço agrupada em `writeBatch` atômico com flag `estoqueBaixado: true`, impedindo baixas duplicadas.
+- **Retrocompatibilidade Total:** Fallbacks dinâmicos garantem que orçamentos e OS criados em versões anteriores continuem funcionando sem necessidade de migração destrutiva.
+
 ## [2.8.0] - 2026-09-09
 ### Adicionado (Fase 2 - Assinaturas e Planos)
 - **Estrutura de Planos SaaS:** Catálogo estruturado com suporte a `TRIAL`, `STARTER`, `PRO` e `BUSINESS`.
