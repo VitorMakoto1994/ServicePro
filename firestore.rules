@@ -2,32 +2,59 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
+    // Autenticação básica
     function isAuth() {
       return request.auth != null;
     }
     
+    // Usuário Master do sistema (superadministrador)
     function isMaster() {
-      return isAuth() && request.auth.token.email.lower() == 'maa.koto@hotmail.com';
+      return isAuth() 
+        && request.auth.token.email.lower() == 'maa.koto@hotmail.com'
+        && request.auth.token.email_verified == true;
     }
     
+    // Dono do recurso por UID
     function isOwner(userId) {
       return isAuth() && request.auth.uid == userId;
     }
     
-    // Assinaturas:
-    // - Leitura: Próprio usuário ou Master
-    // - Criação: Próprio usuário no registro (com validação de email correspondente)
-    // - Alteração e Exclusão: Exclusivo Master
+    // Dono com e-mail devidamente verificado (exigido para dados de negócio)
+    function isVerifiedOwner(userId) {
+      return isOwner(userId) && request.auth.token.email_verified == true;
+    }
+    
+    // Coleção /assinaturas/{userId}
+    // - Leitura: Dono da conta ou Master
+    // - Criação: Master livremente, ou o próprio usuário no signup com teto de 7/8 dias
+    // - Alteração e Exclusão: Estritamente exclusivo do Master (impede privilege escalation e auto-extensão)
     match /assinaturas/{userId} {
       allow read: if isOwner(userId) || isMaster();
-      allow create: if isOwner(userId) && request.resource.data.email == request.auth.token.email;
+      
+      allow create: if isMaster() || (
+        isOwner(userId) 
+        && request.resource.data.email == request.auth.token.email
+        && (!('validadeTimestamp' in request.resource.data) || (
+          request.resource.data.validadeTimestamp is timestamp 
+          && request.resource.data.validadeTimestamp <= request.time + duration.value(8, 'd')
+        ))
+      );
+      
       allow update, delete: if isMaster();
     }
     
-    // Subcoleções do usuário (clientes, estoque, orçamentos, perfil):
-    // - Isolamento estrito por UID: somente o dono ou o Master têm acesso
+    // Coleção /usuarios/{userId}/{document=**}
+    // Contém subcoleções: clientes, estoque, orcamentos, config
+    // - Isolamento absoluto: Usuário A JAMAIS lê ou escreve dados do Usuário B
+    // - Acesso a dados de negócio requer e-mail verificado
+    // - Master possui acesso para suporte, auditoria e backup global
     match /usuarios/{userId}/{document=**} {
-      allow read, write: if isOwner(userId) || isMaster();
+      allow read, write: if isVerifiedOwner(userId) || isMaster();
+    }
+    
+    // Bloqueio explícito por padrão de qualquer outra coleção não declarada
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
