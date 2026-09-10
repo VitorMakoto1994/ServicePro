@@ -807,7 +807,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification, sendPasswordResetEmail, deleteUser } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, onSnapshot, addDoc, updateDoc, enableIndexedDbPersistence, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, onSnapshot, addDoc, updateDoc, enableIndexedDbPersistence, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBrVPL9XBhq1MG550XJ-yGLItS27oiRCUU",
@@ -1501,7 +1501,7 @@
         const orcamentosAtivos = orcamentos.filter(o => !o.apagado);
         document.getElementById('dashClientes').innerText = clientesAtivos.length;
         document.getElementById('dashOSAbertas').innerText = orcamentosAtivos.filter(o => o.status === 'OS ABERTA').length;
-        const faturamento = orcamentosAtivos.filter(o => o.status === 'FINALIZADA').reduce((acc, curr) => acc + limpaDinheiro(curr.total), 0);
+        const faturamento = orcamentosAtivos.filter(o => o.status === 'FINALIZADA').reduce((acc, curr) => { const val = curr.totalNumerico !== undefined ? curr.totalNumerico : limpaDinheiro(curr.total); return acc + (val || 0); }, 0);
         document.getElementById('dashFaturamento').innerText = formatDinheiro(faturamento);
 
         // Cálculo de Valores a Receber (Item B)
